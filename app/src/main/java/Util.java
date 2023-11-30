@@ -65,7 +65,7 @@ public class Util {
 		// DrawLine(x4, y4, x1, y1, color);
 
 		//TODO: Right rumble not drawn
-		
+
 		Vector2 v1 = new Vector2();
 		Vector2 v2 = new Vector2();
 		Vector2 v3 = new Vector2();
@@ -76,6 +76,10 @@ public class Util {
 		v4.x(x4).y(y4);
 		DrawTriangle(v1, v2, v3, color);
     	DrawTriangle(v1, v3, v4, color);
+		v1.close();
+		v2.close();
+		v3.close();
+		v4.close();
 	}
 
 	static void segment(int width, int lanes, int x1, int y1, int w1, int x2, int y2, int w2, int fog, HashMap<String, Color> colors) {
