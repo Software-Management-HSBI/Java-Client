@@ -2,6 +2,7 @@ import static com.raylib.Raylib.ColorAlpha;
 import static com.raylib.Raylib.DrawLine;
 import static com.raylib.Raylib.DrawRectangle;
 import static com.raylib.Raylib.DrawTexture;
+import static com.raylib.Raylib.GetColor;
 import static com.raylib.Raylib.LoadTexture;
 import static com.raylib.Raylib.UnloadTexture;
 
@@ -12,12 +13,6 @@ import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
 
 public class Util {
-	private static Color grassColor = Jaylib.GREEN;
-	private static Color rumbleColor = Jaylib.GRAY;
-	private static Color roadColor = Jaylib.BLACK;
-	private static Color laneColor = Jaylib.WHITE;
-	private static Color fogColor = Jaylib.LIGHTGRAY;
-
 
     public static double increase(double start, double increment, double maximum) {
         double result = start + increment;
@@ -64,35 +59,34 @@ public class Util {
 		return p;
 	}
 
-/**
- * TODO should draw filled polygon
-*/
-static void polygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, Color color) {
-	DrawLine(x1, y1, x2, y2, color);
-	DrawLine(x2, y2, x3, y3, color);
-	DrawLine(x3, y3, x4, y4, color);
-	DrawLine(x4, y4, x1, y1, color);
-}
+	/**
+	 * TODO should draw filled polygon
+	*/
+	static void polygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, Color color) {
+		DrawLine(x1, y1, x2, y2, color);
+		DrawLine(x2, y2, x3, y3, color);
+		DrawLine(x3, y3, x4, y4, color);
+		DrawLine(x4, y4, x1, y1, color);
+	}
 
-	static void segment(int width, int lanes, int x1, int y1, int w1, int x2, int y2, int w2, int fog, Color color) {
+	static void segment(int width, int lanes, int x1, int y1, int w1, int x2, int y2, int w2, int fog, HashMap<String, Integer> colors) {
 		int r1 = (int) rumbleWidth(w1, lanes);
 		int r2 = (int) rumbleWidth(w2, lanes);
 		double l1 = laneMarkerWidth(w1, lanes);
 		double l2 = laneMarkerWidth(w2, lanes);
-		// TODO change colors
-		DrawRectangle(0, y2, width, y1 - y2, grassColor);
+		
+		DrawRectangle(0, y2, width, y1 - y2, GetColor(colors.get("grass")));
 
-		polygon(x1-w1-r1, y1, x1-w1, y1, x2-w2, y2, x2-w2-r2, y2, rumbleColor);
-		polygon(x1+w1+r1, y1, x1+w1, y1, x2+w2, y2, x2+w2+r2, y2, rumbleColor);
-		polygon(x1-w1, y1, x1+w1, y1, x2+w2, y2, x2-w2, y2, roadColor);
-		if (laneColor != null) {
-			double lanew1 = w1*2/lanes;
-			double lanew2 = w2*2/lanes;
-			double lanex1 = x1 - w1 + lanew1;
-			double lanex2 = x2 - w2 + lanew2;
-			for(int lane = 1 ; lane < lanes ; lanex1 += lanew1, lanex2 += lanew2, lane++)
-				polygon((int) (lanex1 - l1/2), y1, (int) (lanex1 + l1/2), y1, (int) (lanex2 + l2/2), y2, (int) (lanex2 - l2/2), y2, laneColor);
-		}
+		polygon(x1-w1-r1, y1, x1-w1, y1, x2-w2, y2, x2-w2-r2, y2, GetColor(colors.get("rumble")));
+		polygon(x1+w1+r1, y1, x1+w1, y1, x2+w2, y2, x2+w2+r2, y2, GetColor(colors.get("rumble")));
+		polygon(x1-w1, y1, x1+w1, y1, x2+w2, y2, x2-w2, y2, GetColor(colors.get("road")));
+
+		double lanew1 = w1*2/lanes;
+		double lanew2 = w2*2/lanes;
+		double lanex1 = x1 - w1 + lanew1;
+		double lanex2 = x2 - w2 + lanew2;
+		for(int lane = 1 ; lane < lanes ; lanex1 += lanew1, lanex2 += lanew2, lane++)
+			polygon((int) (lanex1 - l1/2), y1, (int) (lanex1 + l1/2), y1, (int) (lanex2 + l2/2), y2, (int) (lanex2 - l2/2), y2, GetColor(colors.get("lane")));
 
 		fog(0, y1, width, y2-y1, fog);
 	}
@@ -134,7 +128,7 @@ static void polygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int 
 
 	static void fog(int x, int y, int width, int height, int fog) {
 		if (fog < 1) {
-			Color color = ColorAlpha(fogColor, (1-fog)); //TODO COLOR
+			Color color = ColorAlpha(GetColor(Constants.COLORS.get("fog")), (1-fog));
 			DrawRectangle(x, y, width, height, color);
 		}
 	}
