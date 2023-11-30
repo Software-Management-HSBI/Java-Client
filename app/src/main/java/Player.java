@@ -1,7 +1,7 @@
 import static com.raylib.Raylib.*;
 
 public class Player {
-    private static final String texturePath = "app/src/main/resources/images/sprites/";
+    private static final String texturePath = "src/main/resources/images/sprites/";
 
     public Texture texture;
     public Texture straight;

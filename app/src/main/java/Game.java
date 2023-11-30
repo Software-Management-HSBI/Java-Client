@@ -1,5 +1,20 @@
-import static com.raylib.Raylib.*;
-import static com.raylib.Jaylib.*;
+import static com.raylib.Jaylib.BLACK;
+import static com.raylib.Jaylib.WHITE;
+import static com.raylib.Raylib.BeginDrawing;
+import static com.raylib.Raylib.ClearBackground;
+import static com.raylib.Raylib.CloseWindow;
+import static com.raylib.Raylib.DrawFPS;
+import static com.raylib.Raylib.DrawTexture;
+import static com.raylib.Raylib.EndDrawing;
+import static com.raylib.Raylib.InitWindow;
+import static com.raylib.Raylib.IsKeyDown;
+import static com.raylib.Raylib.KEY_DOWN;
+import static com.raylib.Raylib.KEY_LEFT;
+import static com.raylib.Raylib.KEY_RIGHT;
+import static com.raylib.Raylib.KEY_UP;
+import static com.raylib.Raylib.LoadTexture;
+import static com.raylib.Raylib.SetTargetFPS;
+import static com.raylib.Raylib.WindowShouldClose;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,14 +22,14 @@ import java.util.HashMap;
 import com.raylib.Raylib.Texture;
 
 public class Game {
-    private static final String texturePath = "app/src/main/resources/images/background/";
+    private static final String texturePath = "src/main/resources/images/background/";
 
     double fps = 60;
     double step = (double) (1/fps);
     double dt = 1/30.0;
     int width = 1024;
     int height = 768;
-    ArrayList<Segment> segments;
+    ArrayList<Util.Segment> segments;
     ArrayList<Texture> playerSprites;
     ArrayList<Background> backgroundSprites;
     Player player = null;
@@ -137,23 +152,23 @@ public class Game {
         CloseWindow();
     }
 
-    public void resetRoad() {
-        segments = new ArrayList<>();
-        for (int n = 0 ; n < 500 ; n++) {
-            HashMap<String, Integer> color = getRoadColor(n);
-            segments.add(new Segment(n, n * segmentLength, (n + 1) * segmentLength, color));
-        }
-        segments.get(findSegment(playerZ).index + 2).color = getStart();
-        segments.get(findSegment(playerZ).index + 3).color = getStart();
+public void resetRoad() {
+	segments = new ArrayList<>();
+	for (int n = 0; n < 500; n++) {
+		HashMap<String, Integer> color = getRoadColor(n);
+		segments.add(new Util().new Segment(n, n * segmentLength, (n + 1) * segmentLength, color));
+	}
+	segments.get(findSegment(playerZ).index + 2).color = getStart();
+	segments.get(findSegment(playerZ).index + 3).color = getStart();
 
-        for (int n = 0; n < rumbleLength; n++) {
-            segments.get(segments.size() - 1 - n).color = getFinish();
-        }
+	for (int n = 0; n < rumbleLength; n++) {
+		segments.get(segments.size() - 1 - n).color = getFinish();
+	}
 
-        trackLength = segments.size() * segmentLength;
-    }
+	trackLength = segments.size() * segmentLength;
+}
 
-    private Segment findSegment(double n) {
+    private Util.Segment findSegment(double n) {
         return segments.get((int) Math.floor(n/segmentLength) % segments.size());
     }
     
@@ -162,85 +177,6 @@ public class Game {
             return getLight();
         else
             return getDark();
-    }
-
-    public class Segment {
-        int index;
-        Point p1;
-        Point p2;
-        HashMap<String, Integer> color;
-
-        Segment(int index, double z1, double z2, HashMap<String, Integer> color) {
-            this.index = index;
-            this.p1 = new Point(z1);
-            this.p2 = new Point(z2);
-            this.color = color;
-        }
-    }
-
-    public class Point {
-        World world;
-        Camera camera;
-        Screen screen;
-
-        Point(double z) {
-            this.world = new World(z);
-            this.camera = new Camera();
-            this.screen = new Screen();
-        }
-    }
-
-    public class World {
-        double x;
-        double y;
-        double z;
-
-        World(double z) {
-            this.x = 0;
-            this.y = 0;
-            this.z = z;
-        }
-
-        World(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    }
-
-    public class Camera {
-        double x;
-        double y;
-        double z;
-
-        Camera() {
-            this.x = 0;
-            this.y = 0;
-            this.z = 0;
-        }
-
-        Camera(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    }
-    public class Screen {
-        double scale;
-        double x;
-        double y;
-
-        Screen() {
-            this.scale = 0;
-            this.x = 0;
-            this.y = 0;
-        }
-
-        Screen(double scale, double x, double y) {
-            this.scale = scale;
-            this.x = x;
-            this.y = y;
-        }
     }
 
     public void update(double dt) {

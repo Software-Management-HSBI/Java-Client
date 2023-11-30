@@ -1,15 +1,22 @@
+import static com.raylib.Raylib.ColorAlpha;
+import static com.raylib.Raylib.DrawLine;
+import static com.raylib.Raylib.DrawRectangle;
+import static com.raylib.Raylib.DrawTexture;
+import static com.raylib.Raylib.LoadTexture;
+import static com.raylib.Raylib.UnloadTexture;
+
+import java.util.HashMap;
+
 import com.raylib.Jaylib;
 import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
 
-import static com.raylib.Raylib.*;
-
 public class Util {
-	static Color grassColor = Jaylib.GREEN;
-	static Color rumbleColor = Jaylib.GRAY;
-	static Color roadColor = Jaylib.BLACK;
-	static Color laneColor = Jaylib.WHITE;
-	static Color fogColor = Jaylib.LIGHTGRAY;
+	private static Color grassColor = Jaylib.GREEN;
+	private static Color rumbleColor = Jaylib.GRAY;
+	private static Color roadColor = Jaylib.BLACK;
+	private static Color laneColor = Jaylib.WHITE;
+	private static Color fogColor = Jaylib.LIGHTGRAY;
 
 
     public static double increase(double start, double increment, double maximum) {
@@ -46,21 +53,26 @@ public class Util {
 		return a + (b-a)*percent;
 	}
 
-    // public double project(double p, double cameraX, double cameraY, double cameraZ, double cameraDepth, double width, double height, double roadWidth) {
-	// 	double worldX
-	// 	double worldY
-	// 	double worldZ
-	// }
-
-	/**
-	 * TODO should draw filled polygon
-	*/
-	static void polygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, Color color) {
-		DrawLine(x1, y1, x2, y2, color);
-		DrawLine(x2, y2, x3, y3, color);
-		DrawLine(x3, y3, x4, y4, color);
-		DrawLine(x4, y4, x1, y1, color);
+	public Point project(Point p, double cameraX, double cameraY, double cameraZ, double cameraDepth, double width, double height, double roadWidth) {
+		p.camera.x = Math.max(p.world.x, 0) - cameraX;
+		p.camera.y = Math.max(p.world.y, 0) - cameraY;
+		p.camera.z = Math.max(p.world.z, 0) - cameraZ;
+		p.screen.scale = cameraDepth/p.camera.z;
+		p.screen.x = Math.round((width/2) + (p.screen.scale * p.camera.x  * width/2));
+		p.screen.y = Math.round((height/2) - (p.screen.scale * p.camera.y  * height/2));
+		p.screen.w = Math.round((p.screen.scale * roadWidth * width/2));
+		return p;
 	}
+
+/**
+ * TODO should draw filled polygon
+*/
+static void polygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, Color color) {
+	DrawLine(x1, y1, x2, y2, color);
+	DrawLine(x2, y2, x3, y3, color);
+	DrawLine(x3, y3, x4, y4, color);
+	DrawLine(x4, y4, x1, y1, color);
+}
 
 	static void segment(int width, int lanes, int x1, int y1, int w1, int x2, int y2, int w2, int fog, Color color) {
 		int r1 = (int) rumbleWidth(w1, lanes);
@@ -134,5 +146,88 @@ public class Util {
 	static double laneMarkerWidth(int projectedRoadWidth, int lanes) {
 		return projectedRoadWidth/Math.max(32, 8*lanes);
 	}
+
+	public class Segment {
+        int index;
+        Point p1;
+        Point p2;
+        HashMap<String, Integer> color;
+
+        Segment(int index, double z1, double z2, HashMap<String, Integer> color) {
+            this.index = index;
+            this.p1 = new Point(z1);
+            this.p2 = new Point(z2);
+            this.color = color;
+        }
+    }
+
+    public class Point {
+        World world;
+        Camera camera;
+        Screen screen;
+
+        Point(double z) {
+            this.world = new World(z);
+            this.camera = new Camera();
+            this.screen = new Screen();
+        }
+    }
+
+    public class World {
+        double x;
+        double y;
+        double z;
+
+        World(double z) {
+            this.x = 0;
+            this.y = 0;
+            this.z = z;
+        }
+
+        World(double x, double y, double z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+    }
+
+    public class Camera {
+        double x;
+        double y;
+        double z;
+
+        Camera() {
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+        }
+
+        Camera(double x, double y, double z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+    }
+	
+    public class Screen {
+        double scale;
+        double x;
+        double y;
+		double w;
+
+        Screen() {
+            this.scale = 0;
+            this.x = 0;
+            this.y = 0;
+			this.w = 0;
+        }
+
+        Screen(double scale, double x, double y, double w) {
+            this.scale = scale;
+            this.x = x;
+            this.y = y;
+			this.w = w;
+        }
+    }
 
 }
