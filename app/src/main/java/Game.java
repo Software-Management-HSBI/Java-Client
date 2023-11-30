@@ -22,8 +22,6 @@ import java.util.HashMap;
 import com.raylib.Raylib.Texture;
 
 public class Game {
-    private static final String texturePath = "src/main/resources/images/background/";
-
     double fps = 60;
     double step = (double) (1/fps);
     double dt = 1/30.0;
@@ -64,50 +62,6 @@ public class Game {
     boolean keyRight = false;
     boolean keyFaster = false;
     boolean keySlower = false;
-
-    HashMap<String, Integer> getFinish() {
-        return new HashMap<String, Integer>() {
-            {
-                put("road", 0x000000);
-                put("grass", 0x000000);
-                put("rumble", 0x000000);
-                put("lane", 0x000000);
-            }
-        };
-    }
-
-    HashMap<String, Integer> getLight() {
-        return new HashMap<String, Integer>() {
-            {
-                put("road", 0x6B6B6B);
-                put("grass", 0x10AA10);
-                put("rumble", 0x555555);
-                put("lane", 0xCCCCCC);
-            }
-        };
-    }
-
-    HashMap<String, Integer> getStart() {
-        return new HashMap<String, Integer>() {
-            {
-                put("road", 0xFFFFFF);
-                put("grass", 0xFFFFFF);
-                put("rumble", 0xFFFFFF);
-                put("lane", 0xFFFFFF);
-            }
-        };
-    }
-
-    HashMap<String, Integer> getDark() {
-        return new HashMap<String, Integer>() {
-            {
-                put("road", 0x696969);
-                put("grass", 0x009A00);
-                put("rumble", 0xBBBBBB);
-                put("lane", 0x696969);
-            }
-        };
-    }
 
     public Game() {
         InitWindow(width, height, "Racer");
@@ -152,21 +106,21 @@ public class Game {
         CloseWindow();
     }
 
-public void resetRoad() {
-	segments = new ArrayList<>();
-	for (int n = 0; n < 500; n++) {
-		HashMap<String, Integer> color = getRoadColor(n);
-		segments.add(new Util().new Segment(n, n * segmentLength, (n + 1) * segmentLength, color));
-	}
-	segments.get(findSegment(playerZ).index + 2).color = getStart();
-	segments.get(findSegment(playerZ).index + 3).color = getStart();
+	public void resetRoad() {
+		segments = new ArrayList<>();
+		for (int n = 0; n < 500; n++) {
+			HashMap<String, Integer> color = getRoadColor(n);
+			segments.add(new Util().new Segment(n, n * segmentLength, (n + 1) * segmentLength, color));
+		}
+		segments.get(findSegment(playerZ).index + 2).color = Constants.STARTCOLORS;
+		segments.get(findSegment(playerZ).index + 3).color = Constants.STARTCOLORS;
 
-	for (int n = 0; n < rumbleLength; n++) {
-		segments.get(segments.size() - 1 - n).color = getFinish();
-	}
+		for (int n = 0; n < rumbleLength; n++) {
+			segments.get(segments.size() - 1 - n).color = Constants.FINISHCOLORS;
+		}
 
-	trackLength = segments.size() * segmentLength;
-}
+		trackLength = segments.size() * segmentLength;
+	}
 
     private Util.Segment findSegment(double n) {
         return segments.get((int) Math.floor(n/segmentLength) % segments.size());
@@ -174,9 +128,9 @@ public void resetRoad() {
     
      HashMap<String, Integer> getRoadColor(double n) {
         if ((n / rumbleLength) % 2 == 0)
-            return getLight();
+            return Constants.LIGHTCOLORS;
         else
-            return getDark();
+            return Constants.DARKCOLORS;
     }
 
     public void update(double dt) {
@@ -232,9 +186,9 @@ public void resetRoad() {
     }
 
     public void createBackground() {
-        surfaceSky = new Background(LoadTexture(texturePath + "sky.png"), 0, 0);
-        surfaceHills = new Background(LoadTexture(texturePath + "hills.png"), 0, 0);
-        surfaceTrees = new Background(LoadTexture(texturePath + "trees.png"), 0, 0);
+        surfaceSky = new Background(LoadTexture(Constants.TEXTUREPATH + "sky.png"), 0, 0);
+        surfaceHills = new Background(LoadTexture(Constants.TEXTUREPATH + "hills.png"), 0, 0);
+        surfaceTrees = new Background(LoadTexture(Constants.TEXTUREPATH + "trees.png"), 0, 0);
 
         backgroundSprites.add(surfaceSky);
         backgroundSprites.add(surfaceHills);

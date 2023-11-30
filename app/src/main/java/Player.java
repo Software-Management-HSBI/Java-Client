@@ -1,8 +1,8 @@
-import static com.raylib.Raylib.*;
+import static com.raylib.Raylib.LoadTexture;
+
+import com.raylib.Raylib.Texture;
 
 public class Player {
-    private static final String texturePath = "src/main/resources/images/sprites/";
-
     public Texture texture;
     public Texture straight;
     public Texture right;
@@ -10,10 +10,10 @@ public class Player {
     public int x, y;
 
     public Player(int x, int y) {
-        this.texture = LoadTexture(texturePath + "player_straight.png");
-        this.straight = LoadTexture(texturePath + "player_straight.png");
-        this.right = LoadTexture(texturePath + "player_right.png");
-        this.left = LoadTexture(texturePath + "player_left.png");
+        this.texture = LoadTexture(Constants.TEXTUREPATH + "player_straight.png");
+        this.straight = LoadTexture(Constants.TEXTUREPATH + "player_straight.png");
+        this.right = LoadTexture(Constants.TEXTUREPATH + "player_right.png");
+        this.left = LoadTexture(Constants.TEXTUREPATH + "player_left.png");
         this.x = x;
         this.y = y;
     }
