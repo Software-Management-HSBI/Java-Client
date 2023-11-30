@@ -1,5 +1,9 @@
+import static com.raylib.Raylib.ImageResize;
+import static com.raylib.Raylib.LoadImageFromTexture;
 import static com.raylib.Raylib.LoadTexture;
+import static com.raylib.Raylib.LoadTextureFromImage;
 
+import com.raylib.Raylib.Image;
 import com.raylib.Raylib.Texture;
 
 public class Player {
@@ -20,21 +24,22 @@ public class Player {
 
     public void driveStraight() {
         this.texture = straight;
-        // scale();
+        scale();
     }
 
     public void driveRight() {
         this.texture = right;
-        // scale();
+        scale();
     }
 
     public void driveLeft() {
         this.texture = left;
-        // scale();
+        scale();
     }
     
-    // TODO: Test if this is needed and works
-    // public void scale() {
-    //     ImageResize(this.image, this.image.width() * 4, this.image.height() * 4);
-    // }
+    public void scale() {
+        Image image = LoadImageFromTexture(texture);
+        ImageResize(image, this.texture.width() * 3, this.texture.height() * 3);
+        texture = LoadTextureFromImage(image);
+    }
 }

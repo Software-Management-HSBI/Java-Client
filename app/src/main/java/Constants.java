@@ -1,47 +1,48 @@
 import java.util.HashMap;
+import com.raylib.Raylib.Color;
 
 public class Constants {
-	public static final HashMap<String, Integer> STARTCOLORS = new HashMap<String, Integer>() {
+	public static final HashMap<String, Color> STARTCOLORS = new HashMap<String, Color>() {
 		{
-			put("road", 0xFFFFFF);
-			put("grass", 0xFFFFFF);
-			put("rumble", 0xFFFFFF);
-			put("lane", 0xFFFFFF);
+			put("road", Util.color(255, 255, 255));
+			put("grass", Util.color(255, 255, 255));
+			put("rumble", Util.color(255, 255, 255));
+			put("lane", Util.color(255, 255, 255));
 		}
 	};
 	
-	public static final HashMap<String, Integer> FINISHCOLORS = new HashMap<String, Integer>() {
+	public static final HashMap<String, Color> FINISHCOLORS = new HashMap<String, Color>() {
         {
-            put("road", 0x000000);
-        	put("grass", 0x000000);
-            put("rumble", 0x000000);
-            put("lane", 0x000000);
+            put("road", Util.color(0, 0, 0));
+        	put("grass", Util.color(0, 0, 0));
+            put("rumble", Util.color(0, 0, 0));
+            put("lane", Util.color(0, 0, 0));
         }
     };
 
-	public static final HashMap<String, Integer> LIGHTCOLORS = new HashMap<String, Integer>() {
+	public static final HashMap<String, Color> LIGHTCOLORS = new HashMap<String, Color>() {
         {
-            put("road", 0x6B6B6B);
-            put("grass", 0x10AA10);
-            put("rumble", 0x555555);
-            put("lane", 0xCCCCCC);
+            put("road", Util.color(107, 107, 107));
+            put("grass", Util.color(16, 170, 16));
+            put("rumble", Util.color(85, 85, 85));
+            put("lane", Util.color(204, 204, 204));
         }
     };
 
-	public static final HashMap<String, Integer> DARKCOLORS = new HashMap<String, Integer>() { 
+	public static final HashMap<String, Color> DARKCOLORS = new HashMap<String, Color>() { 
 		{
-                put("road", 0x696969);
-                put("grass", 0x009A00);
-                put("rumble", 0xBBBBBB);
-                put("lane", 0x696969);
+            put("road", Util.color(105, 105, 105));
+            put("grass", Util.color(0, 154, 0));
+            put("rumble", Util.color(187, 187, 187));
+            put("lane", Util.color(105, 105, 105));
         }
     };
 
-	public static final HashMap<String, Integer> COLORS = new HashMap<String, Integer>() {
+	public static final HashMap<String, Color> COLORS = new HashMap<String, Color>() {
 		{
-			put("sky", 0x72D7EE);
-			put("tree", 0x005108);
-			put("fog", 0x005108);
+			put("sky", Util.color(114, 215, 238));
+			put("tree", Util.color(0, 81, 8));
+			put("fog", Util.color(0, 81, 8));
 		}
 	};
 
