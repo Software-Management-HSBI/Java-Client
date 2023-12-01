@@ -19,6 +19,7 @@ import com.raylib.Raylib.Texture;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/** The main game class that initializes the game and starts the game loop */
 public class Game {
     ArrayList<Util.Segment> segments;
     ArrayList<Texture> playerSprites;
@@ -36,19 +37,20 @@ public class Game {
     boolean keyFaster = false;
     boolean keySlower = false;
 
+    /** Initializes the game and starts the game loop */
     public Game() {
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
         SetTargetFPS((int) Constants.FPS);
         playerSprites = new ArrayList<>();
         backgroundSprites = new ArrayList<>();
         resetRoad();
+        createPlayer();
+        createBackground();
         gameLoop();
     }
 
+    /** The game loop that renders and updates the game and checks for key presses */
     public void gameLoop() {
-        createPlayer();
-        createBackground();
-
         while (!WindowShouldClose()) {
             if (IsKeyDown(KEY_LEFT)) keyLeft = true;
             else keyLeft = false;
@@ -68,6 +70,7 @@ public class Game {
         CloseWindow();
     }
 
+    /** Initialize the road segments and set the track length */
     public void resetRoad() {
         segments = new ArrayList<>();
         for (int n = 0; n < 500; n++) {
@@ -90,15 +93,29 @@ public class Game {
         trackLength = segments.size() * Constants.SEGMENTLENGTH;
     }
 
-    private Util.Segment findSegment(double n) {
-        return segments.get((int) Math.floor(n / Constants.SEGMENTLENGTH) % segments.size());
+    /**
+     * Find the segment based on the given position
+     *
+     * @param positionZ the position of the segment
+     * @return the segment at the given position
+     */
+    private Util.Segment findSegment(double positionZ) {
+        return segments.get(
+                (int) Math.floor(positionZ / Constants.SEGMENTLENGTH) % segments.size());
     }
 
-    HashMap<String, Color> getRoadColor(double n) {
-        if ((n / Constants.RUMBLELENGTH) % 2 == 0) return Constants.DARKCOLORS;
+    /**
+     * Get the color of the road based on the segment index
+     *
+     * @param index the index of the segment
+     * @return the color of the road
+     */
+    HashMap<String, Color> getRoadColor(double index) {
+        if ((index / Constants.RUMBLELENGTH) % 2 == 0) return Constants.DARKCOLORS;
         else return Constants.LIGHTCOLORS;
     }
 
+    /** Update the position, speed and texture of the player */
     public void update(double dt) {
         position = Util.increase(position, dt * speed, trackLength);
 
@@ -125,6 +142,7 @@ public class Game {
         speed = Util.limit(speed, 0, Constants.MAXSPEED);
     }
 
+    /** Render the background, road and player */
     public void render() {
         var baseSegment = findSegment(position);
         double maxY = Constants.HEIGHT;
@@ -190,12 +208,14 @@ public class Game {
         EndDrawing();
     }
 
+    /** Create the player */
     public void createPlayer() {
         player = new Player(Constants.WIDTH / 2, Constants.HEIGHT - 150);
         player.x -= player.texture.width() * 3 / 2;
         playerSprites.add(player.texture);
     }
 
+    /** Create the background */
     public void createBackground() {
         surfaceSky =
                 new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"), 0, 0);
