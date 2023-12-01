@@ -10,51 +10,89 @@ import com.raylib.Raylib.Vector2;
 import java.util.Date;
 import java.util.HashMap;
 
+/** Utility class containing helper methods and classes */
 public class Util {
+    /**
+     * Get the current timestamp
+     *
+     * @return the current timestamp
+     */
     public static long getCurrentTimestamp() {
         return new Date().getTime();
     }
 
+    /**
+     * Limit a value between a minimum and maximum
+     *
+     * @return the limited value
+     */
     public static double limit(double value, double minimum, double maximum) {
         return Math.max(minimum, Math.min(value, maximum));
     }
 
+    /**
+     * Get a random integer between min and max
+     *
+     * @return a random integer between min and max
+     */
     public static int randomInt(int min, int max) {
         return (int) Math.round(interpolate(min, max, Math.random()));
     }
 
+    /**
+     * Interpolates between two values based on a percentage
+     *
+     * @return the interpolated value
+     */
     public static double interpolate(double a, double b, double percent) {
         return a + (b - a) * percent;
     }
 
+    /**
+     * Randomly selects an element from an array of options
+     *
+     * @param options an array of options
+     * @return a randomly selected element from the array
+     */
     public static int randomChoice(int[] options) {
         return options[randomInt(0, options.length - 1)];
     }
 
-    public static int percentRemaining(int n, int total) {
-        return (n % total) / total;
+    /**
+     * Calculate the remaining percentage of a given value relative the total value
+     *
+     * @return the remaining percentage of the value relative to the total value
+     */
+    public static int percentRemaining(int value, int total) {
+        return (value % total) / total;
     }
 
-    public static double accelerate(double v, double accel, double dt) {
-        return v + (accel * dt);
+    /**
+     * Accelerate based on the current speed, acceleration, and delta time
+     *
+     * @param speed current speed
+     * @param accel acceleration
+     * @param dt delta time
+     * @return the new speed
+     */
+    public static double accelerate(double speed, double accel, double dt) {
+        return speed + (accel * dt);
     }
 
-    public static int easeIn(int a, int b, int percent) {
-        return (int) (a + (b - a) * Math.pow(percent, 2));
-    }
-
-    public static int easeOut(int a, int b, int percent) {
-        return (int) (a + (b - a) * (1 - Math.pow(1 - percent, 2)));
-    }
-
-    public static int easeInOut(int a, int b, int percent) {
-        return (int) (a + (b - a) * (1 - Math.pow(1 - percent, 2)));
-    }
-
+    /**
+     * Calculate exponential fog based on distance and density
+     *
+     * @return the fog factor based on the exponential function
+     */
     public static double exponentialFog(double distance, double density) {
         return 1 / Math.pow(Math.E, (distance * distance * density));
     }
 
+    /**
+     * Increase a value by a given increment, wrapping around if it exceeds the maximum value
+     *
+     * @return the increased value with wrapping
+     */
     public static double increase(double start, double increment, double max) {
         double result = start + increment;
 
@@ -65,6 +103,12 @@ public class Util {
         return result;
     }
 
+    /**
+     * Check if two ranges overlap based on a given percentage
+     *
+     * @param percent the percentage determining the overlap threshold
+     * @return true if the ranges overlap, false otherwise
+     */
     public static boolean overlap(double x1, double w1, double x2, double w2, double percent) {
         double half = (percent > 0 ? percent : 1) / 2;
         double min1 = x1 - (w1 * half);
@@ -75,6 +119,12 @@ public class Util {
         return !((max1 < min2) || (min1 > max2));
     }
 
+    /**
+     * Set the camera and screen coordinates of a given point based on the camera and screen
+     *
+     * @param p the point to project
+     * @return the projected point
+     */
     public static Point project(
             Point p,
             double cameraX,
@@ -95,6 +145,11 @@ public class Util {
         return p;
     }
 
+    /**
+     * Draw a 4-sided polygon with the given coordinates and color using two triangles
+     *
+     * @param color the fill color of the polygon
+     */
     static void polygon(
             int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, Color color) {
         Vector2 v1 = new Vector2();
@@ -113,6 +168,14 @@ public class Util {
         v4.close();
     }
 
+    /**
+     * Draw a segment of the road with the given coordinates
+     *
+     * @param width the width of the road
+     * @param lanes the number of lanes on the road
+     * @param fog the fog factor
+     * @param colors the colors of the road
+     */
     static void segment(
             int width,
             int lanes,
@@ -156,6 +219,11 @@ public class Util {
         fog(0, y1, width, y2 - y1, fog);
     }
 
+    /**
+     * Draw a rectangle representing fog based on the fog factor
+     *
+     * @param fog the fog factor
+     */
     static void fog(int x, int y, int width, int height, int fog) {
         if (fog < 1) {
             Color color = ColorAlpha(Constants.COLORS.get("fog"), (1 - fog));
@@ -163,14 +231,30 @@ public class Util {
         }
     }
 
+    /**
+     * Calculate the width of the rumble strips based on the projected road width and number of
+     * lanes
+     *
+     * @return the width of the rumble strips
+     */
     static double rumbleWidth(double projectedRoadWidth, int lanes) {
         return projectedRoadWidth / Math.max(6, 2 * lanes);
     }
 
+    /**
+     * Calculate the width of the lane markers based on the projected road width and number of lanes
+     *
+     * @return the width of the lane markers
+     */
     static double laneMarkerWidth(double projectedRoadWidth, int lanes) {
         return projectedRoadWidth / Math.max(32, 8 * lanes);
     }
 
+    /**
+     * Create a new raylib color with the given RGB values
+     *
+     * @return a new raylib color
+     */
     public static Color color(int r, int g, int b) {
         Color color = new Raylib.Color();
         color.r((byte) r);
@@ -180,9 +264,24 @@ public class Util {
         return color;
     }
 
+    /**
+     * Create a Background at the given coordinates and texture
+     *
+     * @param texture the texture of the background
+     * @param x the x coordinate of the background
+     * @param y the y coordinate of the background
+     */
     public record Background(Texture texture, int x, int y) {}
     ;
 
+    /**
+     * Create a Segment with the given index, z1, z2, and color
+     *
+     * @param index the index of the segment
+     * @param z1 the z coordinate of the first World point
+     * @param z2 the z coordinate of the second World point
+     * @param color the color of the segment
+     */
     public class Segment {
         int index;
         Point p1;
@@ -197,6 +296,12 @@ public class Util {
         }
     }
 
+    /**
+     * Create a Point representing a World, Camera, and Screen point
+     *
+     * @param z the z coordinate of the World point
+     * @return a new Point containing points for World, Camera, and Screen
+     */
     public class Point {
         World world;
         Camera camera;
@@ -209,6 +314,7 @@ public class Util {
         }
     }
 
+    /** Create a World point with a given z coordinate */
     public class World {
         double x;
         double y;
@@ -219,14 +325,9 @@ public class Util {
             this.y = 0;
             this.z = z;
         }
-
-        World(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
     }
 
+    /** Create an empty Camera point */
     public class Camera {
         double x;
         double y;
@@ -237,14 +338,9 @@ public class Util {
             this.y = 0;
             this.z = 0;
         }
-
-        Camera(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
     }
 
+    /** Create an empty Screen point */
     public class Screen {
         double scale;
         double x;
@@ -256,13 +352,6 @@ public class Util {
             this.x = 0;
             this.y = 0;
             this.w = 0;
-        }
-
-        Screen(double scale, double x, double y, double w) {
-            this.scale = scale;
-            this.x = x;
-            this.y = y;
-            this.w = w;
         }
     }
 }
