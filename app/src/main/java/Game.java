@@ -13,11 +13,11 @@ import static com.raylib.Raylib.LoadTexture;
 import static com.raylib.Raylib.SetTargetFPS;
 import static com.raylib.Raylib.WindowShouldClose;
 
-import com.raylib.Raylib.Color;
-import com.raylib.Raylib.Texture;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.raylib.Raylib.Color;
+import com.raylib.Raylib.Texture;
 
 public class Game {
     double fps = 60;
@@ -27,11 +27,11 @@ public class Game {
     int height = 768;
     ArrayList<Util.Segment> segments;
     ArrayList<Texture> playerSprites;
-    ArrayList<Background> backgroundSprites;
+    ArrayList<Util.Background> backgroundSprites;
     Player player = null;
-    Background surfaceSky = null;
-    Background surfaceHills = null;
-    Background surfaceTrees = null;
+    Util.Background surfaceSky = null;
+    Util.Background surfaceHills = null;
+    Util.Background surfaceTrees = null;
     int roadWidth = 2000;
     int segmentLength = 200;
     int rumbleLength = 3;
@@ -146,8 +146,8 @@ public class Game {
         double maxY = height;
 
         BeginDrawing();
-        for (Background background : backgroundSprites) {
-            DrawTexture(background.texture, background.x, background.y, WHITE);
+        for (Util.Background background : backgroundSprites) {
+            DrawTexture(background.texture(), background.x(), background.y(), WHITE);
         }
 
         for (int i = 0; i < drawDistance; i++) {
@@ -211,11 +211,11 @@ public class Game {
     }
 
     public void createBackground() {
-        surfaceSky = new Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"), 0, 0);
+        surfaceSky = new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"), 0, 0);
         surfaceHills =
-                new Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"), 0, 0);
+                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"), 0, 0);
         surfaceTrees =
-                new Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), 0, 0);
+                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), 0, 0);
 
         backgroundSprites.add(surfaceSky);
         backgroundSprites.add(surfaceHills);
