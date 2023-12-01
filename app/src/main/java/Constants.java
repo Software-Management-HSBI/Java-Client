@@ -7,7 +7,6 @@ public class Constants {
 			put("road", Util.color(255, 255, 255));
 			put("grass", Util.color(255, 255, 255));
 			put("rumble", Util.color(255, 255, 255));
-			put("lane", Util.color(255, 255, 255));
 		}
 	};
 	
@@ -16,7 +15,6 @@ public class Constants {
             put("road", Util.color(0, 0, 0));
         	put("grass", Util.color(0, 0, 0));
             put("rumble", Util.color(0, 0, 0));
-            put("lane", Util.color(0, 0, 0));
         }
     };
 
@@ -34,7 +32,6 @@ public class Constants {
             put("road", Util.color(105, 105, 105));
             put("grass", Util.color(0, 154, 0));
             put("rumble", Util.color(187, 187, 187));
-            put("lane", Util.color(105, 105, 105));
         }
     };
 

@@ -32,11 +32,11 @@ public class Game {
     Background surfaceSky = null;
     Background surfaceHills = null;
     Background surfaceTrees = null;
-    int roadWidth = 4000;
+    int roadWidth = 2000;
     int segmentLength = 200;
     int rumbleLength = 3;
     int trackLength = 0;
-    int lanes = 8;
+    int lanes = 4;
     int fov = 100;
     int cameraHeight = 1000;
     double cameraDepth = 1 / Math.tan((fov / 2) * Math.PI / 180);
@@ -117,11 +117,11 @@ public class Game {
         return segments.get((int) Math.floor(n/segmentLength) % segments.size());
     }
 
-     HashMap<String, Color> getRoadColor(double n) {
+    HashMap<String, Color> getRoadColor(double n) {
         if ((n / rumbleLength) % 2 == 0)
-            return Constants.LIGHTCOLORS;
-        else
             return Constants.DARKCOLORS;
+        else
+            return Constants.LIGHTCOLORS;
     }
 
     public void update(double dt) {
