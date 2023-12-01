@@ -2,13 +2,13 @@ import static com.raylib.Raylib.ColorAlpha;
 import static com.raylib.Raylib.DrawRectangle;
 import static com.raylib.Raylib.DrawTriangle;
 
-import java.util.Date;
-import java.util.HashMap;
-
 import com.raylib.Raylib;
 import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
 import com.raylib.Raylib.Vector2;
+
+import java.util.Date;
+import java.util.HashMap;
 
 public class Util {
     public static long getCurrentTimestamp() {
@@ -180,7 +180,8 @@ public class Util {
         return color;
     }
 
-    public record Background(Texture texture, int x, int y) {};
+    public record Background(Texture texture, int x, int y) {}
+    ;
 
     public class Segment {
         int index;

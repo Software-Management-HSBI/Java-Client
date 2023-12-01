@@ -13,18 +13,13 @@ import static com.raylib.Raylib.LoadTexture;
 import static com.raylib.Raylib.SetTargetFPS;
 import static com.raylib.Raylib.WindowShouldClose;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Game {
-    double fps = 60;
-    double step = (double) (1 / fps);
-    double dt = 1 / 30.0;
-    int width = 1024;
-    int height = 768;
     ArrayList<Util.Segment> segments;
     ArrayList<Texture> playerSprites;
     ArrayList<Util.Background> backgroundSprites;
@@ -32,34 +27,18 @@ public class Game {
     Util.Background surfaceSky = null;
     Util.Background surfaceHills = null;
     Util.Background surfaceTrees = null;
-    int roadWidth = 2000;
-    int segmentLength = 200;
-    int rumbleLength = 3;
     int trackLength = 0;
-    int lanes = 4;
-    int fov = 100;
-    int cameraHeight = 1000;
-    double cameraDepth = 1 / Math.tan((fov / 2) * Math.PI / 180);
-    int drawDistance = 300;
     double playerX = 0;
-    double playerZ = cameraHeight * cameraDepth;
-    int fogDensity = 5;
     double position = 0;
     double speed = 0;
-    double maxSpeed = segmentLength / step;
-    double accel = maxSpeed / 5.0;
-    double breaking = -maxSpeed;
-    double decel = -maxSpeed / 5.0;
-    double offRoadDecel = -maxSpeed / 2.0;
-    double offRoadLimit = maxSpeed / 4.0;
     boolean keyLeft = false;
     boolean keyRight = false;
     boolean keyFaster = false;
     boolean keySlower = false;
 
     public Game() {
-        InitWindow(width, height, "Racer");
-        SetTargetFPS((int) fps);
+        InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
+        SetTargetFPS((int) Constants.FPS);
         playerSprites = new ArrayList<>();
         backgroundSprites = new ArrayList<>();
         resetRoad();
@@ -84,7 +63,7 @@ public class Game {
             else keySlower = false;
 
             render();
-            update(step);
+            update(Constants.STEP);
         }
         CloseWindow();
     }
@@ -94,31 +73,36 @@ public class Game {
         for (int n = 0; n < 500; n++) {
             HashMap<String, Color> color = getRoadColor(n);
             segments.add(
-                    new Util().new Segment(n, n * segmentLength, (n + 1) * segmentLength, color));
+                    new Util()
+                    .new Segment(
+                            n,
+                            n * Constants.SEGMENTLENGTH,
+                            (n + 1) * Constants.SEGMENTLENGTH,
+                            color));
         }
-        segments.get(findSegment(playerZ).index + 2).color = Constants.STARTCOLORS;
-        segments.get(findSegment(playerZ).index + 3).color = Constants.STARTCOLORS;
+        segments.get(findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
+        segments.get(findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
 
-        for (int n = 0; n < rumbleLength; n++) {
+        for (int n = 0; n < Constants.RUMBLELENGTH; n++) {
             segments.get(segments.size() - 1 - n).color = Constants.FINISHCOLORS;
         }
 
-        trackLength = segments.size() * segmentLength;
+        trackLength = segments.size() * Constants.SEGMENTLENGTH;
     }
 
     private Util.Segment findSegment(double n) {
-        return segments.get((int) Math.floor(n / segmentLength) % segments.size());
+        return segments.get((int) Math.floor(n / Constants.SEGMENTLENGTH) % segments.size());
     }
 
     HashMap<String, Color> getRoadColor(double n) {
-        if ((n / rumbleLength) % 2 == 0) return Constants.DARKCOLORS;
+        if ((n / Constants.RUMBLELENGTH) % 2 == 0) return Constants.DARKCOLORS;
         else return Constants.LIGHTCOLORS;
     }
 
     public void update(double dt) {
         position = Util.increase(position, dt * speed, trackLength);
 
-        var dx = dt * 2 * (speed / maxSpeed);
+        var dx = dt * 2 * (speed / Constants.MAXSPEED);
 
         if (keyLeft) {
             playerX = playerX - dx;
@@ -130,61 +114,63 @@ public class Game {
 
         playerSprites.add(player.texture);
 
-        if (keyFaster) speed = Util.accelerate(speed, accel, dt);
-        else if (keySlower) speed = Util.accelerate(speed, breaking, dt);
-        else speed = Util.accelerate(speed, decel, dt);
+        if (keyFaster) speed = Util.accelerate(speed, Constants.ACCEL, dt);
+        else if (keySlower) speed = Util.accelerate(speed, Constants.BREAKING, dt);
+        else speed = Util.accelerate(speed, Constants.DECEL, dt);
 
-        if (((playerX < -1) || (playerX > 1)) && (speed > offRoadLimit))
-            speed = Util.accelerate(speed, offRoadDecel, dt);
+        if (((playerX < -1) || (playerX > 1)) && (speed > Constants.OFFROADLIMIT))
+            speed = Util.accelerate(speed, Constants.OFFROADDECEL, dt);
 
         playerX = Util.limit(playerX, -2, 2);
-        speed = Util.limit(speed, 0, maxSpeed);
+        speed = Util.limit(speed, 0, Constants.MAXSPEED);
     }
 
     public void render() {
         var baseSegment = findSegment(position);
-        double maxY = height;
+        double maxY = Constants.HEIGHT;
 
         BeginDrawing();
         for (Util.Background background : backgroundSprites) {
             DrawTexture(background.texture(), background.x(), background.y(), WHITE);
         }
 
-        for (int i = 0; i < drawDistance; i++) {
+        for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
             var segment = segments.get((baseSegment.index + i) % segments.size());
             var segmentLooped = segment.index < baseSegment.index;
             int segmentLoopedValue = 0;
-            double segmentFog = Util.exponentialFog(i / drawDistance, fogDensity);
+            double segmentFog =
+                    Util.exponentialFog(i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
 
             if (segmentLooped) segmentLoopedValue = trackLength;
 
             segment.p1 =
                     Util.project(
                             segment.p1,
-                            (playerX * roadWidth),
-                            cameraHeight,
+                            (playerX * Constants.ROADWIDTH),
+                            Constants.CAMERAHEIGHT,
                             position - segmentLoopedValue,
-                            cameraDepth,
-                            width,
-                            height,
-                            roadWidth);
+                            Constants.CAMERADEPTH,
+                            Constants.WIDTH,
+                            Constants.HEIGHT,
+                            Constants.ROADWIDTH);
 
             segment.p2 =
                     Util.project(
                             segment.p2,
-                            (playerX * roadWidth),
-                            cameraHeight,
+                            (playerX * Constants.ROADWIDTH),
+                            Constants.CAMERAHEIGHT,
                             position - segmentLoopedValue,
-                            cameraDepth,
-                            width,
-                            height,
-                            roadWidth);
+                            Constants.CAMERADEPTH,
+                            Constants.WIDTH,
+                            Constants.HEIGHT,
+                            Constants.ROADWIDTH);
 
-            if ((segment.p1.camera.z <= cameraDepth) || (segment.p2.screen.y >= maxY)) continue;
+            if ((segment.p1.camera.z <= Constants.CAMERADEPTH) || (segment.p2.screen.y >= maxY))
+                continue;
 
             Util.segment(
-                    width,
-                    lanes,
+                    Constants.WIDTH,
+                    Constants.LANES,
                     (int) segment.p1.screen.x,
                     (int) segment.p1.screen.y,
                     (int) segment.p1.screen.w,
@@ -205,17 +191,20 @@ public class Game {
     }
 
     public void createPlayer() {
-        player = new Player(width / 2, height - 150);
+        player = new Player(Constants.WIDTH / 2, Constants.HEIGHT - 150);
         player.x -= player.texture.width() * 3 / 2;
         playerSprites.add(player.texture);
     }
 
     public void createBackground() {
-        surfaceSky = new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"), 0, 0);
+        surfaceSky =
+                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"), 0, 0);
         surfaceHills =
-                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"), 0, 0);
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"), 0, 0);
         surfaceTrees =
-                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), 0, 0);
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), 0, 0);
 
         backgroundSprites.add(surfaceSky);
         backgroundSprites.add(surfaceHills);

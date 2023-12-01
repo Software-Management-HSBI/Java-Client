@@ -3,6 +3,30 @@ import com.raylib.Raylib.Color;
 import java.util.HashMap;
 
 public class Constants {
+
+    public static final double FPS = 60;
+    public static final double STEP = (double) (1 / FPS);
+    public static final int WIDTH = 1024;
+    public static final int HEIGHT = 768;
+    public static final int ROADWIDTH = 2000;
+    public static final int SEGMENTLENGTH = 200;
+    public static final int RUMBLELENGTH = 3;
+    public static final int LANES = 4;
+    public static final int FOV = 100;
+    public static final int CAMERAHEIGHT = 1000;
+    public static final double CAMERADEPTH = 1 / Math.tan((FOV / 2) * Math.PI / 180);
+    public static final int DRAWDISTANCE = 300;
+    public static final int FOGDENSITY = 5;
+    public static final double PLAYERZ = CAMERAHEIGHT * CAMERADEPTH;
+    public static final double MAXSPEED = SEGMENTLENGTH / STEP;
+    public static final double ACCEL = MAXSPEED / 5.0;
+    public static final double BREAKING = -MAXSPEED;
+    public static final double DECEL = -MAXSPEED / 5.0;
+    public static final double OFFROADDECEL = -MAXSPEED / 2.0;
+    public static final double OFFROADLIMIT = MAXSPEED / 4.0;
+    public static final String SPRITETEXTUREPATH = "src/main/resources/images/sprites/";
+    public static final String BACKGROUNDTEXTUREPATH = "src/main/resources/images/background/";
+
     public static final HashMap<String, Color> STARTCOLORS =
             new HashMap<String, Color>() {
                 {
@@ -48,7 +72,4 @@ public class Constants {
                     put("fog", Util.color(0, 81, 8));
                 }
             };
-
-    public static final String SPRITETEXTUREPATH = "src/main/resources/images/sprites/";
-    public static final String BACKGROUNDTEXTUREPATH = "src/main/resources/images/background/";
 }
