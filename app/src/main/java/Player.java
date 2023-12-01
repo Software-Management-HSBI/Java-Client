@@ -33,7 +33,7 @@ public class Player {
     public void driveLeft() {
         this.texture = left;
     }
-    
+
     public Texture scale(Texture texture) {
         Image image = LoadImageFromTexture(texture);
         ImageResize(image, this.texture.width() * 3, this.texture.height() * 3);
