@@ -63,8 +63,8 @@ public class Util {
      *
      * @return the remaining percentage of the value relative to the total value
      */
-    public static int percentRemaining(int value, int total) {
-        return (value % total) / total;
+    public static int percentRemaining(double value, int total) {
+        return (int) ((value % total) / total);
     }
 
     /**
@@ -287,12 +287,24 @@ public class Util {
         Point p1;
         Point p2;
         HashMap<String, Color> color;
+        double curve;
+
 
         Segment(int index, double z1, double z2, HashMap<String, Color> color) {
             this.index = index;
             this.p1 = new Point(z1);
             this.p2 = new Point(z2);
             this.color = color;
+        }
+
+
+        public Segment(int index, int z1, int z2, double curve, HashMap<String, Color> color) {
+            this.index = index;
+            this.p1 = new Point(z1);
+            this.p2 = new Point(z2);
+            this.curve = curve;
+            this.color = color;
+
         }
     }
 
@@ -315,7 +327,7 @@ public class Util {
     }
 
     /** Create a World point with a given z coordinate */
-    public class World {
+    public static class World {
         double x;
         double y;
         double z;
@@ -354,4 +366,21 @@ public class Util {
             this.w = 0;
         }
     }
+
+
+
+    public static double easeIn(double a, double b, double percent) {
+        return a + (b - a) * Math.pow(percent, 2);
+    }
+
+    public static double easeOut(double a, double b, double percent) {
+        return a + (b - a) * (1 - Math.pow(1 - percent, 2));
+    }
+
+    public  static double easeInOut(double a, double b, double percent) {
+        return a + (b - a) * ((-Math.cos(percent * Math.PI) / 2) + 0.5);
+    }
+
+
+
 }
