@@ -32,10 +32,15 @@ public class Game {
     double playerX = 0;
     double position = 0;
     double speed = 0;
+
+    double centrifugal = 0.3;
     boolean keyLeft = false;
     boolean keyRight = false;
     boolean keyFaster = false;
     boolean keySlower = false;
+    private double skyOffset;
+    private double hillOffset;
+    private double treeOffset;
 
     /** Initializes the game and starts the game loop */
     public Game() {
@@ -73,16 +78,18 @@ public class Game {
     /** Initialize the road segments and set the track length */
     public void resetRoad() {
         segments = new ArrayList<>();
-        for (int n = 0; n < 500; n++) {
-            HashMap<String, Color> color = getRoadColor(n);
-            segments.add(
-                    new Util()
-                    .new Segment(
-                            n,
-                            n * Constants.SEGMENTLENGTH,
-                            (n + 1) * Constants.SEGMENTLENGTH,
-                            color));
-        }
+        addStraight(ROAD.LENGTH.SHORT/4);
+        addSCurves();
+        addStraight(ROAD.LENGTH.LONG);
+        addCurve(ROAD.LENGTH.MEDIUM, ROAD.CURVE.MEDIUM);
+        addCurve(ROAD.LENGTH.LONG, ROAD.CURVE.MEDIUM);
+        addStraight();
+        addSCurves();
+        addCurve(ROAD.LENGTH.LONG, -ROAD.CURVE.MEDIUM);
+        addCurve(ROAD.LENGTH.LONG, ROAD.CURVE.MEDIUM);
+        addStraight();
+        addSCurves();
+        addCurve(ROAD.LENGTH.LONG, -ROAD.CURVE.EASY);
         segments.get(findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
         segments.get(findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
 
@@ -117,10 +124,17 @@ public class Game {
 
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
+        var playerSegment = findSegment(position+Constants.PLAYERZ);
+        var speedPercent  = speed/Constants.MAXSPEED;
+        var dx            = dt * 2 * speedPercent; // at top speed, should be able to cross from left to right (-1 to +1) in 1 second
+
         position = Util.increase(position, dt * speed, trackLength);
 
-        var dx = dt * 2 * (speed / Constants.MAXSPEED);
+        skyOffset  = Util.increase(skyOffset,  skyOffset  * playerSegment.curve * speedPercent, 1);
+        hillOffset = Util.increase(hillOffset, hillOffset * playerSegment.curve * speedPercent, 1);
+        treeOffset = Util.increase(treeOffset, treeOffset * playerSegment.curve * speedPercent, 1);
 
+        playerX = playerX - (dx * speedPercent * playerSegment.curve * centrifugal);
         if (keyLeft) {
             playerX = playerX - dx;
             if (speed > 0) player.driveLeft();
@@ -145,12 +159,20 @@ public class Game {
     /** Render the background, road and player */
     public void render() {
         var baseSegment = findSegment(position);
+        var basePercent = Util.percentRemaining(position, Constants.SEGMENTLENGTH);
         double maxY = Constants.HEIGHT;
+
+        var x  = 0;
+        var dx = - (baseSegment.curve * basePercent);
+
+
 
         BeginDrawing();
         for (Util.Background background : backgroundSprites) {
-            DrawTexture(background.texture(), background.x(), background.y(), WHITE);
+            DrawTexture(background.texture, background.x, background.y, WHITE);
         }
+        surfaceSky.x = (int) skyOffset;
+
 
         for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
             var segment = segments.get((baseSegment.index + i) % segments.size());
@@ -158,6 +180,14 @@ public class Game {
             int segmentLoopedValue = 0;
             double segmentFog =
                     Util.exponentialFog(i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
+
+
+            Util.project(segment.p1, (playerX * Constants.ROADWIDTH) - x,      Constants.CAMERAHEIGHT, position - (segmentLooped ? trackLength : 0), Constants.CAMERADEPTH, Constants.WIDTH, Constants.HEIGHT, Constants.ROADWIDTH);
+            Util.project(segment.p2, (playerX * Constants.ROADWIDTH) - x - dx, Constants.CAMERAHEIGHT, position - (segmentLooped ? trackLength : 0), Constants.CAMERADEPTH, Constants.WIDTH, Constants.HEIGHT, Constants.ROADWIDTH);
+
+            x  = (int) (x + dx); //////
+            dx = dx + segment.curve;
+
 
             if (segmentLooped) segmentLoopedValue = trackLength;
 
