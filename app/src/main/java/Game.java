@@ -38,9 +38,9 @@ public class Game {
     boolean keyRight = false;
     boolean keyFaster = false;
     boolean keySlower = false;
-    private double skyOffset;
-    private double hillOffset;
-    private double treeOffset;
+     double skyOffset =1;
+     double hillOffset;
+     double treeOffset;
 
     /** Initializes the game and starts the game loop */
     public Game() {
@@ -130,9 +130,10 @@ public class Game {
 
         position = Util.increase(position, dt * speed, trackLength);
 
-        skyOffset  = Util.increase(skyOffset,  skyOffset  * playerSegment.curve * speedPercent, 1);
-        hillOffset = Util.increase(hillOffset, hillOffset * playerSegment.curve * speedPercent, 1);
-        treeOffset = Util.increase(treeOffset, treeOffset * playerSegment.curve * speedPercent, 1);
+        skyOffset = Util.increase(skyOffset, Constants.SKYSPEED  * playerSegment.curve * speedPercent, 1);
+        hillOffset = Util.increase(hillOffset, Constants.HILLSPEED  * playerSegment.curve * speedPercent, 1);
+        treeOffset = Util.increase(treeOffset, Constants.TREESPEED  * playerSegment.curve * speedPercent, 1);
+        
 
         playerX = playerX - (dx * speedPercent * playerSegment.curve * centrifugal);
         if (keyLeft) {
@@ -162,16 +163,16 @@ public class Game {
         var basePercent = Util.percentRemaining(position, Constants.SEGMENTLENGTH);
         double maxY = Constants.HEIGHT;
 
-        var x  = 0;
-        var dx = - (baseSegment.curve * basePercent);
-
+        var x = 0;
+        var dx = -(baseSegment.curve * basePercent);
 
 
         BeginDrawing();
         for (Util.Background background : backgroundSprites) {
-            DrawTexture(background.texture, background.x, background.y, WHITE);
-        }
-        surfaceSky.x = (int) skyOffset;
+                DrawTexture(background.texture, background.x, background.y, WHITE);
+            }
+
+
 
 
         for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
@@ -234,9 +235,12 @@ public class Game {
         for (Texture texture : playerSprites) {
             DrawTexture(texture, player.x, player.y, WHITE);
         }
+
         playerSprites.clear();
         EndDrawing();
     }
+
+
 
     /** Create the player */
     public void createPlayer() {
@@ -277,7 +281,7 @@ public void addSegment(double curve){
 }
 
 
-    public void  addRoad(double enter, int hold, double leave, int curve) {
+    public void  addRoad(double enter, int hold, double leave, double curve) {
         int n;
         for( n = 0 ; n < enter ; n++)
             addSegment(Util.easeIn(0, curve, n/enter));
