@@ -230,4 +230,73 @@ public class Game {
         backgroundSprites.add(surfaceHills);
         backgroundSprites.add(surfaceTrees);
     }
+
+
+
+public void addSegment(double curve){
+        int n = segments.size();
+    HashMap<String, Color> color = getRoadColor(n);
+    segments.add(
+            new Util()
+                    .new Segment(
+                    n,
+                    n * Constants.SEGMENTLENGTH,
+                    (n + 1) * Constants.SEGMENTLENGTH,curve,
+                    color));
+
+}
+
+
+    public void  addRoad(double enter, int hold, double leave, int curve) {
+        int n;
+        for( n = 0 ; n < enter ; n++)
+            addSegment(Util.easeIn(0, curve, n/enter));
+        for( n = 0 ; n < hold  ; n++)
+            addSegment(curve);
+        for( n = 0 ; n < leave ; n++)
+            addSegment(Util.easeInOut(curve, 0, n/leave));
+    }
+
+    public static class ROAD {
+        public static class LENGTH {
+            public static final int NONE = 0;
+            public static final int SHORT = 25;
+            public static final int MEDIUM = 50;
+            public static final int LONG = 100;
+        }
+
+        public static class CURVE {
+            public static final int NONE = 0;
+            public static final int EASY = 2;
+            public static final int MEDIUM = 4;
+            public static final int HARD = 6;
+        }
+
+
+    }
+
+    public void addStraight(int num) {
+        num = (num == 0) ? ROAD.LENGTH.MEDIUM : num;
+        addRoad(num, num, num, 0);
+    }
+
+    public void addStraight() {
+        addRoad(ROAD.LENGTH.MEDIUM,ROAD.LENGTH.MEDIUM,ROAD.LENGTH.MEDIUM,0);
+    }
+
+    public void addCurve(int num, int curve) {
+        num = (num == 0) ? ROAD.LENGTH.MEDIUM : num;
+        curve = (curve == 0) ? ROAD.CURVE.MEDIUM : curve;
+        addRoad(num, num, num, curve);
+    }
+
+
+    public void addSCurves(){
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  -ROAD.CURVE.EASY);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,   ROAD.CURVE.MEDIUM);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,   ROAD.CURVE.EASY);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  -ROAD.CURVE.EASY);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  -ROAD.CURVE.MEDIUM);
+
+    }
 }
