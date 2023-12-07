@@ -7,6 +7,7 @@ import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
 import com.raylib.Raylib.Vector2;
 
+import javax.print.attribute.standard.PresentationDirection;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -271,7 +272,16 @@ public class Util {
      * @param x the x coordinate of the background
      * @param y the y coordinate of the background
      */
-    public record Background(Texture texture, int x, int y) {}
+     public static class  Background {
+
+         Texture texture;
+         int x,y;
+         public Background(Texture texture, int x, int y){
+             this.texture = texture;
+             this.x =x;
+             this.y = y;
+         }
+    }
     ;
 
     /**
@@ -298,6 +308,15 @@ public class Util {
         }
 
 
+        /**
+         * Create a Segment with the given index, z1, z2, and color
+         *
+         * @param index the index of the segment
+         * @param z1 the z coordinate of the first World point
+         * @param z2 the z coordinate of the second World point
+         * @param curve the value of the curve
+         * @param color the color of the segment
+         */
         public Segment(int index, int z1, int z2, double curve, HashMap<String, Color> color) {
             this.index = index;
             this.p1 = new Point(z1);
