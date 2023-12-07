@@ -27,6 +27,11 @@ public class Constants {
     public static final String SPRITETEXTUREPATH = "src/main/resources/images/sprites/";
     public static final String BACKGROUNDTEXTUREPATH = "src/main/resources/images/background/";
 
+
+    public static double SKYSPEED =0.001;
+    public static double HILLSPEED  =0.002;
+    public static double TREESPEED  =0.003;
+
     public static final HashMap<String, Color> STARTCOLORS =
             new HashMap<String, Color>() {
                 {
