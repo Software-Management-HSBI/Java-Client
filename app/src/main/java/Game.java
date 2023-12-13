@@ -78,9 +78,6 @@ public class Game {
         segments = new ArrayList<>();
         Road.addStraight(Road.ROAD.LENGTH.SHORT);
 
-        Road.addHill(Road.ROAD.LENGTH.MEDIUM,200);
-        Road.addHill(Road.ROAD.LENGTH.MEDIUM,-200);
-
         Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.MEDIUM);
         Road.addHill(Road.ROAD.LENGTH.MEDIUM,-Road.ROAD.HILL.MEDIUM);
         
@@ -103,13 +100,28 @@ public class Game {
 
         var dx = dt * 2 * (speed / Constants.MAXSPEED);
 
-        if (keyLeft) {
+        Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
+        
+        double incline = playerSegment.p2.world.y - playerSegment.p1.world.y;
+
+        if (keyLeft && speed > 0) {
             playerX = playerX - dx;
-            if (speed > 0) player.driveLeft();
-        } else if (keyRight) {
+            if(incline > 0)
+                player.driveUpLeft();
+            else
+                player.driveLeft();
+        } else if (keyRight && speed > 0) {
             playerX = playerX + dx;
-            if (speed > 0) player.driveRight();
-        } else player.driveStraight();
+            if(incline > 0)
+                player.driveUpRight();
+            else
+                player.driveRight();
+        } else {
+            if(incline > 0)
+                player.driveUpStraight();
+            else
+                player.driveStraight();
+        }
 
         playerSprites.add(player.texture);
 
@@ -132,10 +144,8 @@ public class Game {
         Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
         double playerSegmentPercent = Util.percentRemaining((int) (position + Constants.PLAYERZ), Constants.SEGMENTLENGTH);
 
-        System.out.println("Base segment percent: " + baseSegmentPercent);
         double playerY = Util.interpolate(playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
         
-        System.out.println("Player y: " + playerY);
         double maxY = Constants.HEIGHT;
 
         BeginDrawing();
