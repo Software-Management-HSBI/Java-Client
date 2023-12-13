@@ -77,6 +77,10 @@ public class Game {
     public void resetRoad() {
         segments = new ArrayList<>();
         Road.addStraight(Road.ROAD.LENGTH.SHORT);
+
+        Road.addHill(Road.ROAD.LENGTH.MEDIUM,200);
+        Road.addHill(Road.ROAD.LENGTH.MEDIUM,-200);
+
         Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.MEDIUM);
         Road.addHill(Road.ROAD.LENGTH.MEDIUM,-Road.ROAD.HILL.MEDIUM);
         
@@ -125,8 +129,11 @@ public class Game {
         Road.Segment baseSegment = Road.findSegment(position);
         double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);
         
-        System.err.println("Base segment percent: " + baseSegmentPercent);
-        double playerY = Util.interpolate(baseSegment.p1.world.y, baseSegment.p2.world.y, baseSegmentPercent);
+        Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
+        double playerSegmentPercent = Util.percentRemaining((int) (position + Constants.PLAYERZ), Constants.SEGMENTLENGTH);
+
+        System.out.println("Base segment percent: " + baseSegmentPercent);
+        double playerY = Util.interpolate(playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
         
         System.out.println("Player y: " + playerY);
         double maxY = Constants.HEIGHT;
