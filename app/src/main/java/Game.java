@@ -21,7 +21,7 @@ import java.util.HashMap;
 
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
-    ArrayList<Util.Segment> segments;
+    public static ArrayList<Road.Segment> segments;
     ArrayList<Texture> playerSprites;
     ArrayList<Util.Background> backgroundSprites;
     Player player = null;
@@ -74,45 +74,23 @@ public class Game {
     public void resetRoad() {
         segments = new ArrayList<>();
         for (int n = 0; n < 500; n++) {
-            HashMap<String, Color> color = getRoadColor(n);
+            HashMap<String, Color> color = Road.getRoadColor(n);
             segments.add(
-                    new Util()
+                    new Road()
                     .new Segment(
                             n,
                             n * Constants.SEGMENTLENGTH,
                             (n + 1) * Constants.SEGMENTLENGTH,
                             color));
         }
-        segments.get(findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
-        segments.get(findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
+        segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
+        segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
 
         for (int n = 0; n < Constants.RUMBLELENGTH; n++) {
             segments.get(segments.size() - 1 - n).color = Constants.FINISHCOLORS;
         }
 
         trackLength = segments.size() * Constants.SEGMENTLENGTH;
-    }
-
-    /**
-     * Find the segment based on the given position
-     *
-     * @param positionZ the position of the segment
-     * @return the segment at the given position
-     */
-    private Util.Segment findSegment(double positionZ) {
-        return segments.get(
-                (int) Math.floor(positionZ / Constants.SEGMENTLENGTH) % segments.size());
-    }
-
-    /**
-     * Get the color of the road based on the segment index
-     *
-     * @param index the index of the segment
-     * @return the color of the road
-     */
-    HashMap<String, Color> getRoadColor(double index) {
-        if ((index / Constants.RUMBLELENGTH) % 2 == 0) return Constants.DARKCOLORS;
-        else return Constants.LIGHTCOLORS;
     }
 
     /** Update the position, speed and texture of the player */
@@ -144,7 +122,7 @@ public class Game {
 
     /** Render the background, road and player */
     public void render() {
-        var baseSegment = findSegment(position);
+        var baseSegment = Road.findSegment(position);
         double maxY = Constants.HEIGHT;
 
         BeginDrawing();

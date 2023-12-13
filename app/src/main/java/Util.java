@@ -275,28 +275,6 @@ public class Util {
     ;
 
     /**
-     * Create a Segment with the given index, z1, z2, and color
-     *
-     * @param index the index of the segment
-     * @param z1 the z coordinate of the first World point
-     * @param z2 the z coordinate of the second World point
-     * @param color the color of the segment
-     */
-    public class Segment {
-        int index;
-        Point p1;
-        Point p2;
-        HashMap<String, Color> color;
-
-        Segment(int index, double z1, double z2, HashMap<String, Color> color) {
-            this.index = index;
-            this.p1 = new Point(z1);
-            this.p2 = new Point(z2);
-            this.color = color;
-        }
-    }
-
-    /**
      * Create a Point representing a World, Camera, and Screen point
      *
      * @param z the z coordinate of the World point
