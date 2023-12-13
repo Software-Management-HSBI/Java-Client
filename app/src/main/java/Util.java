@@ -250,6 +250,19 @@ public class Util {
         return projectedRoadWidth / Math.max(32, 8 * lanes);
     }
 
+    
+    public static double easeIn(double a, double b, double percent) {
+        return a + (b - a) * Math.pow(percent, 2);
+    }
+
+    public static double easeOut(double a, double b, double percent) {
+        return a + (b - a) * (1 - Math.pow(1 - percent, 2));
+    }
+
+    public  static double easeInOut(double a, double b, double percent) {
+        return a + (b - a) * ((-Math.cos(percent * Math.PI) / 2) + 0.5);
+    }
+
     /**
      * Create a new raylib color with the given RGB values
      *

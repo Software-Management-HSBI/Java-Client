@@ -27,15 +27,19 @@ public class Road {
         }
     }
     
-    public static void addSegment(){
+    public static void addSegment(double height){
         int n = Game.segments.size();
     HashMap<String, Color> color = getRoadColor(n);
-    Game.segments.add(
-                    new Road().new Segment(
+
+    Segment segment = new Road().new Segment(
                     n,
                     (double) (n * Constants.SEGMENTLENGTH),
                     (double) ((n + 1) * Constants.SEGMENTLENGTH),
-                    color));
+                    color);
+            segment.p1.world.y = getLastY();
+            segment.p2.world.y = height;
+
+    Game.segments.add(segment);
 
 }
 
@@ -62,14 +66,31 @@ public class Road {
     }
 
 
-    public static void addRoad(double enter, int hold, double leave, double curve) {
+    public static void addRoad(int enter, int hold, int leave, int height) {
+        double startY = getLastY();
+        double endY = startY + (height * Constants.SEGMENTLENGTH);
+        double total = enter + hold + leave;
+
         int n;
-        for( n = 0 ; n < enter ; n++)
-            addSegment(Util.easeIn(0, curve, n/enter));
-        for( n = 0 ; n < hold  ; n++)
-            addSegment(curve);
-        for( n = 0 ; n < leave ; n++)
-            addSegment(Util.easeInOut(curve, 0, n/leave));
+        for( n = 0 ; n < enter ; n++) {
+            addSegment(Util.easeInOut(startY, endY, n / total));
+            System.out.println("Enter: " + Util.easeInOut(startY, endY, n / total));
+        }
+
+        for( n = 0 ; n < hold  ; n++) {
+        addSegment(Util.easeInOut(startY, endY, (enter + n) / total));
+        System.out.println("Hold: " + Util.easeInOut(startY, endY, (enter + n) / total));
+        }   
+
+        for( n = 0 ; n < leave ; n++) {
+        addSegment(Util.easeInOut(startY, endY, (enter + hold + n) / total));
+        System.out.println("Leave: " + Util.easeInOut(startY, endY, (enter + hold + n) / total));
+        }
+    }
+
+    private static double getLastY() {
+        if (Game.segments.size() == 0) return 0;
+        return Game.segments.get(Game.segments.size() - 1).p2.world.y;
     }
 
     public static class ROAD {
@@ -92,6 +113,7 @@ public class Road {
             public static final int LOW = 20;
             public static final int MEDIUM = 40;
             public static final int HIGH = 60;
+        }
     }
 
     public static void addStraight(int num) {
@@ -107,6 +129,12 @@ public class Road {
         num = (num == 0) ? ROAD.LENGTH.MEDIUM : num;
         curve = (curve == 0) ? ROAD.CURVE.MEDIUM : curve;
         addRoad(num, num, num, curve);
+    }
+
+    public static void addHill(int num, int height) {
+        num = (num == 0) ? ROAD.LENGTH.MEDIUM : num;
+        height = (height == 0) ? ROAD.HILL.MEDIUM : height;
+        addRoad(num, num, num, height);
     }
 
 

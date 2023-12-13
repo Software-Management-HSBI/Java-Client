@@ -66,6 +66,9 @@ public class Game {
 
             render();
             update(Constants.STEP);
+
+            // Debugg
+            // System.out.println("Segement y: " + Road.findSegment(position).p1.world.y);
         }
         CloseWindow();
     }
@@ -73,16 +76,9 @@ public class Game {
     /** Initialize the road segments and set the track length */
     public void resetRoad() {
         segments = new ArrayList<>();
-        for (int n = 0; n < 500; n++) {
-            HashMap<String, Color> color = Road.getRoadColor(n);
-            segments.add(
-                    new Road()
-                    .new Segment(
-                            n,
-                            n * Constants.SEGMENTLENGTH,
-                            (n + 1) * Constants.SEGMENTLENGTH,
-                            color));
-        }
+        Road.addStraight(Road.ROAD.LENGTH.SHORT);
+        Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.MEDIUM);
+
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
 
