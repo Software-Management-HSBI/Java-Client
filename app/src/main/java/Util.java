@@ -63,8 +63,8 @@ public class Util {
      *
      * @return the remaining percentage of the value relative to the total value
      */
-    public static int percentRemaining(int value, int total) {
-        return (value % total) / total;
+    public static double percentRemaining(int value, int total) {
+        return (value % (double) total) / total;
     }
 
     /**
@@ -250,7 +250,7 @@ public class Util {
         return projectedRoadWidth / Math.max(32, 8 * lanes);
     }
 
-    
+
     public static double easeIn(double a, double b, double percent) {
         return a + (b - a) * Math.pow(percent, 2);
     }

@@ -78,7 +78,11 @@ public class Game {
         segments = new ArrayList<>();
         Road.addStraight(Road.ROAD.LENGTH.SHORT);
         Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.MEDIUM);
-
+        Road.addHill(Road.ROAD.LENGTH.MEDIUM,-Road.ROAD.HILL.MEDIUM);
+        
+        Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.HIGH);
+        Road.addHill(Road.ROAD.LENGTH.MEDIUM,-Road.ROAD.HILL.HIGH);
+        
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
 
@@ -118,7 +122,13 @@ public class Game {
 
     /** Render the background, road and player */
     public void render() {
-        var baseSegment = Road.findSegment(position);
+        Road.Segment baseSegment = Road.findSegment(position);
+        double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);
+        
+        System.err.println("Base segment percent: " + baseSegmentPercent);
+        double playerY = Util.interpolate(baseSegment.p1.world.y, baseSegment.p2.world.y, baseSegmentPercent);
+        
+        System.out.println("Player y: " + playerY);
         double maxY = Constants.HEIGHT;
 
         BeginDrawing();
@@ -139,7 +149,7 @@ public class Game {
                     Util.project(
                             segment.p1,
                             (playerX * Constants.ROADWIDTH),
-                            Constants.CAMERAHEIGHT,
+                            playerY + Constants.CAMERAHEIGHT,
                             position - segmentLoopedValue,
                             Constants.CAMERADEPTH,
                             Constants.WIDTH,
@@ -150,14 +160,17 @@ public class Game {
                     Util.project(
                             segment.p2,
                             (playerX * Constants.ROADWIDTH),
-                            Constants.CAMERAHEIGHT,
+                            playerY + Constants.CAMERAHEIGHT,
                             position - segmentLoopedValue,
                             Constants.CAMERADEPTH,
                             Constants.WIDTH,
                             Constants.HEIGHT,
                             Constants.ROADWIDTH);
 
-            if ((segment.p1.camera.z <= Constants.CAMERADEPTH) || (segment.p2.screen.y >= maxY))
+            if ((segment.p1.camera.z <= Constants.CAMERADEPTH)
+                || (segment.p2.screen.y >= maxY)
+                // ||
+                )
                 continue;
 
             Util.segment(
