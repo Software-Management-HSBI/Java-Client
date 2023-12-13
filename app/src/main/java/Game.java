@@ -79,11 +79,11 @@ public class Game {
         Road.addStraight(Road.ROAD.LENGTH.SHORT);
 
         Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.MEDIUM);
-        Road.addHill(Road.ROAD.LENGTH.MEDIUM,-Road.ROAD.HILL.MEDIUM);
         
         Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.HIGH);
         Road.addHill(Road.ROAD.LENGTH.MEDIUM,-Road.ROAD.HILL.HIGH);
         
+        Road.addDownhillToEnd(50);
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
 

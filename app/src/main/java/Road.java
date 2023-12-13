@@ -137,6 +137,11 @@ public class Road {
         addRoad(num, num, num, height);
     }
 
+    public static void addDownhillToEnd(int num) {
+        num = (num == 0) ? ROAD.LENGTH.MEDIUM : num;
+        addRoad(num, num, num, (int) (-getLastY() / Constants.SEGMENTLENGTH));
+    }
+
 
     public static void addSCurves(){
         addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  -ROAD.CURVE.EASY);
