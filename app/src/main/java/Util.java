@@ -64,8 +64,8 @@ public class Util {
      *
      * @return the remaining percentage of the value relative to the total value
      */
-    public static int percentRemaining(double value, int total) {
-        return (int) ((value % total) / total);
+    public static double percentRemaining(double value, int total) {
+        return  ((value % total) / total);
     }
 
     /**
