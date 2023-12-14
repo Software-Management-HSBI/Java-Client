@@ -1,20 +1,12 @@
+import static com.raylib.Jaylib.RAYWHITE;
 import static com.raylib.Jaylib.WHITE;
-import static com.raylib.Raylib.BeginDrawing;
-import static com.raylib.Raylib.CloseWindow;
-import static com.raylib.Raylib.DrawTexture;
-import static com.raylib.Raylib.EndDrawing;
-import static com.raylib.Raylib.InitWindow;
-import static com.raylib.Raylib.IsKeyDown;
-import static com.raylib.Raylib.KEY_DOWN;
-import static com.raylib.Raylib.KEY_LEFT;
-import static com.raylib.Raylib.KEY_RIGHT;
-import static com.raylib.Raylib.KEY_UP;
-import static com.raylib.Raylib.LoadTexture;
-import static com.raylib.Raylib.SetTargetFPS;
-import static com.raylib.Raylib.WindowShouldClose;
+import static com.raylib.Raylib.*;
 
+import com.raylib.Jaylib;
 import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
+import org.bytedeco.javacpp.annotation.ByVal;
+import org.bytedeco.javacpp.annotation.Cast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,9 +17,9 @@ public class Game {
     ArrayList<Texture> playerSprites;
     ArrayList<Util.Background> backgroundSprites;
     Player player = null;
-    Util.Background surfaceSky = null;
-    Util.Background surfaceHills = null;
-    Util.Background surfaceTrees = null;
+    Util.Background surfaceSky,surfaceSky2 = null;
+    Util.Background surfaceHills,surfaceHills2 = null;
+    Util.Background surfaceTrees,surfaceTrees2 = null;
     int trackLength = 0;
     double playerX = 0;
     double position = 0;
@@ -38,12 +30,15 @@ public class Game {
     boolean keyRight = false;
     boolean keyFaster = false;
     boolean keySlower = false;
-     double skyOffset =1;
+     double skyOffset;
      double hillOffset;
      double treeOffset;
 
     /** Initializes the game and starts the game loop */
     public Game() {
+
+
+
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
         SetTargetFPS((int) Constants.FPS);
         playerSprites = new ArrayList<>();
@@ -52,6 +47,7 @@ public class Game {
         createPlayer();
         createBackground();
         gameLoop();
+
     }
 
     /** The game loop that renders and updates the game and checks for key presses */
@@ -168,9 +164,22 @@ public class Game {
 
 
         BeginDrawing();
-        for (Util.Background background : backgroundSprites) {
-                DrawTexture(background.texture, background.x, background.y, WHITE);
-            }
+
+        ClearBackground(RAYWHITE); // Hier wird der Hintergrund gelöscht
+
+        float parallaxSurfaceSky = (float) (skyOffset* surfaceSky.texture.width());
+        float parallaxSurfaceHills = (float) (hillOffset* surfaceHills.texture.width());
+        float parallaxSurfaceTree = (float) (treeOffset* surfaceTrees.texture.width());
+
+
+        drawTextureParallax(parallaxSurfaceSky,surfaceSky,surfaceSky2);
+        drawTextureParallax(parallaxSurfaceHills,surfaceHills,surfaceHills2);
+        drawTextureParallax(parallaxSurfaceTree,surfaceTrees,surfaceTrees2);
+
+
+
+
+        System.out.println(surfaceSky.x);
 
 
 
@@ -188,6 +197,7 @@ public class Game {
 
             x  = (int) (x + dx); //////
             dx = dx + segment.curve;
+
 
 
             if (segmentLooped) segmentLoopedValue = trackLength;
@@ -232,13 +242,17 @@ public class Game {
             maxY = segment.p2.screen.y;
         }
 
+
+
         for (Texture texture : playerSprites) {
             DrawTexture(texture, player.x, player.y, WHITE);
         }
 
         playerSprites.clear();
+
         EndDrawing();
     }
+
 
 
 
@@ -249,10 +263,11 @@ public class Game {
         playerSprites.add(player.texture);
     }
 
+
     /** Create the background */
     public void createBackground() {
         surfaceSky =
-                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"), 0, 0);
+                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"),0, 0);
         surfaceHills =
                 new Util.Background(
                         LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"), 0, 0);
@@ -260,9 +275,26 @@ public class Game {
                 new Util.Background(
                         LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), 0, 0);
 
+
         backgroundSprites.add(surfaceSky);
         backgroundSprites.add(surfaceHills);
         backgroundSprites.add(surfaceTrees);
+
+        surfaceSky2 =
+                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"), surfaceSky.texture.width(), 0);
+        surfaceHills2 =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"), -surfaceHills.texture.width(), 0);
+        surfaceTrees2 =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), -surfaceTrees.texture.width(), 0);
+
+
+
+
+        backgroundSprites.add(surfaceSky2);
+        backgroundSprites.add(surfaceHills2);
+        backgroundSprites.add(surfaceTrees2);
     }
 
 
@@ -333,4 +365,15 @@ public void addSegment(double curve){
         addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  -ROAD.CURVE.MEDIUM);
 
     }
+
+    void drawTextureParallax(float parallaxOffSet, Util.Background texture1, Util.Background texture2){
+
+        DrawTextureEx(texture1.texture, new Jaylib.Vector2(parallaxOffSet, texture1.y), 0, 1, WHITE);
+        DrawTextureEx(texture2.texture, new Jaylib.Vector2(parallaxOffSet-texture2.texture.width(), texture1.y), 0, 1, WHITE);
+
+
+    }
+
+
+
 }
