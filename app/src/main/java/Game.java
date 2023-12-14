@@ -179,8 +179,6 @@ public class Game {
 
 
 
-        System.out.println(surfaceSky.x);
-
 
 
 
@@ -202,27 +200,10 @@ public class Game {
 
             if (segmentLooped) segmentLoopedValue = trackLength;
 
-            segment.p1 =
-                    Util.project(
-                            segment.p1,
-                            (playerX * Constants.ROADWIDTH),
-                            Constants.CAMERAHEIGHT,
-                            position - segmentLoopedValue,
-                            Constants.CAMERADEPTH,
-                            Constants.WIDTH,
-                            Constants.HEIGHT,
-                            Constants.ROADWIDTH);
+            segment.p1 = Util.project(segment.p1, (playerX * Constants.ROADWIDTH) - x,      Constants.CAMERAHEIGHT, position - (segmentLooped ? trackLength : 0), Constants.CAMERADEPTH, Constants.WIDTH, Constants.HEIGHT, Constants.ROADWIDTH);
 
-            segment.p2 =
-                    Util.project(
-                            segment.p2,
-                            (playerX * Constants.ROADWIDTH),
-                            Constants.CAMERAHEIGHT,
-                            position - segmentLoopedValue,
-                            Constants.CAMERADEPTH,
-                            Constants.WIDTH,
-                            Constants.HEIGHT,
-                            Constants.ROADWIDTH);
+            segment.p2 = Util.project(segment.p2, (playerX * Constants.ROADWIDTH) - x - dx,      Constants.CAMERAHEIGHT, position - (segmentLooped ? trackLength : 0), Constants.CAMERADEPTH, Constants.WIDTH, Constants.HEIGHT, Constants.ROADWIDTH);
+
 
             if ((segment.p1.camera.z <= Constants.CAMERADEPTH) || (segment.p2.screen.y >= maxY))
                 continue;
