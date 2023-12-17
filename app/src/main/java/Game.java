@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
-    ArrayList<Util.Segment> segments;
+    public static ArrayList<Road.Segment> segments;
     ArrayList<Texture> playerSprites;
     ArrayList<Util.Background> backgroundSprites;
     Player player = null;
@@ -67,6 +67,9 @@ public class Game {
 
             render();
             update(Constants.STEP);
+
+            // Debugg
+            // System.out.println("Segement y: " + Road.findSegment(position).p1.world.y);
         }
         CloseWindow();
     }
@@ -74,48 +77,22 @@ public class Game {
     /** Initialize the road segments and set the track length */
     public void resetRoad() {
         segments = new ArrayList<>();
-        addStraight(ROAD.LENGTH.SHORT/4);
-        addSCurves();
-        addStraight(ROAD.LENGTH.LONG);
-        addCurve(ROAD.LENGTH.MEDIUM, ROAD.CURVE.MEDIUM);
-        addCurve(ROAD.LENGTH.LONG, ROAD.CURVE.MEDIUM);
-        addStraight();
-        addSCurves();
-        addCurve(ROAD.LENGTH.LONG, -ROAD.CURVE.MEDIUM);
-        addCurve(ROAD.LENGTH.LONG, ROAD.CURVE.MEDIUM);
-        addStraight();
-        addSCurves();
-        addCurve(ROAD.LENGTH.LONG, -ROAD.CURVE.EASY);
-        segments.get(findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
-        segments.get(findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
+        Road.addStraight(Road.ROAD.LENGTH.SHORT);
+
+        Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.MEDIUM);
+        
+        Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.HIGH);
+        Road.addHill(Road.ROAD.LENGTH.MEDIUM,-Road.ROAD.HILL.HIGH);
+        
+        Road.addDownhillToEnd(50);
+        segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
+        segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
 
         for (int n = 0; n < Constants.RUMBLELENGTH; n++) {
             segments.get(segments.size() - 1 - n).color = Constants.FINISHCOLORS;
         }
 
         trackLength = segments.size() * Constants.SEGMENTLENGTH;
-    }
-
-    /**
-     * Find the segment based on the given position
-     *
-     * @param positionZ the position of the segment
-     * @return the segment at the given position
-     */
-    private Util.Segment findSegment(double positionZ) {
-        return segments.get(
-                (int) Math.floor(positionZ / Constants.SEGMENTLENGTH) % segments.size());
-    }
-
-    /**
-     * Get the color of the road based on the segment index
-     *
-     * @param index the index of the segment
-     * @return the color of the road
-     */
-    HashMap<String, Color> getRoadColor(double index) {
-        if ((index / Constants.RUMBLELENGTH) % 2 == 0) return Constants.DARKCOLORS;
-        else return Constants.LIGHTCOLORS;
     }
 
     /** Update the position, speed and texture of the player */
@@ -130,15 +107,30 @@ public class Game {
         hillOffset = Util.increase(hillOffset, Constants.HILLSPEED  * playerSegment.curve * speedPercent, 1);
         treeOffset = Util.increase(treeOffset, Constants.TREESPEED  * playerSegment.curve * speedPercent, 1);
         
+        Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
+        
+        double incline = playerSegment.p2.world.y - playerSegment.p1.world.y;
+
 
         playerX = playerX - (dx * speedPercent * playerSegment.curve * centrifugal);
-        if (keyLeft) {
+        if (keyLeft && speed > 0) {
             playerX = playerX - dx;
-            if (speed > 0) player.driveLeft();
-        } else if (keyRight) {
+            if(incline > 0)
+                player.driveUpLeft();
+            else
+                player.driveLeft();
+        } else if (keyRight && speed > 0) {
             playerX = playerX + dx;
-            if (speed > 0) player.driveRight();
-        } else player.driveStraight();
+            if(incline > 0)
+                player.driveUpRight();
+            else
+                player.driveRight();
+        } else {
+            if(incline > 0)
+                player.driveUpStraight();
+            else
+                player.driveStraight();
+        }
 
         playerSprites.add(player.texture);
 
@@ -155,8 +147,14 @@ public class Game {
 
     /** Render the background, road and player */
     public void render() {
-        var baseSegment = findSegment(position);
-        var basePercent = Util.percentRemaining(position, Constants.SEGMENTLENGTH);
+        Road.Segment baseSegment = Road.findSegment(position);
+        double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);
+        
+        Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
+        double playerSegmentPercent = Util.percentRemaining((int) (position + Constants.PLAYERZ), Constants.SEGMENTLENGTH);
+
+        double playerY = Util.interpolate(playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
+        
         double maxY = Constants.HEIGHT;
 
         var x = 0;
@@ -200,12 +198,32 @@ public class Game {
 
             if (segmentLooped) segmentLoopedValue = trackLength;
 
-            segment.p1 = Util.project(segment.p1, (playerX * Constants.ROADWIDTH) - x,      Constants.CAMERAHEIGHT, position - (segmentLooped ? trackLength : 0), Constants.CAMERADEPTH, Constants.WIDTH, Constants.HEIGHT, Constants.ROADWIDTH);
+            segment.p1 =
+                    Util.project(
+                            segment.p1,
+                            (playerX * Constants.ROADWIDTH) - x,
+                            playerY + Constants.CAMERAHEIGHT,
+                            position - (segmentLooped ? trackLength : 0),
+                            Constants.CAMERADEPTH,
+                            Constants.WIDTH,
+                            Constants.HEIGHT,
+                            Constants.ROADWIDTH);
 
-            segment.p2 = Util.project(segment.p2, (playerX * Constants.ROADWIDTH) - x - dx,      Constants.CAMERAHEIGHT, position - (segmentLooped ? trackLength : 0), Constants.CAMERADEPTH, Constants.WIDTH, Constants.HEIGHT, Constants.ROADWIDTH);
+            segment.p2 =
+                    Util.project(
+                            segment.p2,
+                            (playerX * Constants.ROADWIDTH) - x,
+                            playerY + Constants.CAMERAHEIGHT,
+                            position - (segmentLooped ? trackLength : 0),
+                            Constants.CAMERADEPTH,
+                            Constants.WIDTH,
+                            Constants.HEIGHT,
+                            Constants.ROADWIDTH);
 
-
-            if ((segment.p1.camera.z <= Constants.CAMERADEPTH) || (segment.p2.screen.y >= maxY))
+            if ((segment.p1.camera.z <= Constants.CAMERADEPTH)
+                || (segment.p2.screen.y >= maxY)
+                // ||
+                )
                 continue;
 
             Util.segment(
