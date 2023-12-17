@@ -293,8 +293,7 @@ public class Util {
              this.x =x;
              this.y = y;
          }
-    }
-    ;
+    };
 
     /**
      * Create a Point representing a World, Camera, and Screen point
@@ -354,5 +353,4 @@ public class Util {
             this.w = 0;
         }
     }
-
 }

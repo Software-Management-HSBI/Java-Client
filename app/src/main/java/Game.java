@@ -5,6 +5,7 @@ import static com.raylib.Raylib.*;
 import com.raylib.Jaylib;
 import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
+
 import org.bytedeco.javacpp.annotation.ByVal;
 import org.bytedeco.javacpp.annotation.Cast;
 
@@ -74,14 +75,10 @@ public class Game {
     public void resetRoad() {
         segments = new ArrayList<>();
         Road.addStraight(Road.ROAD.LENGTH.MEDIUM);
-        Road.addCurve(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.CURVE.MEDIUM);
 
-        // Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.MEDIUM);
+        Road.addRoad(Road.ROAD.LENGTH.MEDIUM, Road.ROAD.LENGTH.MEDIUM, Road.ROAD.LENGTH.MEDIUM, Road.ROAD.HILL.MEDIUM, Road.ROAD.CURVE.MEDIUM);
+        Road.addRoad(Road.ROAD.LENGTH.MEDIUM, Road.ROAD.LENGTH.MEDIUM, Road.ROAD.LENGTH.MEDIUM, -Road.ROAD.HILL.MEDIUM, -Road.ROAD.CURVE.MEDIUM);
         
-        // Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.HIGH);
-        // Road.addHill(Road.ROAD.LENGTH.MEDIUM,-Road.ROAD.HILL.HIGH);
-        
-        // Road.addDownhillToEnd(50);
 
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
@@ -138,85 +135,66 @@ public class Game {
         if (((playerX < -1) || (playerX > 1)) && (speed > Constants.OFFROADLIMIT))
             speed = Util.accelerate(speed, Constants.OFFROADDECEL, dt);
 
-        playerX = Util.limit(playerX, -2, 2);
-        speed = Util.limit(speed, 0, Constants.MAXSPEED);
-    }
-
-    /** Render the background, road and player */
-    public void render() {
-        Road.Segment baseSegment = Road.findSegment(position);
-        double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);
+            playerX = Util.limit(playerX, -2, 2);
+            speed = Util.limit(speed, 0, Constants.MAXSPEED);
+        }
         
-        Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
-        double playerSegmentPercent = Util.percentRemaining((int) (position + Constants.PLAYERZ), Constants.SEGMENTLENGTH);
-
-        double playerY = Util.interpolate(playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
-        
-        double maxY = Constants.HEIGHT;
-
-        var x = 0;
-        var dx = -(baseSegment.curve * baseSegmentPercent);
-
-        BeginDrawing();
-
-        ClearBackground(RAYWHITE); // Hier wird der Hintergrund gelöscht
-
-        float parallaxSurfaceSky = (float) (skyOffset* surfaceSky.texture.width());
-        float parallaxSurfaceHills = (float) (hillOffset* surfaceHills.texture.width());
-        float parallaxSurfaceTree = (float) (treeOffset* surfaceTrees.texture.width());
-
-        drawTextureParallax(parallaxSurfaceSky,surfaceSky,surfaceSky2);
-        drawTextureParallax(parallaxSurfaceHills,surfaceHills,surfaceHills2);
-        drawTextureParallax(parallaxSurfaceTree,surfaceTrees,surfaceTrees2);
-
-        for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
-            var segment = segments.get((baseSegment.index + i) % segments.size());
-            var segmentLooped = segment.index < baseSegment.index;
-            double segmentFog =
-                    Util.exponentialFog(i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
-
-            // Util.project(segment.p1,
-            //             (playerX * Constants.ROADWIDTH) - x,
-            //             Constants.CAMERAHEIGHT,
-            //             position - (segmentLooped ? trackLength : 0),
-            //             Constants.CAMERADEPTH,
-            //             Constants.WIDTH,
-            //             Constants.HEIGHT,
-            //             Constants.ROADWIDTH);
+        /** Render the background, road and player */
+        public void render() {
+            Road.Segment baseSegment = Road.findSegment(position);
+            double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);
             
-            // Util.project(segment.p2,
-            //             (playerX * Constants.ROADWIDTH) - x - dx,
-            //             Constants.CAMERAHEIGHT,
-            //             position - (segmentLooped ? trackLength : 0),
-            //             Constants.CAMERADEPTH,
-            //             Constants.WIDTH,
-            //             Constants.HEIGHT,
-            //             Constants.ROADWIDTH);
-
-            x  = (int) (x + dx);
-            dx = dx + segment.curve;
-
-            segment.p1 =
-                    Util.project(
-                            segment.p1,
-                            (playerX * Constants.ROADWIDTH) - x,
-                            playerY + Constants.CAMERAHEIGHT,
-                            position - (segmentLooped ? trackLength : 0),
-                            Constants.CAMERADEPTH,
-                            Constants.WIDTH,
-                            Constants.HEIGHT,
-                            Constants.ROADWIDTH);
-
-            segment.p2 =
-                    Util.project(
-                            segment.p2,
-                            (playerX * Constants.ROADWIDTH) - x,
-                            playerY + Constants.CAMERAHEIGHT,
-                            position - (segmentLooped ? trackLength : 0),
-                            Constants.CAMERADEPTH,
-                            Constants.WIDTH,
-                            Constants.HEIGHT,
-                            Constants.ROADWIDTH);
+            Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
+            double playerSegmentPercent = Util.percentRemaining((int) (position + Constants.PLAYERZ), Constants.SEGMENTLENGTH);
+            
+            double playerY = Util.interpolate(playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
+            
+            double maxY = Constants.HEIGHT;
+            
+            var x = 0;
+            var dx = -(baseSegment.curve * baseSegmentPercent);
+            
+            BeginDrawing();
+            
+            ClearBackground(RAYWHITE); // Hier wird der Hintergrund gelöscht
+            
+            float parallaxSurfaceSky = (float) (skyOffset* surfaceSky.texture.width());
+            float parallaxSurfaceHills = (float) (hillOffset* surfaceHills.texture.width());
+            float parallaxSurfaceTree = (float) (treeOffset* surfaceTrees.texture.width());
+            
+            drawTextureParallax(parallaxSurfaceSky,surfaceSky,surfaceSky2);
+            drawTextureParallax(parallaxSurfaceHills,surfaceHills,surfaceHills2);
+            drawTextureParallax(parallaxSurfaceTree,surfaceTrees,surfaceTrees2);
+            
+            for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
+                var segment = segments.get((baseSegment.index + i) % segments.size());
+                var segmentLooped = segment.index < baseSegment.index;
+                double segmentFog =
+                Util.exponentialFog(i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
+                
+                x  = (int) (x + dx);
+                dx = dx + segment.curve;
+                
+                Util.project(
+                    segment.p1,
+                    (playerX * Constants.ROADWIDTH) - x,
+                    playerY + Constants.CAMERAHEIGHT,
+                    position - (segmentLooped ? trackLength : 0),
+                    Constants.CAMERADEPTH,
+                    Constants.WIDTH,
+                    Constants.HEIGHT,
+                    Constants.ROADWIDTH);
+                
+                Util.project(
+                    segment.p2,
+                    (playerX * Constants.ROADWIDTH) - x - dx,
+                    playerY + Constants.CAMERAHEIGHT,
+                    position - (segmentLooped ? trackLength : 0),
+                    Constants.CAMERADEPTH,
+                    Constants.WIDTH,
+                    Constants.HEIGHT,
+                    Constants.ROADWIDTH);
+            
 
             if ((segment.p1.camera.z <= Constants.CAMERADEPTH)
                 || (segment.p2.screen.y >= maxY)
@@ -247,16 +225,12 @@ public class Game {
         EndDrawing();
     }
 
-
-
-
     /** Create the player */
     public void createPlayer() {
         player = new Player(Constants.WIDTH / 2, Constants.HEIGHT - 150);
         player.x -= player.texture.width() * 3 / 2;
         playerSprites.add(player.texture);
     }
-
 
     /** Create the background */
     public void createBackground() {
@@ -283,8 +257,6 @@ public class Game {
                 new Util.Background(
                         LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), -surfaceTrees.texture.width(), 0);
 
-
-
         backgroundSprites.add(surfaceSky2);
         backgroundSprites.add(surfaceHills2);
         backgroundSprites.add(surfaceTrees2);
@@ -294,10 +266,5 @@ public class Game {
 
         DrawTextureEx(texture1.texture, new Jaylib.Vector2(parallaxOffSet, texture1.y), 0, 1, WHITE);
         DrawTextureEx(texture2.texture, new Jaylib.Vector2(parallaxOffSet-texture2.texture.width(), texture1.y), 0, 1, WHITE);
-
-
     }
-
-
-
 }
