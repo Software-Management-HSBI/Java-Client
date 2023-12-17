@@ -7,6 +7,7 @@ import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
 import com.raylib.Raylib.Vector2;
 
+import javax.print.attribute.standard.PresentationDirection;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -63,8 +64,8 @@ public class Util {
      *
      * @return the remaining percentage of the value relative to the total value
      */
-    public static int percentRemaining(int value, int total) {
-        return (value % total) / total;
+    public static double percentRemaining(double value, int total) {
+        return  ((value % total) / total);
     }
 
     /**
@@ -271,7 +272,16 @@ public class Util {
      * @param x the x coordinate of the background
      * @param y the y coordinate of the background
      */
-    public record Background(Texture texture, int x, int y) {}
+     public static class  Background {
+
+         Texture texture;
+         int x,y;
+         public Background(Texture texture, int x, int y){
+             this.texture = texture;
+             this.x =x;
+             this.y = y;
+         }
+    }
     ;
 
     /**
@@ -287,12 +297,33 @@ public class Util {
         Point p1;
         Point p2;
         HashMap<String, Color> color;
+        double curve;
+
 
         Segment(int index, double z1, double z2, HashMap<String, Color> color) {
             this.index = index;
             this.p1 = new Point(z1);
             this.p2 = new Point(z2);
             this.color = color;
+        }
+
+
+        /**
+         * Create a Segment with the given index, z1, z2, and color
+         *
+         * @param index the index of the segment
+         * @param z1 the z coordinate of the first World point
+         * @param z2 the z coordinate of the second World point
+         * @param curve the value of the curve
+         * @param color the color of the segment
+         */
+        public Segment(int index, int z1, int z2, double curve, HashMap<String, Color> color) {
+            this.index = index;
+            this.p1 = new Point(z1);
+            this.p2 = new Point(z2);
+            this.curve = curve;
+            this.color = color;
+
         }
     }
 
@@ -315,7 +346,7 @@ public class Util {
     }
 
     /** Create a World point with a given z coordinate */
-    public class World {
+    public static class World {
         double x;
         double y;
         double z;
@@ -354,4 +385,21 @@ public class Util {
             this.w = 0;
         }
     }
+
+
+
+    public static double easeIn(double a, double b, double percent) {
+        return a + (b - a) * Math.pow(percent, 2);
+    }
+
+    public static double easeOut(double a, double b, double percent) {
+        return a + (b - a) * (1 - Math.pow(1 - percent, 2));
+    }
+
+    public  static double easeInOut(double a, double b, double percent) {
+        return a + (b - a) * ((-Math.cos(percent * Math.PI) / 2) + 0.5);
+    }
+
+
+
 }
