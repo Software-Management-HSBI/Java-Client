@@ -19,15 +19,16 @@ public class Road {
         HashMap<String, Color> color;
         double curve;
 
-        Segment(int index, double z1, double z2, HashMap<String, Color> color) {
+        Segment(int index, double z1, double z2, double curve, HashMap<String, Color> color) {
             this.index = index;
             this.p1 = new Util().new Point(z1);
             this.p2 = new Util().new Point(z2);
             this.color = color;
+            this.curve = curve;
         }
     }
     
-    public static void addSegment(double height){
+    public static void addSegment(double height, double curve){
         int n = Game.segments.size();
     HashMap<String, Color> color = getRoadColor(n);
 
@@ -35,12 +36,12 @@ public class Road {
                     n,
                     (double) (n * Constants.SEGMENTLENGTH),
                     (double) ((n + 1) * Constants.SEGMENTLENGTH),
+                    curve,
                     color);
             segment.p1.world.y = getLastY();
             segment.p2.world.y = height;
 
     Game.segments.add(segment);
-
 }
 
 /**
@@ -66,27 +67,31 @@ public class Road {
     }
 
 
-    public static void addRoad(int enter, int hold, int leave, int height) {
+    public static void addRoad(int enter, int hold, int leave, int height, double curve) {
         double startY = getLastY();
         double endY = startY + (height * Constants.SEGMENTLENGTH);
         double total = enter + hold + leave;
 
         int n;
-        for( n = 0 ; n < enter ; n++) {
-            addSegment(Util.easeInOut(startY, endY, n / total));
-            System.out.println("Enter: " + Util.easeInOut(startY, endY, n / total));
-        }
+        for( n = 0 ; n < enter ; n++)
+            addSegment(Util.easeInOut(startY, endY, n / total), Util.easeIn(0, curve, n/enter));
 
-        for( n = 0 ; n < hold  ; n++) {
-        addSegment(Util.easeInOut(startY, endY, (enter + n) / total));
-        System.out.println("Hold: " + Util.easeInOut(startY, endY, (enter + n) / total));
-        }   
+        for( n = 0 ; n < hold  ; n++)
+            addSegment(Util.easeInOut(startY, endY, (enter + n) / total), curve);
 
-        for( n = 0 ; n < leave ; n++) {
-        addSegment(Util.easeInOut(startY, endY, (enter + hold + n) / total));
-        System.out.println("Leave: " + Util.easeInOut(startY, endY, (enter + hold + n) / total));
-        }
+        for( n = 0 ; n < leave ; n++)
+            addSegment(Util.easeInOut(startY, endY, (enter + hold + n) / total), Util.easeInOut(curve, 0, n/leave));
     }
+
+    // public void  addRoad(double enter, int hold, double leave, double curve) {
+    //     int n;
+    //     for( n = 0 ; n < enter ; n++)
+    //         addSegment(Util.easeIn(0, curve, n/enter));
+    //     for( n = 0 ; n < hold  ; n++)
+    //         addSegment(curve);
+    //     for( n = 0 ; n < leave ; n++)
+    //         addSegment(Util.easeInOut(curve, 0, n/leave));
+    // }
 
     private static double getLastY() {
         if (Game.segments.size() == 0) return 0;
@@ -118,36 +123,36 @@ public class Road {
 
     public static void addStraight(int num) {
         num = (num == 0) ? ROAD.LENGTH.MEDIUM : num;
-        addRoad(num, num, num, 0);
+        addRoad(num, num, num, 0, 0);
     }
 
     public static void addStraight() {
-        addRoad(ROAD.LENGTH.MEDIUM,ROAD.LENGTH.MEDIUM,ROAD.LENGTH.MEDIUM,0);
+        addRoad(ROAD.LENGTH.MEDIUM,ROAD.LENGTH.MEDIUM,ROAD.LENGTH.MEDIUM,0, 0);
     }
 
     public static void addCurve(int num, int curve) {
         num = (num == 0) ? ROAD.LENGTH.MEDIUM : num;
         curve = (curve == 0) ? ROAD.CURVE.MEDIUM : curve;
-        addRoad(num, num, num, curve);
+        addRoad(num, num, num, 0, curve);
     }
 
     public static void addHill(int num, int height) {
         num = (num == 0) ? ROAD.LENGTH.MEDIUM : num;
         height = (height == 0) ? ROAD.HILL.MEDIUM : height;
-        addRoad(num, num, num, height);
+        addRoad(num, num, num, height, 0);
     }
 
     public static void addDownhillToEnd(int num) {
         num = (num == 0) ? ROAD.LENGTH.MEDIUM : num;
-        addRoad(num, num, num, (int) (-getLastY() / Constants.SEGMENTLENGTH));
+        addRoad(num, num, num, (int) (-getLastY() / Constants.SEGMENTLENGTH), 0);
     }
 
 
     public static void addSCurves(){
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  -ROAD.CURVE.EASY);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,   ROAD.CURVE.MEDIUM);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,   ROAD.CURVE.EASY);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  -ROAD.CURVE.EASY);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  -ROAD.CURVE.MEDIUM);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0,  -ROAD.CURVE.EASY);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0,   ROAD.CURVE.MEDIUM);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0,   ROAD.CURVE.EASY);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0,  -ROAD.CURVE.EASY);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0,  -ROAD.CURVE.MEDIUM);
     }
 }

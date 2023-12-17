@@ -36,9 +36,6 @@ public class Game {
 
     /** Initializes the game and starts the game loop */
     public Game() {
-
-
-
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
         SetTargetFPS((int) Constants.FPS);
         playerSprites = new ArrayList<>();
@@ -47,7 +44,6 @@ public class Game {
         createPlayer();
         createBackground();
         gameLoop();
-
     }
 
     /** The game loop that renders and updates the game and checks for key presses */
@@ -77,29 +73,32 @@ public class Game {
     /** Initialize the road segments and set the track length */
     public void resetRoad() {
         segments = new ArrayList<>();
-        Road.addStraight(Road.ROAD.LENGTH.SHORT);
+        Road.addStraight(Road.ROAD.LENGTH.MEDIUM);
+        Road.addCurve(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.CURVE.MEDIUM);
 
-        Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.MEDIUM);
+        // Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.MEDIUM);
         
-        Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.HIGH);
-        Road.addHill(Road.ROAD.LENGTH.MEDIUM,-Road.ROAD.HILL.HIGH);
+        // Road.addHill(Road.ROAD.LENGTH.MEDIUM,Road.ROAD.HILL.HIGH);
+        // Road.addHill(Road.ROAD.LENGTH.MEDIUM,-Road.ROAD.HILL.HIGH);
         
-        Road.addDownhillToEnd(50);
+        // Road.addDownhillToEnd(50);
+
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
 
         for (int n = 0; n < Constants.RUMBLELENGTH; n++) {
             segments.get(segments.size() - 1 - n).color = Constants.FINISHCOLORS;
         }
-
-        trackLength = segments.size() * Constants.SEGMENTLENGTH;
+        
     }
-
+    
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
-        var playerSegment = findSegment(position+Constants.PLAYERZ);
-        var speedPercent  = speed/Constants.MAXSPEED;
-        var dx            = dt * 2 * speedPercent; // at top speed, should be able to cross from left to right (-1 to +1) in 1 second
+        Road.Segment playerSegment = Road.findSegment(position+Constants.PLAYERZ);
+        double speedPercent  = speed/Constants.MAXSPEED;
+        double dx            = dt * 2 * speedPercent; // at top speed, should be able to cross from left to right (-1 to +1) in 1 second
+        
+        trackLength = segments.size() * Constants.SEGMENTLENGTH;
 
         position = Util.increase(position, dt * speed, trackLength);
 
@@ -107,12 +106,10 @@ public class Game {
         hillOffset = Util.increase(hillOffset, Constants.HILLSPEED  * playerSegment.curve * speedPercent, 1);
         treeOffset = Util.increase(treeOffset, Constants.TREESPEED  * playerSegment.curve * speedPercent, 1);
         
-        Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
-        
         double incline = playerSegment.p2.world.y - playerSegment.p1.world.y;
 
-
         playerX = playerX - (dx * speedPercent * playerSegment.curve * centrifugal);
+
         if (keyLeft && speed > 0) {
             playerX = playerX - dx;
             if(incline > 0)
@@ -158,8 +155,7 @@ public class Game {
         double maxY = Constants.HEIGHT;
 
         var x = 0;
-        var dx = -(baseSegment.curve * basePercent);
-
+        var dx = -(baseSegment.curve * baseSegmentPercent);
 
         BeginDrawing();
 
@@ -169,34 +165,36 @@ public class Game {
         float parallaxSurfaceHills = (float) (hillOffset* surfaceHills.texture.width());
         float parallaxSurfaceTree = (float) (treeOffset* surfaceTrees.texture.width());
 
-
         drawTextureParallax(parallaxSurfaceSky,surfaceSky,surfaceSky2);
         drawTextureParallax(parallaxSurfaceHills,surfaceHills,surfaceHills2);
         drawTextureParallax(parallaxSurfaceTree,surfaceTrees,surfaceTrees2);
 
-
-
-
-
-
-
         for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
             var segment = segments.get((baseSegment.index + i) % segments.size());
             var segmentLooped = segment.index < baseSegment.index;
-            int segmentLoopedValue = 0;
             double segmentFog =
                     Util.exponentialFog(i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
 
+            // Util.project(segment.p1,
+            //             (playerX * Constants.ROADWIDTH) - x,
+            //             Constants.CAMERAHEIGHT,
+            //             position - (segmentLooped ? trackLength : 0),
+            //             Constants.CAMERADEPTH,
+            //             Constants.WIDTH,
+            //             Constants.HEIGHT,
+            //             Constants.ROADWIDTH);
+            
+            // Util.project(segment.p2,
+            //             (playerX * Constants.ROADWIDTH) - x - dx,
+            //             Constants.CAMERAHEIGHT,
+            //             position - (segmentLooped ? trackLength : 0),
+            //             Constants.CAMERADEPTH,
+            //             Constants.WIDTH,
+            //             Constants.HEIGHT,
+            //             Constants.ROADWIDTH);
 
-            Util.project(segment.p1, (playerX * Constants.ROADWIDTH) - x,      Constants.CAMERAHEIGHT, position - (segmentLooped ? trackLength : 0), Constants.CAMERADEPTH, Constants.WIDTH, Constants.HEIGHT, Constants.ROADWIDTH);
-            Util.project(segment.p2, (playerX * Constants.ROADWIDTH) - x - dx, Constants.CAMERAHEIGHT, position - (segmentLooped ? trackLength : 0), Constants.CAMERADEPTH, Constants.WIDTH, Constants.HEIGHT, Constants.ROADWIDTH);
-
-            x  = (int) (x + dx); //////
+            x  = (int) (x + dx);
             dx = dx + segment.curve;
-
-
-
-            if (segmentLooped) segmentLoopedValue = trackLength;
 
             segment.p1 =
                     Util.project(
@@ -222,8 +220,7 @@ public class Game {
 
             if ((segment.p1.camera.z <= Constants.CAMERADEPTH)
                 || (segment.p2.screen.y >= maxY)
-                // ||
-                )
+                || (segment.p2.screen.y >= segment.p1.screen.y))
                 continue;
 
             Util.segment(
@@ -240,8 +237,6 @@ public class Game {
 
             maxY = segment.p2.screen.y;
         }
-
-
 
         for (Texture texture : playerSprites) {
             DrawTexture(texture, player.x, player.y, WHITE);
@@ -290,79 +285,9 @@ public class Game {
 
 
 
-
         backgroundSprites.add(surfaceSky2);
         backgroundSprites.add(surfaceHills2);
         backgroundSprites.add(surfaceTrees2);
-    }
-
-
-
-public void addSegment(double curve){
-        int n = segments.size();
-    HashMap<String, Color> color = getRoadColor(n);
-    segments.add(
-            new Util()
-                    .new Segment(
-                    n,
-                    n * Constants.SEGMENTLENGTH,
-                    (n + 1) * Constants.SEGMENTLENGTH,curve,
-                    color));
-
-}
-
-
-    public void  addRoad(double enter, int hold, double leave, double curve) {
-        int n;
-        for( n = 0 ; n < enter ; n++)
-            addSegment(Util.easeIn(0, curve, n/enter));
-        for( n = 0 ; n < hold  ; n++)
-            addSegment(curve);
-        for( n = 0 ; n < leave ; n++)
-            addSegment(Util.easeInOut(curve, 0, n/leave));
-    }
-
-    public static class ROAD {
-        public static class LENGTH {
-            public static final int NONE = 0;
-            public static final int SHORT = 25;
-            public static final int MEDIUM = 50;
-            public static final int LONG = 100;
-        }
-
-        public static class CURVE {
-            public static final int NONE = 0;
-            public static final int EASY = 2;
-            public static final int MEDIUM = 4;
-            public static final int HARD = 6;
-        }
-
-
-    }
-
-    public void addStraight(int num) {
-        num = (num == 0) ? ROAD.LENGTH.MEDIUM : num;
-        addRoad(num, num, num, 0);
-    }
-
-    public void addStraight() {
-        addRoad(ROAD.LENGTH.MEDIUM,ROAD.LENGTH.MEDIUM,ROAD.LENGTH.MEDIUM,0);
-    }
-
-    public void addCurve(int num, int curve) {
-        num = (num == 0) ? ROAD.LENGTH.MEDIUM : num;
-        curve = (curve == 0) ? ROAD.CURVE.MEDIUM : curve;
-        addRoad(num, num, num, curve);
-    }
-
-
-    public void addSCurves(){
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  -ROAD.CURVE.EASY);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,   ROAD.CURVE.MEDIUM);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,   ROAD.CURVE.EASY);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  -ROAD.CURVE.EASY);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  -ROAD.CURVE.MEDIUM);
-
     }
 
     void drawTextureParallax(float parallaxOffSet, Util.Background texture1, Util.Background texture2){

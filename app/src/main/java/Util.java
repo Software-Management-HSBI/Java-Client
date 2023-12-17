@@ -7,7 +7,6 @@ import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
 import com.raylib.Raylib.Vector2;
 
-import javax.print.attribute.standard.PresentationDirection;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -296,49 +295,6 @@ public class Util {
          }
     }
     ;
-
-    /**
-     * Create a Segment with the given index, z1, z2, and color
-     *
-     * @param index the index of the segment
-     * @param z1 the z coordinate of the first World point
-     * @param z2 the z coordinate of the second World point
-     * @param color the color of the segment
-     */
-    public class Segment {
-        int index;
-        Point p1;
-        Point p2;
-        HashMap<String, Color> color;
-        double curve;
-
-
-        Segment(int index, double z1, double z2, HashMap<String, Color> color) {
-            this.index = index;
-            this.p1 = new Point(z1);
-            this.p2 = new Point(z2);
-            this.color = color;
-        }
-
-
-        /**
-         * Create a Segment with the given index, z1, z2, and color
-         *
-         * @param index the index of the segment
-         * @param z1 the z coordinate of the first World point
-         * @param z2 the z coordinate of the second World point
-         * @param curve the value of the curve
-         * @param color the color of the segment
-         */
-        public Segment(int index, int z1, int z2, double curve, HashMap<String, Color> color) {
-            this.index = index;
-            this.p1 = new Point(z1);
-            this.p2 = new Point(z2);
-            this.curve = curve;
-            this.color = color;
-
-        }
-    }
 
     /**
      * Create a Point representing a World, Camera, and Screen point
