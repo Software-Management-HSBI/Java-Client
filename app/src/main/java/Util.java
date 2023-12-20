@@ -216,7 +216,7 @@ public class Util {
                         colors.get("lane"));
         }
 
-        fog(0, y1, width, y1-y2, fog);
+        fog(0, y2, width, y1-y2, fog);
     }
 
     /**
@@ -227,7 +227,7 @@ public class Util {
     static void fog(int x, int y, int width, int height, double fog) {
         if (fog < 1) {
             Color color = ColorAlpha(Constants.COLORS.get("fog"), (float) (1 - fog));
-            DrawRectangle(x, y-1, width, height, color);
+            DrawRectangle(x, y, width, height, color);
         }
     }
 
