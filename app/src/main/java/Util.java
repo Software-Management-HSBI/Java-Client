@@ -185,7 +185,7 @@ public class Util {
             int x2,
             int y2,
             int w2,
-            int fog,
+            double fog,
             HashMap<String, Color> colors) {
         int r1 = (int) rumbleWidth(w1, lanes);
         int r2 = (int) rumbleWidth(w2, lanes);
@@ -216,7 +216,7 @@ public class Util {
                         colors.get("lane"));
         }
 
-        fog(0, y1, width, y2 - y1, fog);
+        fog(0, y1, width, y1-y2, fog);
     }
 
     /**
@@ -224,9 +224,9 @@ public class Util {
      *
      * @param fog the fog factor
      */
-    static void fog(int x, int y, int width, int height, int fog) {
+    static void fog(int x, int y, int width, int height, double fog) {
         if (fog < 1) {
-            Color color = ColorAlpha(Constants.COLORS.get("fog"), (1 - fog));
+            Color color = ColorAlpha(Constants.COLORS.get("fog"), (float) (1 - fog));
             DrawRectangle(x, y, width, height, color);
         }
     }

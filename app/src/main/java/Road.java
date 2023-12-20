@@ -18,6 +18,7 @@ public class Road {
         Util.Point p2;
         HashMap<String, Color> color;
         double curve;
+        double fog;
 
         Segment(int index, double z1, double z2, double curve, HashMap<String, Color> color) {
             this.index = index;
