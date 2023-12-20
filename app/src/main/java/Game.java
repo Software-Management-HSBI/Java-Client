@@ -169,8 +169,8 @@ public class Game {
             for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
                 var segment = segments.get((baseSegment.index + i) % segments.size());
                 var segmentLooped = segment.index < baseSegment.index;
-                double segmentFog =
-                Util.exponentialFog(i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
+                segment.fog =
+                Util.exponentialFog((double) i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
                 
                 x  = (int) (x + dx);
                 dx = dx + segment.curve;
@@ -210,7 +210,7 @@ public class Game {
                     (int) segment.p2.screen.x,
                     (int) segment.p2.screen.y,
                     (int) segment.p2.screen.w,
-                    (int) segmentFog,
+                    segment.fog,
                     segment.color);
 
             maxY = segment.p2.screen.y;
