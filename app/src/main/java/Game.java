@@ -35,8 +35,11 @@ public class Game {
      double hillOffset;
      double treeOffset;
 
+     OptionsManager optionsManager;
+
     /** Initializes the game and starts the game loop */
     public Game() {
+        optionsManager = OptionsManager.getInstance();
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
         SetTargetFPS((int) Constants.FPS);
         playerSprites = new ArrayList<>();
@@ -91,6 +94,7 @@ public class Game {
     
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
+
         Road.Segment playerSegment = Road.findSegment(position+Constants.PLAYERZ);
         double speedPercent  = speed/Constants.MAXSPEED;
         double dx            = dt * 2 * speedPercent; // at top speed, should be able to cross from left to right (-1 to +1) in 1 second
@@ -137,6 +141,11 @@ public class Game {
 
             playerX = Util.limit(playerX, -2, 2);
             speed = Util.limit(speed, 0, Constants.MAXSPEED);
+
+
+
+            optionsManager.update();
+
         }
         
         /** Render the background, road and player */
@@ -148,14 +157,16 @@ public class Game {
             double playerSegmentPercent = Util.percentRemaining((int) (position + Constants.PLAYERZ), Constants.SEGMENTLENGTH);
             
             double playerY = Util.interpolate(playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
-            
+
+
             double maxY = Constants.HEIGHT;
             
             var x = 0;
             var dx = -(baseSegment.curve * baseSegmentPercent);
             
             BeginDrawing();
-            
+
+
             ClearBackground(RAYWHITE); // Hier wird der Hintergrund gelöscht
             
             float parallaxSurfaceSky = (float) (skyOffset* surfaceSky.texture.width());
@@ -165,7 +176,8 @@ public class Game {
             drawTextureParallax(parallaxSurfaceSky,surfaceSky,surfaceSky2);
             drawTextureParallax(parallaxSurfaceHills,surfaceHills,surfaceHills2);
             drawTextureParallax(parallaxSurfaceTree,surfaceTrees,surfaceTrees2);
-            
+
+
             for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
                 var segment = segments.get((baseSegment.index + i) % segments.size());
                 var segmentLooped = segment.index < baseSegment.index;
@@ -222,6 +234,7 @@ public class Game {
 
         playerSprites.clear();
 
+optionsManager.showBackground();
         EndDrawing();
     }
 
