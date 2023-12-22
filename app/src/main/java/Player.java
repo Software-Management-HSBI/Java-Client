@@ -12,7 +12,7 @@ public class Player {
     public Texture straight;
     public Texture right;
     public Texture left;
-    
+
     public Texture upStraight;
     public Texture upRight;
     public Texture upLeft;
@@ -30,11 +30,12 @@ public class Player {
         this.straight = scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_straight.png"));
         this.right = scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_right.png"));
         this.left = scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_left.png"));
-        
-        this.upStraight = scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_uphill_straight.png"));
+
+        this.upStraight =
+                scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_uphill_straight.png"));
         this.upRight = scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_uphill_right.png"));
         this.upLeft = scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_uphill_left.png"));
-        
+
         this.x = x;
         this.y = y;
     }
@@ -53,7 +54,6 @@ public class Player {
     public void driveLeft() {
         this.texture = left;
     }
-
 
     /** Set the texture of the player to the uphill straight texture */
     public void driveUpStraight() {

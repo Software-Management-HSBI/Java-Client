@@ -1,17 +1,8 @@
-import com.raylib.Jaylib;
-import com.raylib.Raylib;
-import org.bytedeco.javacpp.IntPointer;
-import org.bytedeco.javacpp.Pointer;
-
-import java.util.concurrent.Callable;
-
 import static com.raylib.Jaylib.*;
-import static com.raylib.Raylib.*;
 
-/**
- * Die OptionsManager-Klasse verwaltet die Optionen des Spiels.
- * Singleton Pattern wird benutzt
- */
+import com.raylib.Jaylib;
+
+/** Die OptionsManager-Klasse verwaltet die Optionen des Spiels. Singleton Pattern wird benutzt */
 public class OptionsManager {
 
     // Instanzvariable für das Singleton-Muster
@@ -21,17 +12,11 @@ public class OptionsManager {
     boolean show;
 
     // Optionen für das Spiel
-    float roadWidth;
-    float cameraHeight;
-    float drawDistance;
-    float fogDensity;
-    float fieldOfView;
-
-    // Dropdown-Fenster-Status
-    boolean dropdownWindowOpened;
-
-    // Status der Schaltflächen im Fenster
-    boolean windowButton1Clicked;
+    int roadWidth;
+    int cameraHeight;
+    int drawDistance;
+    int fogDensity;
+    int fieldOfView;
 
     // Rechtecke für GUI-Elemente
     Jaylib.Rectangle laneTitle = new Jaylib.Rectangle(500, 150, 200, 50);
@@ -52,7 +37,7 @@ public class OptionsManager {
         roadWidth = Constants.ROADWIDTH;
         cameraHeight = Constants.CAMERAHEIGHT;
         drawDistance = Constants.DRAWDISTANCE;
-        fieldOfView = (float) Constants.FOV;
+        fieldOfView = Constants.FOV;
         fogDensity = Constants.FOGDENSITY;
     }
 
@@ -65,26 +50,18 @@ public class OptionsManager {
         return instance;
     }
 
-    /**
-     * Aktualisiert die Optionen basierend auf Benutzereingaben.
-     */
+    /** Aktualisiert die Optionen basierend auf Benutzereingaben. */
     public void update() {
-        // Tastendruck 'S' zeigt/versteckt die Optionen
-        if (IsKeyPressed(KEY_S)) {
-            show = !show;
-        }
 
         // Aktualisiert die Konstanten basierend auf den Schiebereglern
-        Constants.ROADWIDTH = (int) roadWidth;
-        Constants.CAMERAHEIGHT = (int) cameraHeight;
-        Constants.DRAWDISTANCE = (int) drawDistance;
-        Constants.FOV = (int) fieldOfView;
-        Constants.FOGDENSITY = (int) fogDensity;
+        Constants.ROADWIDTH =  roadWidth;
+        Constants.CAMERAHEIGHT = cameraHeight;
+        Constants.DRAWDISTANCE =  drawDistance;
+        Constants.FOV =  fieldOfView;
+        Constants.FOGDENSITY = fogDensity;
     }
 
-    /**
-     * Zeigt das Hintergrundfenster mit den Optionen.
-     */
+    /** Zeigt das Hintergrundfenster mit den Optionen. */
     public void showBackground() {
         if (show) {
             updateGui();
@@ -92,9 +69,7 @@ public class OptionsManager {
         }
     }
 
-    /**
-     * Überprüft, ob eine Schaltfläche im Dropdown-Fenster geklickt wurde.
-     */
+    //Überprüft, ob eine Schaltfläche im Dropdown-Fenster geklickt wurde.
     private void checkButtonWindowSize() {
         if (CheckCollisionPointRec(GetMousePosition(), laneButtonSize1)) {
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -115,18 +90,59 @@ public class OptionsManager {
         }
     }
 
-    //Aktualisiert die grafische Benutzeroberfläche (GUI) für die Optionen.
+    // Aktualisiert die grafische Benutzeroberfläche (GUI) für die Optionen.
 
     private void updateGui() {
-        DrawRectangle(0, 0, Constants.WIDTH, Constants.HEIGHT, ColorAlpha(Util.color(0, 0, 0), 0.5f));
+        DrawRectangle(
+                0, 0, Constants.WIDTH, Constants.HEIGHT, ColorAlpha(Util.color(0, 0, 0), 0.5f));
         DrawText("Lanes:", 500, 170, 20, GRAY);
 
         // Aktualisiert die Schieberegler und Schaltflächen
-        roadWidth = GuiSlider(roadWidthSize, "Road Width: " + (int) roadWidth, "", roadWidth, 500, 3000);
-        cameraHeight = GuiSlider(cameraHeightSize, "Camera Height: " + (int) cameraHeight, "", cameraHeight, 500, 5000);
-        drawDistance = GuiSlider(drawDistanceSize, "Draw Distance: " + (int) drawDistance, "", drawDistance, 100, 500);
-        fieldOfView = GuiSlider(fieldOfViewSize, "Field of View: " + (int) fieldOfView, "", fieldOfView, 80, 140);
-        fogDensity = GuiSlider(fogDensitySize, "Fog Density: " + (int) fogDensity, "", fogDensity, 0, 50);
+        roadWidth =
+                (int)
+                        GuiSlider(
+                                roadWidthSize,
+                                "Road Width: " + roadWidth,
+                                "",
+                                roadWidth,
+                                500,
+                                3000);
+        cameraHeight =
+                (int)
+                        GuiSlider(
+                                cameraHeightSize,
+                                "Camera Height: " + cameraHeight,
+                                "",
+                                cameraHeight,
+                                500,
+                                5000);
+        drawDistance =
+                (int)
+                        GuiSlider(
+                                drawDistanceSize,
+                                "Draw Distance: " + drawDistance,
+                                "",
+                                drawDistance,
+                                100,
+                                500);
+        fieldOfView =
+                (int)
+                        GuiSlider(
+                                fieldOfViewSize,
+                                "Field of View: " + fieldOfView,
+                                "",
+                                fieldOfView,
+                                80,
+                                140);
+        fogDensity =
+                (int)
+                        GuiSlider(
+                                fogDensitySize,
+                                "Fog Density: " + fogDensity,
+                                "",
+                                fogDensity,
+                                0,
+                                50);
 
         GuiButton(laneButtonSize1, "Lane 1");
         GuiButton(laneButtonSize2, "Lane 2");

@@ -216,7 +216,7 @@ public class Util {
                         colors.get("lane"));
         }
 
-        fog(0, y2, width, y1-y2, fog);
+        fog(0, y2, width, y1 - y2, fog);
     }
 
     /**
@@ -250,7 +250,6 @@ public class Util {
         return projectedRoadWidth / Math.max(32, 8 * lanes);
     }
 
-
     public static double easeIn(double a, double b, double percent) {
         return a + (b - a) * Math.pow(percent, 2);
     }
@@ -259,7 +258,7 @@ public class Util {
         return a + (b - a) * (1 - Math.pow(1 - percent, 2));
     }
 
-    public  static double easeInOut(double a, double b, double percent) {
+    public static double easeInOut(double a, double b, double percent) {
         return a + (b - a) * ((-Math.cos(percent * Math.PI) / 2) + 0.5);
     }
 
@@ -277,8 +276,6 @@ public class Util {
         return color;
     }
 
-
-
     /**
      * Create a Background at the given coordinates and texture
      *
@@ -286,16 +283,18 @@ public class Util {
      * @param x the x coordinate of the background
      * @param y the y coordinate of the background
      */
-     public static class  Background {
+    public static class Background {
 
-         Texture texture;
-         int x,y;
-         public Background(Texture texture, int x, int y){
-             this.texture = texture;
-             this.x =x;
-             this.y = y;
-         }
-    };
+        Texture texture;
+        int x, y;
+
+        public Background(Texture texture, int x, int y) {
+            this.texture = texture;
+            this.x = x;
+            this.y = y;
+        }
+    }
+    ;
 
     /**
      * Create a Point representing a World, Camera, and Screen point
