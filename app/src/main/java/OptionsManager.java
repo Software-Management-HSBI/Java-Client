@@ -2,23 +2,23 @@ import static com.raylib.Jaylib.*;
 
 import com.raylib.Jaylib;
 
-/** Die OptionsManager-Klasse verwaltet die Optionen des Spiels. Singleton Pattern wird benutzt */
+/** The OptionsManager class manages the game options. Singleton pattern is used. */
 public class OptionsManager {
 
-    // Instanzvariable für das Singleton-Muster
+    // Instance variable for the Singleton pattern
     private static final OptionsManager instance = new OptionsManager();
 
-    // Anzeige der Optionen
-    boolean show;
+    // Display of options
+     boolean show;
 
-    // Optionen für das Spiel
-    int roadWidth;
-    int cameraHeight;
-    int drawDistance;
-    int fogDensity;
-    int fieldOfView;
+    // Game options
+    private int roadWidth;
+    private int cameraHeight;
+    private int drawDistance;
+    private int fogDensity;
+    private int fieldOfView;
 
-    // Rechtecke für GUI-Elemente
+    // Rectangles for GUI elements
     Jaylib.Rectangle laneTitle = new Jaylib.Rectangle(500, 150, 200, 50);
     Jaylib.Rectangle laneButtonSize1 = new Jaylib.Rectangle(500, 200, 200, 50);
     Jaylib.Rectangle laneButtonSize2 = new Jaylib.Rectangle(500, 250, 200, 50);
@@ -31,9 +31,9 @@ public class OptionsManager {
     Jaylib.Rectangle fieldOfViewSize = new Jaylib.Rectangle(120, 350, 300, 50);
     Jaylib.Rectangle fogDensitySize = new Jaylib.Rectangle(120, 400, 300, 50);
 
-    // Private Konstruktor für das Singleton-Muster
+    // Private constructor for the Singleton pattern
     private OptionsManager() {
-        // Standardwerte für die Optionen
+        // Default values for options
         roadWidth = Constants.ROADWIDTH;
         cameraHeight = Constants.CAMERAHEIGHT;
         drawDistance = Constants.DRAWDISTANCE;
@@ -42,26 +42,26 @@ public class OptionsManager {
     }
 
     /**
-     * Gibt die einzige Instanz der OptionsManager-Klasse zurück.
+     * Returns the only instance of the OptionsManager class.
      *
-     * @return Instanz von OptionsManager
+     * @return Instance of OptionsManager
      */
     public static OptionsManager getInstance() {
         return instance;
     }
 
-    /** Aktualisiert die Optionen basierend auf Benutzereingaben. */
+    /** Updates the options based on user input. */
     public void update() {
 
-        // Aktualisiert die Konstanten basierend auf den Schiebereglern
-        Constants.ROADWIDTH =  roadWidth;
+        // Updates constants based on sliders
+        Constants.ROADWIDTH = roadWidth;
         Constants.CAMERAHEIGHT = cameraHeight;
-        Constants.DRAWDISTANCE =  drawDistance;
-        Constants.FOV =  fieldOfView;
+        Constants.DRAWDISTANCE = drawDistance;
+        Constants.FOV = fieldOfView;
         Constants.FOGDENSITY = fogDensity;
     }
 
-    /** Zeigt das Hintergrundfenster mit den Optionen. */
+    /** Displays the background window with options. */
     public void showBackground() {
         if (show) {
             updateGui();
@@ -69,7 +69,7 @@ public class OptionsManager {
         }
     }
 
-    //Überprüft, ob eine Schaltfläche im Dropdown-Fenster geklickt wurde.
+    // Checks if a button in the dropdown window was clicked.
     private void checkButtonWindowSize() {
         if (CheckCollisionPointRec(GetMousePosition(), laneButtonSize1)) {
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -90,14 +90,13 @@ public class OptionsManager {
         }
     }
 
-    // Aktualisiert die grafische Benutzeroberfläche (GUI) für die Optionen.
-
+    // Updates the graphical user interface (GUI) for options.
     private void updateGui() {
         DrawRectangle(
                 0, 0, Constants.WIDTH, Constants.HEIGHT, ColorAlpha(Util.color(0, 0, 0), 0.5f));
         DrawText("Lanes:", 500, 170, 20, GRAY);
 
-        // Aktualisiert die Schieberegler und Schaltflächen
+        // Updates sliders and buttons
         roadWidth =
                 (int)
                         GuiSlider(
