@@ -3,14 +3,9 @@ import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.*;
 
 import com.raylib.Jaylib;
-import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
 
-import org.bytedeco.javacpp.annotation.ByVal;
-import org.bytedeco.javacpp.annotation.Cast;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
@@ -18,9 +13,9 @@ public class Game {
     ArrayList<Texture> playerSprites;
     ArrayList<Util.Background> backgroundSprites;
     Player player = null;
-    Util.Background surfaceSky,surfaceSky2 = null;
-    Util.Background surfaceHills,surfaceHills2 = null;
-    Util.Background surfaceTrees,surfaceTrees2 = null;
+    Util.Background surfaceSky, surfaceSky2 = null;
+    Util.Background surfaceHills, surfaceHills2 = null;
+    Util.Background surfaceTrees, surfaceTrees2 = null;
     int trackLength = 0;
     double playerX = 0;
     double position = 0;
@@ -31,12 +26,17 @@ public class Game {
     boolean keyRight = false;
     boolean keyFaster = false;
     boolean keySlower = false;
-     double skyOffset;
-     double hillOffset;
-     double treeOffset;
+    double skyOffset;
+    double hillOffset;
+    double treeOffset;
+
+    MainMenu mainMenu;
+
+    static GameState gameState = GameState.MENU;
 
     /** Initializes the game and starts the game loop */
     public Game() {
+
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
         SetTargetFPS((int) Constants.FPS);
         playerSprites = new ArrayList<>();
@@ -44,6 +44,7 @@ public class Game {
         resetRoad();
         createPlayer();
         createBackground();
+        mainMenu = MainMenu.getInstance();
         gameLoop();
     }
 
@@ -76,9 +77,18 @@ public class Game {
         segments = new ArrayList<>();
         Road.addStraight(Road.ROAD.LENGTH.MEDIUM);
 
-        Road.addRoad(Road.ROAD.LENGTH.MEDIUM, Road.ROAD.LENGTH.MEDIUM, Road.ROAD.LENGTH.MEDIUM, Road.ROAD.HILL.MEDIUM, Road.ROAD.CURVE.MEDIUM);
-        Road.addRoad(Road.ROAD.LENGTH.MEDIUM, Road.ROAD.LENGTH.MEDIUM, Road.ROAD.LENGTH.MEDIUM, -Road.ROAD.HILL.MEDIUM, -Road.ROAD.CURVE.MEDIUM);
-        
+        Road.addRoad(
+                Road.ROAD.LENGTH.MEDIUM,
+                Road.ROAD.LENGTH.MEDIUM,
+                Road.ROAD.LENGTH.MEDIUM,
+                Road.ROAD.HILL.MEDIUM,
+                Road.ROAD.CURVE.MEDIUM);
+        Road.addRoad(
+                Road.ROAD.LENGTH.MEDIUM,
+                Road.ROAD.LENGTH.MEDIUM,
+                Road.ROAD.LENGTH.MEDIUM,
+                -Road.ROAD.HILL.MEDIUM,
+                -Road.ROAD.CURVE.MEDIUM);
 
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
@@ -86,44 +96,137 @@ public class Game {
         for (int n = 0; n < Constants.RUMBLELENGTH; n++) {
             segments.get(segments.size() - 1 - n).color = Constants.FINISHCOLORS;
         }
-        
     }
-    
+
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
-        Road.Segment playerSegment = Road.findSegment(position+Constants.PLAYERZ);
-        double speedPercent  = speed/Constants.MAXSPEED;
-        double dx            = dt * 2 * speedPercent; // at top speed, should be able to cross from left to right (-1 to +1) in 1 second
-        
+        switch (gameState) {
+            case MENU:
+                mainMenu.update();
+                break;
+            case SINGLEPLAYER:
+                updateSinglePlayer(dt);
+                break;
+                // case MULTIPLAYER:
+
+            default:
+                // Handle unexpected values of gameState
+                gameState = GameState.MENU;
+                break;
+        }
+    }
+
+    /** Render different gameStates */
+    public void render() {
+        BeginDrawing();
+
+        switch (gameState) {
+            case MENU:
+                renderMenu();
+                break;
+            case SINGLEPLAYER:
+                renderSinglePlayer();
+                break;
+                // case MULTIPLAYER:
+
+        }
+
+        EndDrawing();
+    }
+
+    /** Create the player */
+    public void createPlayer() {
+        player = new Player(Constants.WIDTH / 2, Constants.HEIGHT - 150);
+        player.x -= player.texture.width() * 3 / 2;
+        playerSprites.add(player.texture);
+    }
+
+    /** Create the background */
+    public void createBackground() {
+        surfaceSky =
+                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"), 0, 0);
+        surfaceHills =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"), 0, 0);
+        surfaceTrees =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), 0, 0);
+
+        backgroundSprites.add(surfaceSky);
+        backgroundSprites.add(surfaceHills);
+        backgroundSprites.add(surfaceTrees);
+
+        surfaceSky2 =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"),
+                        surfaceSky.texture.width(),
+                        0);
+        surfaceHills2 =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"),
+                        -surfaceHills.texture.width(),
+                        0);
+        surfaceTrees2 =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"),
+                        -surfaceTrees.texture.width(),
+                        0);
+
+        backgroundSprites.add(surfaceSky2);
+        backgroundSprites.add(surfaceHills2);
+        backgroundSprites.add(surfaceTrees2);
+    }
+
+    void drawTextureParallax(
+            float parallaxOffSet, Util.Background texture1, Util.Background texture2) {
+
+        DrawTextureEx(
+                texture1.texture, new Jaylib.Vector2(parallaxOffSet, texture1.y), 0, 1, WHITE);
+        DrawTextureEx(
+                texture2.texture,
+                new Jaylib.Vector2(parallaxOffSet - texture2.texture.width(), texture1.y),
+                0,
+                1,
+                WHITE);
+    }
+
+    // updates all the logic of the singleplayer mode
+    private void updateSinglePlayer(double dt) {
+        Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
+        double speedPercent = speed / Constants.MAXSPEED;
+        double dx =
+                dt * 2 * speedPercent; // at top speed, should be able to cross from left to right
+        // (-1 to +1) in 1 second
+
         trackLength = segments.size() * Constants.SEGMENTLENGTH;
 
         position = Util.increase(position, dt * speed, trackLength);
 
-        skyOffset = Util.increase(skyOffset, Constants.SKYSPEED  * playerSegment.curve * speedPercent, 1);
-        hillOffset = Util.increase(hillOffset, Constants.HILLSPEED  * playerSegment.curve * speedPercent, 1);
-        treeOffset = Util.increase(treeOffset, Constants.TREESPEED  * playerSegment.curve * speedPercent, 1);
-        
+        skyOffset =
+                Util.increase(
+                        skyOffset, Constants.SKYSPEED * playerSegment.curve * speedPercent, 1);
+        hillOffset =
+                Util.increase(
+                        hillOffset, Constants.HILLSPEED * playerSegment.curve * speedPercent, 1);
+        treeOffset =
+                Util.increase(
+                        treeOffset, Constants.TREESPEED * playerSegment.curve * speedPercent, 1);
+
         double incline = playerSegment.p2.world.y - playerSegment.p1.world.y;
 
         playerX = playerX - (dx * speedPercent * playerSegment.curve * centrifugal);
 
         if (keyLeft && speed > 0) {
             playerX = playerX - dx;
-            if(incline > 0)
-                player.driveUpLeft();
-            else
-                player.driveLeft();
+            if (incline > 0) player.driveUpLeft();
+            else player.driveLeft();
         } else if (keyRight && speed > 0) {
             playerX = playerX + dx;
-            if(incline > 0)
-                player.driveUpRight();
-            else
-                player.driveRight();
+            if (incline > 0) player.driveUpRight();
+            else player.driveRight();
         } else {
-            if(incline > 0)
-                player.driveUpStraight();
-            else
-                player.driveStraight();
+            if (incline > 0) player.driveUpStraight();
+            else player.driveStraight();
         }
 
         playerSprites.add(player.texture);
@@ -135,47 +238,49 @@ public class Game {
         if (((playerX < -1) || (playerX > 1)) && (speed > Constants.OFFROADLIMIT))
             speed = Util.accelerate(speed, Constants.OFFROADDECEL, dt);
 
-            playerX = Util.limit(playerX, -2, 2);
-            speed = Util.limit(speed, 0, Constants.MAXSPEED);
-        }
-        
-        /** Render the background, road and player */
-        public void render() {
-            Road.Segment baseSegment = Road.findSegment(position);
-            double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);
-            
-            Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
-            double playerSegmentPercent = Util.percentRemaining((int) (position + Constants.PLAYERZ), Constants.SEGMENTLENGTH);
-            
-            double playerY = Util.interpolate(playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
-            
-            double maxY = Constants.HEIGHT;
-            
-            var x = 0;
-            var dx = -(baseSegment.curve * baseSegmentPercent);
-            
-            BeginDrawing();
-            
-            ClearBackground(RAYWHITE); // Hier wird der Hintergrund gelöscht
-            
-            float parallaxSurfaceSky = (float) (skyOffset* surfaceSky.texture.width());
-            float parallaxSurfaceHills = (float) (hillOffset* surfaceHills.texture.width());
-            float parallaxSurfaceTree = (float) (treeOffset* surfaceTrees.texture.width());
-            
-            drawTextureParallax(parallaxSurfaceSky,surfaceSky,surfaceSky2);
-            drawTextureParallax(parallaxSurfaceHills,surfaceHills,surfaceHills2);
-            drawTextureParallax(parallaxSurfaceTree,surfaceTrees,surfaceTrees2);
-            
-            for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
-                var segment = segments.get((baseSegment.index + i) % segments.size());
-                var segmentLooped = segment.index < baseSegment.index;
-                segment.fog =
-                Util.exponentialFog((double) i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
-                
-                x  = (int) (x + dx);
-                dx = dx + segment.curve;
-                
-                Util.project(
+        playerX = Util.limit(playerX, -2, 2);
+        speed = Util.limit(speed, 0, Constants.MAXSPEED);
+    }
+
+    // renders all the graphics for the singleplayer mode
+    private void renderSinglePlayer() {
+        Road.Segment baseSegment = Road.findSegment(position);
+        double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);
+
+        Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
+        double playerSegmentPercent =
+                Util.percentRemaining(
+                        (int) (position + Constants.PLAYERZ), Constants.SEGMENTLENGTH);
+
+        double playerY =
+                Util.interpolate(
+                        playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
+
+        double maxY = Constants.HEIGHT;
+
+        var x = 0;
+        var dx = -(baseSegment.curve * baseSegmentPercent);
+
+        ClearBackground(RAYWHITE); // Hier wird der Hintergrund gelöscht
+
+        float parallaxSurfaceSky = (float) (skyOffset * surfaceSky.texture.width());
+        float parallaxSurfaceHills = (float) (hillOffset * surfaceHills.texture.width());
+        float parallaxSurfaceTree = (float) (treeOffset * surfaceTrees.texture.width());
+
+        drawTextureParallax(parallaxSurfaceSky, surfaceSky, surfaceSky2);
+        drawTextureParallax(parallaxSurfaceHills, surfaceHills, surfaceHills2);
+        drawTextureParallax(parallaxSurfaceTree, surfaceTrees, surfaceTrees2);
+
+        for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
+            var segment = segments.get((baseSegment.index + i) % segments.size());
+            var segmentLooped = segment.index < baseSegment.index;
+            segment.fog =
+                    Util.exponentialFog((double) i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
+
+            x = (int) (x + dx);
+            dx = dx + segment.curve;
+
+            Util.project(
                     segment.p1,
                     (playerX * Constants.ROADWIDTH) - x,
                     playerY + Constants.CAMERAHEIGHT,
@@ -184,8 +289,8 @@ public class Game {
                     Constants.WIDTH,
                     Constants.HEIGHT,
                     Constants.ROADWIDTH);
-                
-                Util.project(
+
+            Util.project(
                     segment.p2,
                     (playerX * Constants.ROADWIDTH) - x - dx,
                     playerY + Constants.CAMERAHEIGHT,
@@ -194,12 +299,10 @@ public class Game {
                     Constants.WIDTH,
                     Constants.HEIGHT,
                     Constants.ROADWIDTH);
-            
 
             if ((segment.p1.camera.z <= Constants.CAMERADEPTH)
-                || (segment.p2.screen.y >= maxY)
-                || (segment.p2.screen.y >= segment.p1.screen.y))
-                continue;
+                    || (segment.p2.screen.y >= maxY)
+                    || (segment.p2.screen.y >= segment.p1.screen.y)) continue;
 
             Util.segment(
                     Constants.WIDTH,
@@ -221,50 +324,10 @@ public class Game {
         }
 
         playerSprites.clear();
-
-        EndDrawing();
     }
 
-    /** Create the player */
-    public void createPlayer() {
-        player = new Player(Constants.WIDTH / 2, Constants.HEIGHT - 150);
-        player.x -= player.texture.width() * 3 / 2;
-        playerSprites.add(player.texture);
-    }
-
-    /** Create the background */
-    public void createBackground() {
-        surfaceSky =
-                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"),0, 0);
-        surfaceHills =
-                new Util.Background(
-                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"), 0, 0);
-        surfaceTrees =
-                new Util.Background(
-                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), 0, 0);
-
-
-        backgroundSprites.add(surfaceSky);
-        backgroundSprites.add(surfaceHills);
-        backgroundSprites.add(surfaceTrees);
-
-        surfaceSky2 =
-                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"), surfaceSky.texture.width(), 0);
-        surfaceHills2 =
-                new Util.Background(
-                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"), -surfaceHills.texture.width(), 0);
-        surfaceTrees2 =
-                new Util.Background(
-                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), -surfaceTrees.texture.width(), 0);
-
-        backgroundSprites.add(surfaceSky2);
-        backgroundSprites.add(surfaceHills2);
-        backgroundSprites.add(surfaceTrees2);
-    }
-
-    void drawTextureParallax(float parallaxOffSet, Util.Background texture1, Util.Background texture2){
-
-        DrawTextureEx(texture1.texture, new Jaylib.Vector2(parallaxOffSet, texture1.y), 0, 1, WHITE);
-        DrawTextureEx(texture2.texture, new Jaylib.Vector2(parallaxOffSet-texture2.texture.width(), texture1.y), 0, 1, WHITE);
+    // renders all the graphics for the menu mode
+    private void renderMenu() {
+        mainMenu.showBackground();
     }
 }
