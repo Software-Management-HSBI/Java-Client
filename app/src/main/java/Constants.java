@@ -8,15 +8,15 @@ public class Constants {
     public static final double STEP = (double) (1 / FPS);
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
-    public static final int ROADWIDTH = 2000;
+    public static int ROADWIDTH = 2000;
     public static final int SEGMENTLENGTH = 200;
     public static final int RUMBLELENGTH = 3;
-    public static final int LANES = 4;
-    public static final int FOV = 100;
-    public static final int CAMERAHEIGHT = 1000;
+    public static int LANES = 4;
+    public static int FOV = 100;
+    public static int CAMERAHEIGHT = 1000;
     public static final double CAMERADEPTH = 1 / Math.tan((FOV / 2) * Math.PI / 180);
-    public static final int DRAWDISTANCE = 300;
-    public static final int FOGDENSITY = 5;
+    public static int DRAWDISTANCE = 300;
+    public static int FOGDENSITY = 5;
     public static final double PLAYERZ = CAMERAHEIGHT * CAMERADEPTH;
     public static final double MAXSPEED = SEGMENTLENGTH / STEP;
     public static final double ACCEL = MAXSPEED / 5.0;
@@ -27,10 +27,9 @@ public class Constants {
     public static final String SPRITETEXTUREPATH = "src/main/resources/images/sprites/";
     public static final String BACKGROUNDTEXTUREPATH = "src/main/resources/images/background/";
 
-
-    public static double SKYSPEED =0.001;
-    public static double HILLSPEED  =0.002;
-    public static double TREESPEED  =0.003;
+    public static double SKYSPEED = 0.001;
+    public static double HILLSPEED = 0.002;
+    public static double TREESPEED = 0.003;
 
     public static final HashMap<String, Color> STARTCOLORS =
             new HashMap<String, Color>() {

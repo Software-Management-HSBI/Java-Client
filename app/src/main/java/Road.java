@@ -28,24 +28,26 @@ public class Road {
             this.curve = curve;
         }
     }
-    
-    public static void addSegment(double height, double curve){
+
+    public static void addSegment(double height, double curve) {
         int n = Game.segments.size();
-    HashMap<String, Color> color = getRoadColor(n);
+        HashMap<String, Color> color = getRoadColor(n);
 
-    Segment segment = new Road().new Segment(
-                    n,
-                    (double) (n * Constants.SEGMENTLENGTH),
-                    (double) ((n + 1) * Constants.SEGMENTLENGTH),
-                    curve,
-                    color);
-            segment.p1.world.y = getLastY();
-            segment.p2.world.y = height;
+        Segment segment =
+                new Road()
+                .new Segment(
+                        n,
+                        (double) (n * Constants.SEGMENTLENGTH),
+                        (double) ((n + 1) * Constants.SEGMENTLENGTH),
+                        curve,
+                        color);
+        segment.p1.world.y = getLastY();
+        segment.p2.world.y = height;
 
-    Game.segments.add(segment);
-}
+        Game.segments.add(segment);
+    }
 
-/**
+    /**
      * Get the color of the road based on the segment index
      *
      * @param index the index of the segment
@@ -67,21 +69,22 @@ public class Road {
                 (int) Math.floor(positionZ / Constants.SEGMENTLENGTH) % Game.segments.size());
     }
 
-
     public static void addRoad(int enter, int hold, int leave, int height, double curve) {
         double startY = getLastY();
         double endY = startY + (height * Constants.SEGMENTLENGTH);
         double total = enter + hold + leave;
 
         int n;
-        for( n = 0 ; n < enter ; n++)
-            addSegment(Util.easeInOut(startY, endY, n / total), Util.easeIn(0, curve, n/enter));
+        for (n = 0; n < enter; n++)
+            addSegment(Util.easeInOut(startY, endY, n / total), Util.easeIn(0, curve, n / enter));
 
-        for( n = 0 ; n < hold  ; n++)
+        for (n = 0; n < hold; n++)
             addSegment(Util.easeInOut(startY, endY, (enter + n) / total), curve);
 
-        for( n = 0 ; n < leave ; n++)
-            addSegment(Util.easeInOut(startY, endY, (enter + hold + n) / total), Util.easeInOut(curve, 0, n/leave));
+        for (n = 0; n < leave; n++)
+            addSegment(
+                    Util.easeInOut(startY, endY, (enter + hold + n) / total),
+                    Util.easeInOut(curve, 0, n / leave));
     }
 
     // public void  addRoad(double enter, int hold, double leave, double curve) {
@@ -128,7 +131,7 @@ public class Road {
     }
 
     public static void addStraight() {
-        addRoad(ROAD.LENGTH.MEDIUM,ROAD.LENGTH.MEDIUM,ROAD.LENGTH.MEDIUM,0, 0);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0, 0);
     }
 
     public static void addCurve(int num, int curve) {
@@ -148,12 +151,11 @@ public class Road {
         addRoad(num, num, num, (int) (-getLastY() / Constants.SEGMENTLENGTH), 0);
     }
 
-
-    public static void addSCurves(){
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0,  -ROAD.CURVE.EASY);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0,   ROAD.CURVE.MEDIUM);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0,   ROAD.CURVE.EASY);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0,  -ROAD.CURVE.EASY);
-        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0,  -ROAD.CURVE.MEDIUM);
+    public static void addSCurves() {
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0, -ROAD.CURVE.EASY);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0, ROAD.CURVE.MEDIUM);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0, ROAD.CURVE.EASY);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0, -ROAD.CURVE.EASY);
+        addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0, -ROAD.CURVE.MEDIUM);
     }
 }
