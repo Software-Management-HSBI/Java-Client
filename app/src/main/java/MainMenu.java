@@ -74,7 +74,7 @@ public class MainMenu {
         }
     }
 
-    public void createBackground() {
+    private void createBackground() {
         background =
                 new Util.Background(
                         LoadTexture(Constants.UITEXTUREPATH + "backgroundMenu.png"), 0, 0);
@@ -98,12 +98,19 @@ public class MainMenu {
             GuiButton(size, text);
         }
 
+
+        /**
+         * Checks if the button is clicked based on the current mouse position and left mouse button state.
+         *
+         * @return {@code true} if the mouse is over the button and the left mouse button is pressed,
+         *         {@code false} otherwise.
+         */
         public boolean buttonClicked() {
-            // Check if the mouse is over the button and left mouse button is pressed
             if (CheckCollisionPointRec(GetMousePosition(), size)) {
                 return IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
             }
             return false;
         }
+
     }
 }
