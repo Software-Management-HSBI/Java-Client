@@ -122,7 +122,7 @@ public class Game {
 
         switch (gameState) {
             case MENU:
-                renderMenu();
+                mainMenu.showBackground();
                 break;
             case SINGLEPLAYER:
                 renderSinglePlayer();
@@ -324,10 +324,5 @@ public class Game {
         }
 
         playerSprites.clear();
-    }
-
-    // renders all the graphics for the menu mode
-    private void renderMenu() {
-        mainMenu.showBackground();
     }
 }

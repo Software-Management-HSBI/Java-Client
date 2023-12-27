@@ -2,8 +2,6 @@ import static com.raylib.Jaylib.*;
 
 import com.raylib.Jaylib;
 
-import java.util.ArrayList;
-
 /** The MainMenu class manages the game's main menu options using the Singleton Pattern. */
 public class MainMenu {
 
@@ -11,33 +9,36 @@ public class MainMenu {
     private static final MainMenu instance = new MainMenu();
 
     private Util.Background background;
-    private ArrayList<UtilButton> button;
+
+    UtilButton singleplayerButton;
+    UtilButton multiplayerButton;
+    UtilButton exitButton;
 
     // Private constructor for the Singleton Pattern
     private MainMenu() {
-        button = new ArrayList<>();
+
         // Create Buttons
-        button.add(
+        singleplayerButton =
                 new UtilButton(
                         (float) Constants.WIDTH / 2 - ((float) 250 / 2),
                         (float) Constants.HEIGHT / 2 - ((float) 50 / 2),
                         250,
                         50,
-                        "SINGLEPLAYER"));
-        button.add(
+                        "SINGLEPLAYER");
+        multiplayerButton =
                 new UtilButton(
-                        button.get(0).x,
-                        button.get(0).y + (button.get(0).height),
+                        singleplayerButton.x(),
+                        singleplayerButton.y() + singleplayerButton.height(),
                         250,
                         50,
-                        "MULTIPLAYER"));
-        button.add(
+                        "MULTIPLAYER");
+        exitButton =
                 new UtilButton(
-                        button.get(1).x,
-                        button.get(1).y + (button.get(0).height),
+                        multiplayerButton.x(),
+                        multiplayerButton.y() + multiplayerButton.height(),
                         250,
                         50,
-                        "EXIT"));
+                        "EXIT");
 
         createBackground();
     }
@@ -54,9 +55,10 @@ public class MainMenu {
     /** Displays the background window with menu options. */
     public void showBackground() {
         DrawTexture(background.texture, 0, 0, WHITE);
-        for (UtilButton b : button) {
-            b.draw();
-        }
+
+        singleplayerButton.draw();
+        multiplayerButton.draw();
+        exitButton.draw();
     }
 
     public void update() {
@@ -65,11 +67,11 @@ public class MainMenu {
 
     private void checkInput() {
         // Check if singleplayer or multiplayer button is clicked
-        if (button.get(0).buttonClicked()) {
+        if (singleplayerButton.buttonClicked()) {
             Game.gameState = GameState.SINGLEPLAYER;
-        } else if (button.get(1).buttonClicked()) {
+        } else if (multiplayerButton.buttonClicked()) {
             Game.gameState = GameState.MULTIPLAYER;
-        } else if (button.get(2).buttonClicked()) {
+        } else if (exitButton.buttonClicked()) {
             System.exit(0);
         }
     }
@@ -80,37 +82,40 @@ public class MainMenu {
                         LoadTexture(Constants.UITEXTUREPATH + "backgroundMenu.png"), 0, 0);
     }
 
-    class UtilButton {
-        private Jaylib.Rectangle size;
-        private float x, y, width, height;
+    class UtilButton extends Jaylib.Rectangle {
         private String text;
 
+        /**
+         * Creates a button with the given parameters
+         *
+         * @param x the x position of the button
+         * @param y the y position of the button
+         * @param width the width of the button
+         * @param height the height of the button
+         * @param text the text to be displayed on the button
+         */
         public UtilButton(float x, float y, float width, float height, String text) {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
+            super(x, y, width, height);
             this.text = text;
-            size = new Jaylib.Rectangle(x, y, width, height);
         }
 
-        void draw() {
-            GuiButton(size, text);
+        /** Draws the button on the screen */
+        public void draw() {
+            GuiButton(this, text);
         }
-
 
         /**
-         * Checks if the button is clicked based on the current mouse position and left mouse button state.
+         * Checks if the button is clicked based on the current mouse position and left mouse button
+         * state
          *
-         * @return {@code true} if the mouse is over the button and the left mouse button is pressed,
-         *         {@code false} otherwise.
+         * @return {@code true} if the mouse is over the button and the left mouse button is
+         *     pressed, {@code false} otherwise
          */
         public boolean buttonClicked() {
-            if (CheckCollisionPointRec(GetMousePosition(), size)) {
+            if (CheckCollisionPointRec(GetMousePosition(), this)) {
                 return IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
             }
             return false;
         }
-
     }
 }
