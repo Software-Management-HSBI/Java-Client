@@ -30,10 +30,13 @@ public class Game {
     double hillOffset;
     double treeOffset;
 
-    OptionsManager optionsManager;
+    MainMenu mainMenu;
+ OptionsManager optionsManager;
+    static GameState gameState = GameState.MENU;
 
     /** Initializes the game and starts the game loop */
     public Game() {
+
         optionsManager = OptionsManager.getInstance();
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
         SetTargetFPS((int) Constants.FPS);
@@ -42,6 +45,7 @@ public class Game {
         resetRoad();
         createPlayer();
         createBackground();
+        mainMenu = MainMenu.getInstance();
         gameLoop();
     }
 
@@ -97,7 +101,98 @@ public class Game {
 
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
+        switch (gameState) {
+            case MENU:
+                mainMenu.checkInput();
+                break;
+            case SINGLEPLAYER:
+                updateSinglePlayer(dt);
+                break;
+                // case MULTIPLAYER:
 
+            default:
+                // Handle unexpected values of gameState
+                gameState = GameState.MENU;
+                break;
+        }
+    }
+
+    /** Render different gameStates */
+    public void render() {
+        BeginDrawing();
+
+        switch (gameState) {
+            case MENU:
+                mainMenu.showBackground();
+                break;
+            case SINGLEPLAYER:
+                renderSinglePlayer();
+                break;
+                // case MULTIPLAYER:
+
+        }
+
+        EndDrawing();
+    }
+
+    /** Create the player */
+    public void createPlayer() {
+        player = new Player(Constants.WIDTH / 2, Constants.HEIGHT - 150);
+        player.x -= player.texture.width() * 3 / 2;
+        playerSprites.add(player.texture);
+    }
+
+    /** Create the background */
+    public void createBackground() {
+        surfaceSky =
+                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"), 0, 0);
+        surfaceHills =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"), 0, 0);
+        surfaceTrees =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), 0, 0);
+
+        backgroundSprites.add(surfaceSky);
+        backgroundSprites.add(surfaceHills);
+        backgroundSprites.add(surfaceTrees);
+
+        surfaceSky2 =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"),
+                        surfaceSky.texture.width(),
+                        0);
+        surfaceHills2 =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"),
+                        -surfaceHills.texture.width(),
+                        0);
+        surfaceTrees2 =
+                new Util.Background(
+                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"),
+                        -surfaceTrees.texture.width(),
+                        0);
+
+        backgroundSprites.add(surfaceSky2);
+        backgroundSprites.add(surfaceHills2);
+        backgroundSprites.add(surfaceTrees2);
+    }
+
+    void drawTextureParallax(
+            float parallaxOffSet, Util.Background texture1, Util.Background texture2) {
+
+        DrawTextureEx(
+                texture1.texture, new Jaylib.Vector2(parallaxOffSet, texture1.y), 0, 1, WHITE);
+        DrawTextureEx(
+                texture2.texture,
+                new Jaylib.Vector2(parallaxOffSet - texture2.texture.width(), texture1.y),
+                0,
+                1,
+                WHITE);
+    }
+
+    // updates all the logic of the singleplayer mode
+    private void updateSinglePlayer(double dt) {
         Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
         double speedPercent = speed / Constants.MAXSPEED;
         double dx =
@@ -147,7 +242,7 @@ public class Game {
         playerX = Util.limit(playerX, -2, 2);
         speed = Util.limit(speed, 0, Constants.MAXSPEED);
 
-        // Tastendruck 'S' zeigt/versteckt die Optionen
+          // Tastendruck 'S' zeigt/versteckt die Optionen
         if (IsKeyPressed(KEY_S)) {
             optionsManager.show = !optionsManager.show;
         }
@@ -155,8 +250,8 @@ public class Game {
         optionsManager.update();
     }
 
-    /** Render the background, road and player */
-    public void render() {
+    // renders all the graphics for the singleplayer mode
+    private void renderSinglePlayer() {
         Road.Segment baseSegment = Road.findSegment(position);
         double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);
 
@@ -173,8 +268,6 @@ public class Game {
 
         var x = 0;
         var dx = -(baseSegment.curve * baseSegmentPercent);
-
-        BeginDrawing();
 
         ClearBackground(RAYWHITE); // Hier wird der Hintergrund gelöscht
 
@@ -238,65 +331,7 @@ public class Game {
             DrawTexture(texture, player.x, player.y, WHITE);
         }
 
-        playerSprites.clear();
-
         optionsManager.showBackground();
-        EndDrawing();
-    }
-
-    /** Create the player */
-    public void createPlayer() {
-        player = new Player(Constants.WIDTH / 2, Constants.HEIGHT - 150);
-        player.x -= player.texture.width() * 3 / 2;
-        playerSprites.add(player.texture);
-    }
-
-    /** Create the background */
-    public void createBackground() {
-        surfaceSky =
-                new Util.Background(LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"), 0, 0);
-        surfaceHills =
-                new Util.Background(
-                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"), 0, 0);
-        surfaceTrees =
-                new Util.Background(
-                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"), 0, 0);
-
-        backgroundSprites.add(surfaceSky);
-        backgroundSprites.add(surfaceHills);
-        backgroundSprites.add(surfaceTrees);
-
-        surfaceSky2 =
-                new Util.Background(
-                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "sky.png"),
-                        surfaceSky.texture.width(),
-                        0);
-        surfaceHills2 =
-                new Util.Background(
-                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "hills.png"),
-                        -surfaceHills.texture.width(),
-                        0);
-        surfaceTrees2 =
-                new Util.Background(
-                        LoadTexture(Constants.BACKGROUNDTEXTUREPATH + "trees.png"),
-                        -surfaceTrees.texture.width(),
-                        0);
-
-        backgroundSprites.add(surfaceSky2);
-        backgroundSprites.add(surfaceHills2);
-        backgroundSprites.add(surfaceTrees2);
-    }
-
-    void drawTextureParallax(
-            float parallaxOffSet, Util.Background texture1, Util.Background texture2) {
-
-        DrawTextureEx(
-                texture1.texture, new Jaylib.Vector2(parallaxOffSet, texture1.y), 0, 1, WHITE);
-        DrawTextureEx(
-                texture2.texture,
-                new Jaylib.Vector2(parallaxOffSet - texture2.texture.width(), texture1.y),
-                0,
-                1,
-                WHITE);
+        playerSprites.clear();
     }
 }
