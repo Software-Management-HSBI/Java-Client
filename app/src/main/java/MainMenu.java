@@ -40,7 +40,9 @@ public class MainMenu {
                         50,
                         "EXIT");
 
-        createBackground();
+        background =
+                new Util.Background(
+                        LoadTexture(Constants.UITEXTUREPATH + "backgroundMenu.png"), 0, 0);
     }
 
     /**
@@ -61,12 +63,10 @@ public class MainMenu {
         exitButton.draw();
     }
 
-    public void update() {
-        checkInput();
-    }
+    /**Check if singleplayer or multiplayer button is clicked*/
 
-    private void checkInput() {
-        // Check if singleplayer or multiplayer button is clicked
+    public void checkInput() {
+
         if (singleplayerButton.buttonClicked()) {
             Game.gameState = GameState.SINGLEPLAYER;
         } else if (multiplayerButton.buttonClicked()) {
@@ -76,11 +76,7 @@ public class MainMenu {
         }
     }
 
-    private void createBackground() {
-        background =
-                new Util.Background(
-                        LoadTexture(Constants.UITEXTUREPATH + "backgroundMenu.png"), 0, 0);
-    }
+
 
     class UtilButton extends Jaylib.Rectangle {
         private String text;

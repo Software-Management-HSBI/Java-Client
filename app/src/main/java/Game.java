@@ -102,7 +102,7 @@ public class Game {
     public void update(double dt) {
         switch (gameState) {
             case MENU:
-                mainMenu.update();
+                mainMenu.checkInput();
                 break;
             case SINGLEPLAYER:
                 updateSinglePlayer(dt);
