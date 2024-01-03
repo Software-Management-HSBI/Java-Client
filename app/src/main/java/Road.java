@@ -1,6 +1,7 @@
 import com.raylib.Raylib.Color;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Road {
 
@@ -19,6 +20,7 @@ public class Road {
         HashMap<String, Color> color;
         double curve;
         double fog;
+        ArrayList<NPC> npcs;
 
         Segment(int index, double z1, double z2, double curve, HashMap<String, Color> color) {
             this.index = index;
@@ -26,6 +28,7 @@ public class Road {
             this.p2 = new Util().new Point(z2);
             this.color = color;
             this.curve = curve;
+            npcs = new ArrayList<NPC>();
         }
     }
 

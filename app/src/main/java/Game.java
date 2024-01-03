@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Game {
     public static ArrayList<Road.Segment> segments;
     ArrayList<Texture> playerSprites;
-    ArrayList<NPCs>
+    ArrayList<NPC> npcs;
     ArrayList<Util.Background> backgroundSprites;
     Player player = null;
     Util.Background surfaceSky, surfaceSky2 = null;
@@ -98,6 +98,10 @@ public class Game {
         for (int n = 0; n < Constants.RUMBLELENGTH; n++) {
             segments.get(segments.size() - 1 - n).color = Constants.FINISHCOLORS;
         }
+    }
+
+    public void resetNPCs() {
+        npcs = new ArrayList<>();
     }
 
     /** Update the position, speed and texture of the player */
