@@ -2,6 +2,9 @@ import static com.raylib.Jaylib.*;
 
 import com.raylib.Jaylib;
 
+import javax.sound.sampled.SourceDataLine;
+import java.awt.*;
+
 /** The OptionsManager class manages the game options. Singleton pattern is used. */
 public class OptionsManager {
 
@@ -10,26 +13,33 @@ public class OptionsManager {
 
     // Display of options
      boolean show;
+     boolean soundMuted;
 
     // Game options
     private int roadWidth;
     private int cameraHeight;
     private int drawDistance;
     private int fogDensity;
+
+    
     private int fieldOfView;
 
     // Rectangles for GUI elements
-    Jaylib.Rectangle laneTitle = new Jaylib.Rectangle(500, 150, 200, 50);
-    Jaylib.Rectangle laneButtonSize1 = new Jaylib.Rectangle(500, 200, 200, 50);
-    Jaylib.Rectangle laneButtonSize2 = new Jaylib.Rectangle(500, 250, 200, 50);
-    Jaylib.Rectangle laneButtonSize3 = new Jaylib.Rectangle(500, 300, 200, 50);
-    Jaylib.Rectangle laneButtonSize4 = new Jaylib.Rectangle(500, 350, 200, 50);
+
+
+
+    UtilButton lane1 = new UtilButton(500, 200, 200, 50,"lane1");
+    UtilButton lane2 = new UtilButton(500, 250, 200, 50,"lane2");
+    UtilButton lane3 = new UtilButton(500, 300, 200, 50,"lane3");
+    UtilButton lane4 = new UtilButton(500, 350, 200, 50,"lane4");
+
 
     Jaylib.Rectangle roadWidthSize = new Jaylib.Rectangle(120, 200, 300, 50);
     Jaylib.Rectangle cameraHeightSize = new Jaylib.Rectangle(120, 250, 300, 50);
     Jaylib.Rectangle drawDistanceSize = new Jaylib.Rectangle(120, 300, 300, 50);
     Jaylib.Rectangle fieldOfViewSize = new Jaylib.Rectangle(120, 350, 300, 50);
     Jaylib.Rectangle fogDensitySize = new Jaylib.Rectangle(120, 400, 300, 50);
+
 
     // Private constructor for the Singleton pattern
     private OptionsManager() {
@@ -59,6 +69,13 @@ public class OptionsManager {
         Constants.DRAWDISTANCE = drawDistance;
         Constants.FOV = fieldOfView;
         Constants.FOGDENSITY = fogDensity;
+
+        if(soundMuted){
+
+        }else{
+
+        }
+
     }
 
     /** Displays the background window with options. */
@@ -71,23 +88,23 @@ public class OptionsManager {
 
     // Checks if a button in the dropdown window was clicked.
     private void checkButtonWindowSize() {
-        if (CheckCollisionPointRec(GetMousePosition(), laneButtonSize1)) {
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                Constants.LANES = 1;
-            }
-        } else if (CheckCollisionPointRec(GetMousePosition(), laneButtonSize2)) {
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                Constants.LANES = 2;
-            }
-        } else if (CheckCollisionPointRec(GetMousePosition(), laneButtonSize3)) {
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                Constants.LANES = 3;
-            }
-        } else if (CheckCollisionPointRec(GetMousePosition(), laneButtonSize4)) {
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                Constants.LANES = 4;
-            }
+
+        if(lane1.buttonClicked()){
+            Constants.LANES = 1;
         }
+        if (lane2.buttonClicked()){
+            Constants.LANES = 2;
+        }
+         if (lane3.buttonClicked()){
+            Constants.LANES = 3;
+        }
+         if (lane4.buttonClicked()){
+            Constants.LANES = 4;
+        }
+
+
+
+
     }
 
     // Updates the graphical user interface (GUI) for options.
@@ -143,9 +160,18 @@ public class OptionsManager {
                                 0,
                                 50);
 
-        GuiButton(laneButtonSize1, "Lane 1");
-        GuiButton(laneButtonSize2, "Lane 2");
-        GuiButton(laneButtonSize3, "Lane 3");
-        GuiButton(laneButtonSize4, "Lane 4");
+
+
+
+       lane1.draw();
+       lane2.draw();
+       lane3.draw();
+       lane4.draw();
+
     }
+
+
+
+
+
 }
