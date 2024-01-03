@@ -1,15 +1,11 @@
-import static com.raylib.Raylib.ImageResize;
-import static com.raylib.Raylib.LoadImageFromTexture;
 import static com.raylib.Raylib.LoadTexture;
-import static com.raylib.Raylib.LoadTextureFromImage;
 
-import com.raylib.Raylib.Image;
 import com.raylib.Raylib.Texture;
 
 public class NPC {
 
     // TExture of the NPC
-    public final Texture texture;
+    public final NPCType texture;
     
     // Z Koordinate of the NPC (race track length)
     public double z;
@@ -19,7 +15,7 @@ public class NPC {
 
     public double speed;
 
-    public NPC(Texture pTexture, double pZ, double pX, double pSpeed) {
+    public NPC(NPCType pTexture, double pZ, double pX, double pSpeed) {
         this.texture = pTexture;
         this.z = pZ;
         this.x = pX;

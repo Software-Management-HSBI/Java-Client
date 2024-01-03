@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class Game {
     public static ArrayList<Road.Segment> segments;
     ArrayList<Texture> playerSprites;
+    ArrayList<NPCs>
     ArrayList<Util.Background> backgroundSprites;
     Player player = null;
     Util.Background surfaceSky, surfaceSky2 = null;
