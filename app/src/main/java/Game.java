@@ -102,6 +102,19 @@ public class Game {
 
     public void resetNPCs() {
         npcs = new ArrayList<>();
+        for(int i = 0; i < Constants.TOTALCARS; i++) {
+            NPC npc;
+            double x = Math.random() * Util.randomChoice(new double[] {-0.8, 0.8});
+            double z = Math.floor(Math.random() * segments.size()) * Constants.SEGMENTLENGTH;
+            NPC.NPCType texture = Util.getRandomEnum(NPC.NPCType.class);
+            double speed = Constants.MAXSPEED / 4 + Math.random() * Constants.MAXSPEED / (texture == NPC.NPCType.SEMI ? 4 : 2);
+            npc = new NPC(texture, z, x, speed);
+
+            npcs.add(npc);
+
+            Road.Segment segment = Road.findSegment(z);
+            segment.npcs.add(npc);
+        }
     }
 
     /** Update the position, speed and texture of the player */

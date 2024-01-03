@@ -40,6 +40,28 @@ public class Util {
     }
 
     /**
+     * Gibt einen zufälligen Wert eines Enums zurück.
+     *
+     * @param enumClass  Die Klasse des Enums.
+     * @return           Ein zufälliger Wert des Enums.
+     * @throws IllegalArgumentException Wenn die Klasse kein Enum ist.
+     */
+    public static <T extends Enum<T>> T getRandomEnum(Class<T> enumClass) {
+        T[] values = enumClass.getEnumConstants();
+        
+        // Überprüfen, ob die Klasse ein Enum ist
+        if (values == null) {
+            throw new IllegalArgumentException(enumClass.getSimpleName() + " is not an enum type.");
+        }
+
+        // Zufälligen Index generieren
+        int randomIndex = (int) (Math.random() * values.length);
+        
+        // Zufälligen Enum-Wert zurückgeben
+        return values[randomIndex];
+    }
+
+    /**
      * Interpolates between two values based on a percentage
      *
      * @return the interpolated value
@@ -54,7 +76,7 @@ public class Util {
      * @param options an array of options
      * @return a randomly selected element from the array
      */
-    public static int randomChoice(int[] options) {
+    public static double randomChoice(double[] options) {
         return options[randomInt(0, options.length - 1)];
     }
 
