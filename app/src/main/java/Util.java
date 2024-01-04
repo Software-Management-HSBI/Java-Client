@@ -1,9 +1,13 @@
 import static com.raylib.Raylib.ColorAlpha;
 import static com.raylib.Raylib.DrawRectangle;
 import static com.raylib.Raylib.DrawTriangle;
+import static com.raylib.Raylib.ImageResize;
+import static com.raylib.Raylib.LoadImageFromTexture;
+import static com.raylib.Raylib.LoadTextureFromImage;
 
 import com.raylib.Raylib;
 import com.raylib.Raylib.Color;
+import com.raylib.Raylib.Image;
 import com.raylib.Raylib.Texture;
 import com.raylib.Raylib.Vector2;
 
@@ -239,6 +243,18 @@ public class Util {
         }
 
         fog(0, y2, width, y1 - y2, fog);
+    }
+
+    /**
+     * Scale the given texture by the factor pResize
+     *
+     * @param texture to scale
+     * @return the scaled texture
+     */
+    public static Texture scale(Texture texture, double pResize) {
+        Image image = LoadImageFromTexture(texture);
+        ImageResize(image, (int) (texture.width() * pResize), (int) (texture.height() * pResize));
+        return LoadTextureFromImage(image);
     }
 
     /**

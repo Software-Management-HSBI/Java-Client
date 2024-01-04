@@ -27,14 +27,14 @@ public class Player {
      */
     public Player(int x, int y) {
         this.texture = LoadTexture(Constants.SPRITETEXTUREPATH + "player_straight.png");
-        this.straight = scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_straight.png"));
-        this.right = scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_right.png"));
-        this.left = scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_left.png"));
+        this.straight = Util.scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_straight.png"), 3);
+        this.right = Util.scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_right.png"), 3);
+        this.left = Util.scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_left.png"), 3);
 
         this.upStraight =
-                scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_uphill_straight.png"));
-        this.upRight = scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_uphill_right.png"));
-        this.upLeft = scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_uphill_left.png"));
+                Util.scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_uphill_straight.png"), 3);
+        this.upRight = Util.scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_uphill_right.png"), 3);
+        this.upLeft = Util.scale(LoadTexture(Constants.SPRITETEXTUREPATH + "player_uphill_left.png"), 3);
 
         this.x = x;
         this.y = y;
@@ -68,17 +68,5 @@ public class Player {
     /** Set the texture of the player to the uphill left texture */
     public void driveUpLeft() {
         this.texture = upLeft;
-    }
-
-    /**
-     * Scale the given texture by a factor of 3
-     *
-     * @param texture to scale
-     * @return the scaled texture
-     */
-    public Texture scale(Texture texture) {
-        Image image = LoadImageFromTexture(texture);
-        ImageResize(image, this.texture.width() * 3, this.texture.height() * 3);
-        return LoadTextureFromImage(image);
     }
 }
