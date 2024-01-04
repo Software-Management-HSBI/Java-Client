@@ -44,6 +44,7 @@ public class Game {
         playerSprites = new ArrayList<>();
         backgroundSprites = new ArrayList<>();
         resetRoad();
+        resetNPCs();
         createPlayer();
         createBackground();
         mainMenu = MainMenu.getInstance();
@@ -109,7 +110,7 @@ public class Game {
             double x = Math.random() * Util.randomChoice(new double[] {-0.8, 0.8});
             double z = Math.floor(Math.random() * segments.size()) * Constants.SEGMENTLENGTH;
             NPC.NPCType texture = Util.getRandomEnum(NPC.NPCType.class);
-            double speed = Constants.MAXSPEED / 4 + Math.random() * Constants.MAXSPEED / (texture == NPC.NPCType.SEMI ? 4 : 2);
+            double speed = Constants.MAXSPEED / 4 + Math.random() * Constants.MAXSPEED/(texture == NPC.NPCType.SEMI ? 4 : 2);
             npc = new NPC(texture, z, x, speed);
 
             npcs.add(npc);
@@ -220,7 +221,7 @@ public class Game {
         // (-1 to +1) in 1 second
 
         updateNPCs(dt);
-        
+
         position = Util.increase(position, dt * speed, trackLength);
 
         skyOffset =
@@ -275,7 +276,7 @@ public class Game {
             NPC npc = npcs.get(i);
             Road.Segment oldSegment = Road.findSegment(npc.z);
             npc.x = npc.x + updateNPCXLocation(npc, oldSegment);
-            npc.z = Util.increase(npc.z, dt + npc.speed, trackLength);
+            npc.z = Util.increase(npc.z, dt * npc.speed, trackLength);
             
             Road.Segment newSegment = Road.findSegment(npc.z);
             if (oldSegment != newSegment) {
@@ -364,6 +365,33 @@ public class Game {
                     segment.color);
 
             maxY = segment.p2.screen.y;
+        }
+
+        for(int i = Constants.DRAWDISTANCE - 1; i > 0; i--) {
+            Road.Segment segment = segments.get((baseSegment.index + i) % segments.size());
+
+            for(NPC npc : segment.npcs) {
+
+                double npcPercent = Util.percentRemaining((int) npc.z, Constants.SEGMENTLENGTH);
+
+                double spriteScale = Util.interpolate(
+                        segment.p1.screen.scale,
+                        segment.p2.screen.scale,
+                        npcPercent);
+
+                double spriteX = Util.interpolate(
+                        segment.p1.screen.x,
+                        segment.p2.screen.x,
+                        npcPercent) +
+                        (spriteScale * npc.x * Constants.ROADWIDTH * Constants.WIDTH / 2);
+
+                double spriteY = Util.interpolate(
+                        segment.p1.screen.y,
+                        segment.p2.screen.y,
+                        npcPercent);
+
+                DrawTexture(npc.texture.getTexture(), (int) spriteX, (int) spriteY, WHITE);
+            }
         }
 
         for (Texture texture : playerSprites) {
