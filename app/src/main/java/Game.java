@@ -411,6 +411,24 @@ public class Game {
             DrawTexture(texture, player.x, player.y, WHITE);
         }
 
+
+
+
+
+        for(int a =0;a<segments.size();a++){
+            if(Game.segments.get(a).sprite!=null) {
+                Game.segments.get(a).sprite.draw(a, segment, (float) segment.p1.screen.scale);
+
+
+            }
+        }
+
+
+
+
+
+
+
         optionsManager.showBackground();
         playerSprites.clear();
     }
