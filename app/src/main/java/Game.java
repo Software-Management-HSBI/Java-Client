@@ -98,6 +98,8 @@ public class Game {
         for (int n = 0; n < Constants.RUMBLELENGTH; n++) {
             segments.get(segments.size() - 1 - n).color = Constants.FINISHCOLORS;
         }
+
+        trackLength = segments.size() * Constants.SEGMENTLENGTH;
     }
 
     public void resetNPCs() {
@@ -217,8 +219,8 @@ public class Game {
                 dt * 2 * speedPercent; // at top speed, should be able to cross from left to right
         // (-1 to +1) in 1 second
 
-        trackLength = segments.size() * Constants.SEGMENTLENGTH;
-
+        updateNPCs(dt);
+        
         position = Util.increase(position, dt * speed, trackLength);
 
         skyOffset =
@@ -266,6 +268,25 @@ public class Game {
         }
 
         optionsManager.update();
+    }
+
+    private void updateNPCs(double dt) {
+        for(int i = 0; i < npcs.size(); i++){
+            NPC npc = npcs.get(i);
+            Road.Segment oldSegment = Road.findSegment(npc.z);
+            npc.x = npc.x + updateNPCXLocation(npc, oldSegment);
+            npc.z = Util.increase(npc.z, dt + npc.speed, trackLength);
+            
+            Road.Segment newSegment = Road.findSegment(npc.z);
+            if (oldSegment != newSegment) {
+                oldSegment.npcs.remove(npc);
+                newSegment.npcs.add(npc);
+            }
+        }
+    }
+
+    private double updateNPCXLocation(NPC pNpc, Road.Segment pOldSegment) {
+        return 0;
     }
 
     // renders all the graphics for the singleplayer mode
