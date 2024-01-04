@@ -1,5 +1,8 @@
+import com.raylib.Raylib;
 import com.raylib.Raylib.Color;
 
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Road {
@@ -13,6 +16,7 @@ public class Road {
      * @param color the color of the segment
      */
     public class Segment {
+        public ArrayList<Raylib.Texture> sprites;
         int index;
         Util.Point p1;
         Util.Point p2;
@@ -26,6 +30,7 @@ public class Road {
             this.p2 = new Util().new Point(z2);
             this.color = color;
             this.curve = curve;
+            sprites = new ArrayList<>();
         }
     }
 
