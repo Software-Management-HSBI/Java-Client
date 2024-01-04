@@ -415,7 +415,11 @@ public class Game {
 
 
         for(int a =0;a<segments.size();a++){
-            Game.segments.get(a).sprite.draw(a,baseSegment);
+            if(Game.segments.get(a).sprite!=null) {
+                Game.segments.get(a).sprite.draw(a, segment, (float) segment.p1.screen.scale);
+
+
+            }
         }
 
 
