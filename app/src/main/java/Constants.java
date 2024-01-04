@@ -17,6 +17,7 @@ public class Constants {
     public static final double CAMERADEPTH = 1 / Math.tan((FOV / 2) * Math.PI / 180);
     public static int DRAWDISTANCE = 300;
     public static int FOGDENSITY = 5;
+
     public static final double PLAYERZ = CAMERAHEIGHT * CAMERADEPTH;
     public static final double MAXSPEED = SEGMENTLENGTH / STEP;
     public static final double ACCEL = MAXSPEED / 5.0;
