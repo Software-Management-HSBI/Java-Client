@@ -12,7 +12,7 @@ public class Game {
     public static ArrayList<Road.Segment> segments;
     ArrayList<Texture> playerSprites;
     ArrayList<Util.Background> backgroundSprites;
-    Player player = null;
+    static Player player = null;
     Util.Background surfaceSky, surfaceSky2 = null;
     Util.Background surfaceHills, surfaceHills2 = null;
     Util.Background surfaceTrees, surfaceTrees2 = null;
@@ -32,7 +32,9 @@ public class Game {
     Texture[] billboards;
 
 
-    Texture tree1,tree2,palm_tree;
+    static Texture tree1;
+    Texture tree2;
+    Texture palm_tree;
 
     Texture[] plants;
 
@@ -56,7 +58,9 @@ public class Game {
 
     MainMenu mainMenu;
 
-     double SPRITESCALE;
+     static double SPRITESCALE;
+
+     Road.Segment segment;
 
 
  OptionsManager optionsManager;
@@ -70,11 +74,12 @@ public class Game {
         SetTargetFPS((int) Constants.FPS);
         playerSprites = new ArrayList<>();
         backgroundSprites = new ArrayList<>();
-        resetRoad();
-        createPlayer();
         createBillboards();
         createPlants();
-        createColumn();
+        createColumns();
+        resetRoad();
+        createPlayer();
+
 
 
 
@@ -127,7 +132,7 @@ public class Game {
                 -Road.ROAD.CURVE.MEDIUM);
 
 
-        resetSprites();
+
 
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
@@ -135,44 +140,29 @@ public class Game {
         for (int n = 0; n < Constants.RUMBLELENGTH; n++) {
             segments.get(segments.size() - 1 - n).color = Constants.FINISHCOLORS;
         }
+        resetSprites();
     }
 
     private void resetSprites() {
 
-        int n, i;
 
-        addSprite(20,  billboard7, -1);
-        addSprite(40,  billboard6, -1);
-        addSprite(60,  billboard8, -1);
-        addSprite(80,  billboard9, -1);
-        addSprite(100, billboard1, -1);
-        addSprite(120, billboard2, -1);
-        addSprite(140, billboard3, -1);
-        addSprite(160, billboard4, -1);
-        addSprite(180, billboard5, -1);
+        for(int i = 0;i<100;i++){
+            Road.addSprite(i,billboard7,10);
 
-        addSprite(240,                  billboard7, -1.2);
-        addSprite(240,                  billboard6,  1.2);
-        addSprite(segments.size() - 25, billboard7, -1.2);
-        addSprite(segments.size() - 25, billboard6,  1.2);
 
-        for(n = 10 ; n < 100 ; n += (int) (4 + Math.floor((double) n /100))) {
-            addSprite(n, palm_tree, 0.5 + Math.random()*0.5);
-            addSprite(n, palm_tree,   1 + Math.random()*2);
         }
 
 
 
 
 
-    }
 
-    private void addSprite(int i, Texture sprite, double offset) {
-        segments.get(i).sprites.add(sprite);
 
 
 
     }
+
+
 
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
@@ -203,7 +193,7 @@ public class Game {
                 break;
             case SINGLEPLAYER:
                 renderSinglePlayer();
-                System.out.println(SPRITESCALE);
+
                 break;
                 // case MULTIPLAYER:
 
@@ -281,6 +271,7 @@ public class Game {
 
         trackLength = segments.size() * Constants.SEGMENTLENGTH;
 
+
         position = Util.increase(position, dt * speed, trackLength);
 
         skyOffset =
@@ -345,6 +336,10 @@ public class Game {
                         playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
 
         double maxY = Constants.HEIGHT;
+        System.out.println( baseSegment.p1.screen.scale);
+
+
+
 
         var x = 0;
         var dx = -(baseSegment.curve * baseSegmentPercent);
@@ -360,7 +355,7 @@ public class Game {
         drawTextureParallax(parallaxSurfaceTree, surfaceTrees, surfaceTrees2);
 
         for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
-            var segment = segments.get((baseSegment.index + i) % segments.size());
+             segment = segments.get((baseSegment.index + i) % segments.size());
             var segmentLooped = segment.index < baseSegment.index;
             segment.fog =
                     Util.exponentialFog((double) i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
@@ -405,11 +400,29 @@ public class Game {
                     segment.color);
 
             maxY = segment.p2.screen.y;
+
+
+
+
         }
 
         for (Texture texture : playerSprites) {
             DrawTexture(texture, player.x, player.y, WHITE);
         }
+
+
+
+
+
+        for(int a =0;a<segments.size();a++){
+            Game.segments.get(a).sprite.draw(a,baseSegment);
+        }
+
+
+
+
+
+
 
         optionsManager.showBackground();
         playerSprites.clear();
@@ -417,15 +430,15 @@ public class Game {
 
     private void createBillboards(){
 
-        billboard1 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard1.png");
-        billboard2 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard2.png");
-        billboard3 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard3.png");
-        billboard4 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard4.png");
-        billboard5 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard5.png");
-        billboard6 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard6.png");
-        billboard7 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard7.png");
-        billboard8 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard8.png");
-        billboard9 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard9.png");
+        billboard1 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard01.png");
+        billboard2 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard02.png");
+        billboard3 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard03.png");
+        billboard4 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard04.png");
+        billboard5 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard05.png");
+        billboard6 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard06.png");
+        billboard7 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard07.png");
+        billboard8 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard08.png");
+        billboard9 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard09.png");
 
         billboards = new Texture[]{billboard1,billboard2,billboard3,billboard4,billboard5,
                 billboard6,billboard7,billboard8,billboard9};
@@ -442,7 +455,7 @@ public class Game {
 
     }
 
-    private void createColumn(){
+    private void createColumns(){
         column =LoadTexture(Constants.SPRITETEXTUREPATH + "column.png");
     }
 }

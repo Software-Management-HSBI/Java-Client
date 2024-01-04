@@ -347,6 +347,7 @@ public class Util {
         double y;
         double w;
 
+
         Screen() {
             this.scale = 0;
             this.x = 0;
@@ -354,4 +355,5 @@ public class Util {
             this.w = 0;
         }
     }
+
 }

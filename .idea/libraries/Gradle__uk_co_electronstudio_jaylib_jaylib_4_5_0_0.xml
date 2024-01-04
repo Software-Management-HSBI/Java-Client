@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: uk.co.electronstudio.jaylib:jaylib:4.5.0-0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="uk.co.electronstudio.jaylib" artifactId="jaylib" version="4.5.0-0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/uk.co.electronstudio.jaylib/jaylib/4.5.0-0/90c0d608df9bbd32f5f34683acc58cb433e94508/jaylib-4.5.0-0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/uk.co.electronstudio.jaylib/jaylib/4.5.0-0/7ef80553003bcc3089362c3d8f679eb7bb0e5eb2/jaylib-4.5.0-0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

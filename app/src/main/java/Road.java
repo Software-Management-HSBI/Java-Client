@@ -5,6 +5,9 @@ import com.raylib.Raylib.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.raylib.Jaylib.WHITE;
+import static com.raylib.Raylib.DrawTexture;
+
 public class Road {
 
     /**
@@ -16,7 +19,7 @@ public class Road {
      * @param color the color of the segment
      */
     public class Segment {
-        public ArrayList<Raylib.Texture> sprites;
+        public  Sprite sprite;
         int index;
         Util.Point p1;
         Util.Point p2;
@@ -24,14 +27,18 @@ public class Road {
         double curve;
         double fog;
 
+
+
+
         Segment(int index, double z1, double z2, double curve, HashMap<String, Color> color) {
             this.index = index;
             this.p1 = new Util().new Point(z1);
             this.p2 = new Util().new Point(z2);
             this.color = color;
             this.curve = curve;
-            sprites = new ArrayList<>();
+
         }
+
     }
 
     public static void addSegment(double height, double curve) {
@@ -51,6 +58,8 @@ public class Road {
 
         Game.segments.add(segment);
     }
+
+
 
     /**
      * Get the color of the road based on the segment index
@@ -163,4 +172,17 @@ public class Road {
         addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0, -ROAD.CURVE.EASY);
         addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0, -ROAD.CURVE.MEDIUM);
     }
+
+    static void addSprite(int n, Raylib.Texture sprite, int offset) {
+        if (n >= 0 && n < Game.segments.size()) {
+            if (Game.segments.get(n) == null) {
+                Game.segments.get(n).sprite = new Sprite(sprite, offset);
+            }
+
+        }
+    }
+
+
+
+
 }
