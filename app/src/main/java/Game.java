@@ -10,6 +10,7 @@ import java.util.ArrayList;
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
     public static ArrayList<Road.Segment> segments;
+    public static ArrayList<Sound> sounds;
     ArrayList<Texture> playerSprites;
     ArrayList<Util.Background> backgroundSprites;
     Player player = null;
@@ -32,13 +33,17 @@ public class Game {
 
     MainMenu mainMenu;
  OptionsManager optionsManager;
+
+
     static GameState gameState = GameState.MENU;
 
     /** Initializes the game and starts the game loop */
     public Game() {
 
         optionsManager = OptionsManager.getInstance();
+
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
+        initSounds();
         SetTargetFPS((int) Constants.FPS);
         playerSprites = new ArrayList<>();
         backgroundSprites = new ArrayList<>();
@@ -46,7 +51,13 @@ public class Game {
         createPlayer();
         createBackground();
         mainMenu = MainMenu.getInstance();
+
+
+
         gameLoop();
+
+
+
     }
 
     /** The game loop that renders and updates the game and checks for key presses */
@@ -193,6 +204,10 @@ public class Game {
 
     // updates all the logic of the singleplayer mode
     private void updateSinglePlayer(double dt) {
+
+       for(Sound s : sounds){
+           s.playSound();
+       }
         Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
         double speedPercent = speed / Constants.MAXSPEED;
         double dx =
@@ -334,4 +349,13 @@ public class Game {
         optionsManager.showBackground();
         playerSprites.clear();
     }
+
+    private  void initSounds(){
+        sounds = new ArrayList<>();
+        sounds.add(new Sound(Constants.SOUNDSPATH,"racer"));
+    }
+
+
+
+
 }
