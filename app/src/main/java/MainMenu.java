@@ -10,6 +10,8 @@ public class MainMenu {
 
     private Util.Background background;
 
+    UtilButton backButton;
+    OptionsManager optionsManager;
     UtilButton singleplayerButton;
     UtilButton multiplayerButton;
     UtilButton exitButton;
@@ -19,17 +21,25 @@ public class MainMenu {
     // Private constructor for the Singleton Pattern
     private MainMenu() {
 
+        optionsManager = OptionsManager.getInstance();
         // Create Buttons
 
 
         singleplayerButton =
                 new UtilButton(50,50,200,50,"Start");
-        optionButton =
-                new UtilButton(Constants.WIDTH-250,50,200,50,"Options");
+
+
         multiplayerButton =
-                new UtilButton(50,Constants.WIDTH-250,Constants.HEIGHT-100,200,"Multiplayer");
+                new UtilButton(50,Constants.HEIGHT-100,200,50,"Multiplayer");
 
         exitButton = new UtilButton(Constants.WIDTH-250,Constants.HEIGHT-100,200,50,"Beenden");
+
+        background =
+                new Util.Background(
+                        LoadTexture(Constants.UITEXTUREPATH + "backgroundMenu.png"), 0, 0);
+
+        optionButton =
+                new UtilButton(Constants.WIDTH-250,50,200,50,"Options");
     }
 
     /**
@@ -46,6 +56,7 @@ public class MainMenu {
         DrawTexture(background.texture, 0, 0, WHITE);
 
         singleplayerButton.draw();
+        optionButton.draw();
         multiplayerButton.draw();
         exitButton.draw();
     }
@@ -60,6 +71,11 @@ public class MainMenu {
             Game.gameState = GameState.MULTIPLAYER;
         } else if (exitButton.buttonClicked()) {
             System.exit(0);
+        }
+
+
+        if(optionButton.buttonClicked()){
+            Game.gameState = GameState.OPTION;
         }
     }
 

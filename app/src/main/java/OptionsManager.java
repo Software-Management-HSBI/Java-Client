@@ -31,6 +31,8 @@ public class OptionsManager {
     Jaylib.Rectangle fieldOfViewSize = new Jaylib.Rectangle(120, 350, 300, 50);
     Jaylib.Rectangle fogDensitySize = new Jaylib.Rectangle(120, 400, 300, 50);
 
+    Jaylib.Rectangle controllSize = new Jaylib.Rectangle(120, 450, 300, 50);
+
     // Private constructor for the Singleton pattern
     private OptionsManager() {
         // Default values for options
@@ -143,6 +145,8 @@ public class OptionsManager {
                                     fogDensity,
                                     0,
                                     50);
+
+            DrawText("\nPress S for Options\n Press P for Pause", (int) controllSize.x(), (int) controllSize.y(),25,WHITE);
 
 
             lane1.draw();

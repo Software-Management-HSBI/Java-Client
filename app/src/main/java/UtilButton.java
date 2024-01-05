@@ -5,6 +5,7 @@ import static com.raylib.Raylib.*;
 public class UtilButton extends Jaylib.Rectangle {
     private String text;
 
+
     /**
      * Creates a button with the given parameters
      *
@@ -17,6 +18,7 @@ public class UtilButton extends Jaylib.Rectangle {
     public UtilButton(float x, float y, float width, float height, String text) {
         super(x, y, width, height);
         this.text = text;
+
     }
 
     /** Draws the button on the screen */

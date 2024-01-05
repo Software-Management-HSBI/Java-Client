@@ -39,8 +39,7 @@ public class Game {
 
     /** Initializes the game and starts the game loop */
     public Game() {
-        mainMenu = MainMenu.getInstance();
-        optionsManager = OptionsManager.getInstance();
+
 
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
         initSounds();
@@ -51,6 +50,8 @@ public class Game {
         createPlayer();
         createBackground();
 
+        optionsManager = OptionsManager.getInstance();
+        mainMenu = MainMenu.getInstance();
 
 
 
@@ -118,7 +119,13 @@ public class Game {
                 break;
             case SINGLEPLAYER:
                 updateSinglePlayer(dt);
-                break;
+            case OPTION:
+                optionsManager.update();
+                // Tastendruck 'S' zeigt/versteckt die Optionen
+                if (IsKeyPressed(KEY_P)) {
+                    Game.gameState = GameState.MENU;
+                }
+            break;
                 // case MULTIPLAYER:
 
             default:
@@ -138,6 +145,10 @@ public class Game {
                 break;
             case SINGLEPLAYER:
                 renderSinglePlayer();
+                break;
+            case OPTION:
+                optionsManager.show = true;
+                optionsManager.showBackground();
                 break;
                 // case MULTIPLAYER:
 
