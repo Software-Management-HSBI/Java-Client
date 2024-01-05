@@ -28,7 +28,7 @@ public class Constants {
     public static final String SPRITETEXTUREPATH = "src/main/resources/images/sprites/";
     public static final String BACKGROUNDTEXTUREPATH = "src/main/resources/images/background/";
 
-    public static final String SOUNDSPATH = "src/main/resources/images/background/" ;
+    public static final String SOUNDSPATH = "src/main/resources/sounds/" ;
 
     public static final String UITEXTUREPATH = "src/main/resources/images/UI/";
 
