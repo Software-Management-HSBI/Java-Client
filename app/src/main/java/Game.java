@@ -39,7 +39,7 @@ public class Game {
 
     /** Initializes the game and starts the game loop */
     public Game() {
-
+        mainMenu = MainMenu.getInstance();
         optionsManager = OptionsManager.getInstance();
 
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
@@ -50,7 +50,7 @@ public class Game {
         resetRoad();
         createPlayer();
         createBackground();
-        mainMenu = MainMenu.getInstance();
+
 
 
 
@@ -207,6 +207,7 @@ public class Game {
 
        for(Sound s : sounds){
            s.playSound();
+
        }
         Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
         double speedPercent = speed / Constants.MAXSPEED;

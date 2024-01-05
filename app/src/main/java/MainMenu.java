@@ -14,35 +14,22 @@ public class MainMenu {
     UtilButton multiplayerButton;
     UtilButton exitButton;
 
+    UtilButton optionButton;
+
     // Private constructor for the Singleton Pattern
     private MainMenu() {
 
         // Create Buttons
-        singleplayerButton =
-                new UtilButton(
-                        (float) Constants.WIDTH / 2 - ((float) 250 / 2),
-                        (float) Constants.HEIGHT / 2 - ((float) 50 / 2),
-                        250,
-                        50,
-                        "SINGLEPLAYER");
-        multiplayerButton =
-                new UtilButton(
-                        singleplayerButton.x(),
-                        singleplayerButton.y() + singleplayerButton.height(),
-                        250,
-                        50,
-                        "MULTIPLAYER");
-        exitButton =
-                new UtilButton(
-                        multiplayerButton.x(),
-                        multiplayerButton.y() + multiplayerButton.height(),
-                        250,
-                        50,
-                        "EXIT");
 
-        background =
-                new Util.Background(
-                        LoadTexture(Constants.UITEXTUREPATH + "backgroundMenu.png"), 0, 0);
+
+        singleplayerButton =
+                new UtilButton(50,50,200,50,"Start");
+        optionButton =
+                new UtilButton(Constants.WIDTH-250,50,200,50,"Options");
+        multiplayerButton =
+                new UtilButton(50,Constants.WIDTH-250,Constants.HEIGHT-100,200,"Multiplayer");
+
+        exitButton = new UtilButton(Constants.WIDTH-250,Constants.HEIGHT-100,200,50,"Beenden");
     }
 
     /**
