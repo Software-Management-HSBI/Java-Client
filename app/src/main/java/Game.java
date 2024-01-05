@@ -107,7 +107,8 @@ public class Game {
         npcs = new ArrayList<>();
         for(int i = 0; i < Constants.TOTALCARS; i++) {
             NPC npc;
-            double x = Math.random() * Util.randomChoice(new double[] {-0.8, 0.8});
+            // double x = Math.random() * Util.randomChoice(new double[] {-0.8, 0.8});
+            double x = 0;
             double z = Math.floor(Math.random() * segments.size()) * Constants.SEGMENTLENGTH;
             NPC.NPCType texture = Util.getRandomEnum(NPC.NPCType.class);
             double speed = Constants.MAXSPEED / 4 + Math.random() * Constants.MAXSPEED/(texture == NPC.NPCType.SEMI ? 4 : 2);
@@ -304,7 +305,7 @@ public class Game {
                 Util.interpolate(
                         playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
 
-        double maxY = Constants.HEIGHT;
+        int maxY = Constants.HEIGHT;
 
         var x = 0;
         var dx = -(baseSegment.curve * baseSegmentPercent);
@@ -324,6 +325,7 @@ public class Game {
             var segmentLooped = segment.index < baseSegment.index;
             segment.fog =
                     Util.exponentialFog((double) i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
+            segment.clip = maxY;
 
             x = (int) (x + dx);
             dx = dx + segment.curve;
@@ -364,33 +366,48 @@ public class Game {
                     segment.fog,
                     segment.color);
 
-            maxY = segment.p2.screen.y;
+            maxY = (int) segment.p2.screen.y;
         }
 
         for(int i = Constants.DRAWDISTANCE - 1; i > 0; i--) {
+
             Road.Segment segment = segments.get((baseSegment.index + i) % segments.size());
 
             for(NPC npc : segment.npcs) {
 
                 double npcPercent = Util.percentRemaining((int) npc.z, Constants.SEGMENTLENGTH);
 
-                double spriteScale = Util.interpolate(
+                double scale = Util.interpolate(
                         segment.p1.screen.scale,
                         segment.p2.screen.scale,
                         npcPercent);
+
+                double spriteScale = scale * Constants.WIDTH/2 * Constants.NPCSCALE * Constants.ROADWIDTH;
 
                 double spriteX = Util.interpolate(
                         segment.p1.screen.x,
                         segment.p2.screen.x,
                         npcPercent) +
-                        (spriteScale * npc.x * Constants.ROADWIDTH * Constants.WIDTH / 2);
+                        (scale * npc.x * Constants.ROADWIDTH * Constants.WIDTH / 2);
 
                 double spriteY = Util.interpolate(
                         segment.p1.screen.y,
                         segment.p2.screen.y,
                         npcPercent);
 
-                DrawTexture(npc.texture.getTexture(), (int) spriteX, (int) spriteY, WHITE);
+                // check if sprite is not visible
+                if(spriteY > segment.clip) continue;
+
+                Texture npcTexture = npc.texture.getTexture();
+                npcTexture = Util.scale(npcTexture, spriteScale);
+                        
+                // Clip the sprite
+                int clipHeight = segment.clip - ((int) spriteY - npcTexture.height());
+                npcTexture = Util.clipHorizontall(npcTexture, clipHeight);
+                // System.out.println("SegmentClip: " + segment.clip + "\n" + "SpriteY: " + spriteY + "\n");
+                // System.out.println(clipHeight);
+
+                DrawTexture(npcTexture, (int) spriteX, (int) spriteY, WHITE);
             }
         }
 

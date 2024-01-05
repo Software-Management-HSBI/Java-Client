@@ -20,6 +20,7 @@ public class Road {
         HashMap<String, Color> color;
         double curve;
         double fog;
+        int clip;
         ArrayList<NPC> npcs;
 
         Segment(int index, double z1, double z2, double curve, HashMap<String, Color> color) {
@@ -28,6 +29,7 @@ public class Road {
             this.p2 = new Util().new Point(z2);
             this.color = color;
             this.curve = curve;
+            this.clip = Constants.HEIGHT;
             npcs = new ArrayList<NPC>();
         }
     }

@@ -34,6 +34,7 @@ public class Constants {
     public static double TREESPEED = 0.003;
 
     public static int TOTALCARS = 10;
+    public static double NPCSCALE = (1.0/80.0) * 0.3;
 
     public static final HashMap<String, Color> STARTCOLORS =
             new HashMap<String, Color>() {

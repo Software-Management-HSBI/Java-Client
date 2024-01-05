@@ -1,6 +1,7 @@
 import static com.raylib.Raylib.ColorAlpha;
 import static com.raylib.Raylib.DrawRectangle;
 import static com.raylib.Raylib.DrawTriangle;
+import static com.raylib.Raylib.ImageCrop;
 import static com.raylib.Raylib.ImageResize;
 import static com.raylib.Raylib.LoadImageFromTexture;
 import static com.raylib.Raylib.LoadTextureFromImage;
@@ -10,6 +11,7 @@ import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Image;
 import com.raylib.Raylib.Texture;
 import com.raylib.Raylib.Vector2;
+import com.raylib.Raylib.Rectangle;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -256,6 +258,28 @@ public class Util {
         ImageResize(image, (int) (texture.width() * pResize), (int) (texture.height() * pResize));
         return LoadTextureFromImage(image);
     }
+
+    /**
+     * Clips the texture downward by the given height
+     * 
+     * @param height relative height from top to bottom of the texture
+     * @return the clipped texture
+     */
+
+     public static Texture clipHorizontall(Texture texture, int height) {
+        Image image = LoadImageFromTexture(texture);
+        if(height > texture.height()) return texture;
+        
+        Rectangle rec = new Rectangle();
+        rec.x(0);
+        rec.y(0);
+        rec.width(texture.width());
+        rec.height(height);
+
+        ImageCrop(image, rec);
+
+        return LoadTextureFromImage(image);
+     }
 
     /**
      * Draw a rectangle representing fog based on the fog factor
