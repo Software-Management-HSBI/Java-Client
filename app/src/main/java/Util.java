@@ -364,17 +364,12 @@ public class Util {
         float destW = (sprite.width() * spriteScale * width / 2) * (((1 / 80f) * 0.3f) * roadWidth);
         float destH = (sprite.height() * spriteScale * width / 2) * (((1 / 80f) * 0.3f) * roadWidth);
 
-
-            // Adjustments as needed
-
-
-
-
-            if (offset_x == null) {
-            offset_x = (Float) 0f;
+        // Anpassungen falls erforderlich
+        if (offset_x == null) {
+            offset_x = 0f;
         }
         if (offset_y == null) {
-            offset_y = (Float) 0f;
+            offset_y = 0f;
         }
 
         destX += destW * offset_x;
@@ -383,16 +378,13 @@ public class Util {
         float clipH = (clip_y == null) ? 0f : Math.max(0f, destY + destH - clip_y);
 
         if (clipH < destH && (destW <= (sprite.width() * 5) || (destH <= (sprite.height() * 5)))) {
-            // Use the texture directly from TexturedSprite
-            Raylib.Texture texture = sprite;
+            // Adjust the clipping rectangle
+            float clipHeight = sprite.height() * clipH;
 
-            // Berechne die Ausschnitt-Rechtecke
-            float clipHeight = texture.height() * clipH; // Berechne die Höhe des Ausschnitts basierend auf einem Prozentsatz
-            Jaylib.Rectangle sourceRec = new Jaylib.Rectangle(0, 0, texture.width(), texture.height() - (int) clipHeight);
-            Jaylib.Rectangle destRec = new Jaylib.Rectangle(destX, destY, destW, destH);
+            Jaylib.Rectangle destRec = new Jaylib.Rectangle(destX, destY, destW, destH - clipHeight);
 
-// Zeichne das Bild mit den berechneten Rechtecken
-            Raylib.DrawTextureRec(texture, destRec, new Jaylib.Vector2(destX, destY), WHITE);
+
+            Raylib.DrawTextureRec(sprite, destRec, new Jaylib.Vector2(destRec.x(), destRec.y()), WHITE);
 
 
         }

@@ -58,7 +58,9 @@ public class Game {
 
     MainMenu mainMenu;
 
-     double SPRITESCALE;
+     static float SPRITESCALE;
+
+     Road.Segment segment;
 
 
  OptionsManager optionsManager;
@@ -145,13 +147,11 @@ public class Game {
         int n, i;
 
 
-        addSprite(240,                  billboard7, -1.2);
-        addSprite(240,                  billboard6,  1.2);
-        addSprite(segments.size() - 25, billboard7, -1.2);
-        addSprite(segments.size() - 25, billboard6,  1.2);
+                addSprite(30,billboard2,1);
 
 
-              addSprite(20,billboard7,-1);
+
+
 
 
 
@@ -213,7 +213,7 @@ public class Game {
         player = new Player(Constants.WIDTH / 2, Constants.HEIGHT - 150);
         player.x -= player.texture.width() * 3 / 2;
         playerSprites.add(player.texture);
-        SPRITESCALE =  0.3 * ((double) 1 /player.straight.width());
+        SPRITESCALE = (float) (0.3 *  1 /player.straight.width());
 
 
     }
