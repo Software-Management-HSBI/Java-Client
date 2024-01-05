@@ -4,6 +4,7 @@ import com.raylib.Raylib.Color;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.DrawTexture;
@@ -19,7 +20,7 @@ public class Road {
      * @param color the color of the segment
      */
     public class Segment {
-        public  Sprite sprite;
+        public  ArrayList<Sprite> sprites;
         int index;
         Util.Point p1;
         Util.Point p2;
@@ -36,6 +37,7 @@ public class Road {
             this.p2 = new Util().new Point(z2);
             this.color = color;
             this.curve = curve;
+            sprites = new ArrayList<>();
 
         }
 
@@ -173,14 +175,6 @@ public class Road {
         addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0, -ROAD.CURVE.MEDIUM);
     }
 
-    static void addSprite(int n, Raylib.Texture sprite, int offset) {
-
-
-                Game.segments.get(n).sprite = new Sprite(sprite, offset);
-
-
-
-    }
 
 
 

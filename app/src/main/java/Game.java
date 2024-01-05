@@ -3,9 +3,11 @@ import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.*;
 
 import com.raylib.Jaylib;
+import com.raylib.Raylib;
 import com.raylib.Raylib.Texture;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
@@ -87,6 +89,7 @@ public class Game {
         mainMenu = MainMenu.getInstance();
         gameLoop();
 
+
     }
 
     /** The game loop that renders and updates the game and checks for key presses */
@@ -132,7 +135,7 @@ public class Game {
                 -Road.ROAD.CURVE.MEDIUM);
 
 
-
+        resetSprites();
 
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
@@ -140,17 +143,20 @@ public class Game {
         for (int n = 0; n < Constants.RUMBLELENGTH; n++) {
             segments.get(segments.size() - 1 - n).color = Constants.FINISHCOLORS;
         }
-        resetSprites();
+
     }
 
     private void resetSprites() {
 
 
-        for(int i = 0;i<100;i++){
-            Road.addSprite(i,billboard7,10);
 
 
-        }
+
+              addSprite(20,billboard7,-1);
+
+
+
+
 
 
 
@@ -406,6 +412,8 @@ public class Game {
 
         }
 
+        renderSprites();
+
         for (Texture texture : playerSprites) {
             DrawTexture(texture, player.x, player.y, WHITE);
         }
@@ -413,14 +421,6 @@ public class Game {
 
 
 
-
-        for(int a =0;a<segments.size();a++){
-            if(Game.segments.get(a).sprite!=null) {
-                Game.segments.get(a).sprite.draw(a, segment, (float) segment.p1.screen.scale);
-
-
-            }
-        }
 
 
 
@@ -462,6 +462,37 @@ public class Game {
     private void createColumns(){
         column =LoadTexture(Constants.SPRITETEXTUREPATH + "column.png");
     }
+
+    public static void renderSprites(Road.Segment segment) {
+        if (segment.sprites != null) {
+            for (int i = 0; i < segment.sprites.size(); i++) {
+                Sprite sprite = segment.sprites.get(i);
+                float spriteScale = (float) segment.p1.screen.scale;
+                float spriteX = (float) (segment.p1.screen.x + (spriteScale * sprite.offset * Constants.ROADWIDTH * Constants.WIDTH / 2));
+                float spriteY = (float) segment.p1.screen.y;
+
+                float offset = (sprite.offset < 0) ? -1 : 0;
+
+                Util.sprite(sprite.texture, Constants.WIDTH, Constants.ROADWIDTH, spriteScale, spriteX, spriteY, offset, (float) -1, Constants.HEIGHT);
+            }
+        }
+    }
+
+    private static void renderSprites() {
+        // Iterate through road segments and render sprites
+        for (Road.Segment segment : Game.segments) {
+            renderSprites(segment);
+        }
+    }
+
+
+
+
+    public void addSprite(int n, Texture sprite,int offSet){
+        Game.segments.get(n).sprites.add(new Sprite(sprite,offSet));
+    }
+
+
 }
 
 
