@@ -3,9 +3,11 @@ import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.*;
 
 import com.raylib.Jaylib;
+import com.raylib.Raylib;
 import com.raylib.Raylib.Texture;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
@@ -82,6 +84,7 @@ public class Game {
         mainMenu = MainMenu.getInstance();
         gameLoop();
 
+
     }
 
     /** The game loop that renders and updates the game and checks for key presses */
@@ -141,25 +144,18 @@ public class Game {
 
         int n, i;
 
-        addSprite(20,  billboard7, -1);
-        addSprite(40,  billboard6, -1);
-        addSprite(60,  billboard8, -1);
-        addSprite(80,  billboard9, -1);
-        addSprite(100, billboard1, -1);
-        addSprite(120, billboard2, -1);
-        addSprite(140, billboard3, -1);
-        addSprite(160, billboard4, -1);
-        addSprite(180, billboard5, -1);
 
         addSprite(240,                  billboard7, -1.2);
         addSprite(240,                  billboard6,  1.2);
         addSprite(segments.size() - 25, billboard7, -1.2);
         addSprite(segments.size() - 25, billboard6,  1.2);
 
-        for(n = 10 ; n < 100 ; n += (int) (4 + Math.floor((double) n /100))) {
-            addSprite(n, palm_tree, 0.5 + Math.random()*0.5);
-            addSprite(n, palm_tree,   1 + Math.random()*2);
-        }
+
+              addSprite(20,billboard7,-1);
+
+
+
+
 
 
 
@@ -407,6 +403,8 @@ public class Game {
             maxY = segment.p2.screen.y;
         }
 
+        renderSprites();
+
         for (Texture texture : playerSprites) {
             DrawTexture(texture, player.x, player.y, WHITE);
         }
@@ -414,14 +412,6 @@ public class Game {
 
 
 
-
-        for(int a =0;a<segments.size();a++){
-            if(Game.segments.get(a).sprite!=null) {
-                Game.segments.get(a).sprite.draw(a, segment, (float) segment.p1.screen.scale);
-
-
-            }
-        }
 
 
 
@@ -463,6 +453,37 @@ public class Game {
     private void createColumn(){
         column =LoadTexture(Constants.SPRITETEXTUREPATH + "column.png");
     }
+
+    public static void renderSprites(Road.Segment segment) {
+        if (segment.sprites != null) {
+            for (int i = 0; i < segment.sprites.size(); i++) {
+                Sprite sprite = segment.sprites.get(i);
+                float spriteScale = (float) segment.p1.screen.scale;
+                float spriteX = (float) (segment.p1.screen.x + (spriteScale * sprite.offset * Constants.ROADWIDTH * Constants.WIDTH / 2));
+                float spriteY = (float) segment.p1.screen.y;
+
+                float offset = (sprite.offset < 0) ? -1 : 0;
+
+                Util.sprite(sprite.texture, Constants.WIDTH, Constants.ROADWIDTH, spriteScale, spriteX, spriteY, offset, (float) -1, Constants.HEIGHT);
+            }
+        }
+    }
+
+    private static void renderSprites() {
+        // Iterate through road segments and render sprites
+        for (Road.Segment segment : Game.segments) {
+            renderSprites(segment);
+        }
+    }
+
+
+
+
+    public void addSprite(int n, Texture sprite,int offSet){
+        Game.segments.get(n).sprites.add(new Sprite(sprite,offSet));
+    }
+
+
 }
 
 
