@@ -67,14 +67,12 @@ public class MainMenu {
 
         if (singleplayerButton.buttonClicked()) {
             Game.gameState = GameState.SINGLEPLAYER;
+            optionsManager.show = false;
         } else if (multiplayerButton.buttonClicked()) {
             Game.gameState = GameState.MULTIPLAYER;
         } else if (exitButton.buttonClicked()) {
             System.exit(0);
-        }
-
-
-        if(optionButton.buttonClicked()){
+        }else if(optionButton.buttonClicked()){
             Game.gameState = GameState.OPTION;
         }
     }
