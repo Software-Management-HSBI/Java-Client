@@ -401,8 +401,7 @@ public class Util {
 
             Jaylib.Rectangle srcRec = new Jaylib.Rectangle(0, 0, sprite.width(), sprite.height());
 
-            System.out.println(Constants.HEIGHT-Game.maxY);
-            System.out.println(destY);
+
             // Check if the sprite is above the specified y position
 
             if (destY  <= (Game.maxY)) {
