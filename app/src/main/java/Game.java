@@ -460,7 +460,7 @@ public class Game {
         }
 
         // Drawing of sprites
-        renderSprites();
+        renderSprites(baseSegment);
 
         for (Texture texture : playerSprites) {
             DrawTexture(texture, player.x, player.y, WHITE);
@@ -515,7 +515,7 @@ public class Game {
         column =LoadTexture(Constants.SPRITETEXTUREPATH + "column.png");
     }
 
-    public static void renderSprites(Road.Segment segment) {
+    public static void renderSegmentSprites(Road.Segment segment) {
         if (segment.sprites != null) {
             for (int i = 0; i < segment.sprites.size(); i++) {
                 Sprite sprite = segment.sprites.get(i);
@@ -530,10 +530,11 @@ public class Game {
         }
     }
 
-    private static void renderSprites() {
-        // Iterate through road segments and render sprites
-        for (Road.Segment segment : Game.segments) {
-            renderSprites(segment);
+    private static void renderSprites(Road.Segment baseSegment) {
+        for(int n = (Constants.DRAWDISTANCE - 1) ; n > 0 ; n--) {
+            Road.Segment segment = segments.get((baseSegment.index + n) % segments.size());
+            // Iterate through road segments and render sprites
+            renderSegmentSprites(segment);
         }
     }
 
