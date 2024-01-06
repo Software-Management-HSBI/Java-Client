@@ -148,6 +148,7 @@ public class Game {
     private void resetSprites() {
 
 
+        addSprite(20,  billboard7, -1);
         addSprite(40,  billboard6, -1);
         addSprite(60,  billboard8, -1);
         addSprite(80,  billboard9, -1);
@@ -158,16 +159,13 @@ public class Game {
         addSprite(180, billboard5, -1);
 
 
-        addSprite(240, billboard7, (int) -1.2);
-        addSprite(240, billboard6, (int) 1.2);
-        addSprite(segments.size() - 25, billboard7, (float) -1.2);
-        addSprite(segments.size() - 25, billboard6, 1.2F);
 
+        for (int n = 10; n < Constants.SEGMENTLENGTH; n += (int) (4 + Math.floor((double) n / 100))) {
+            addSprite(n, Util.getRandomTexture(plants), 1);
 
-        for (int n = 10; n < 200; n += (int) (4 + Math.floor((double) n /100))) {
-            addSprite(n, palm_tree, (float) (0.5 + Math.random()*0.5));
-            addSprite(n, palm_tree, (float) (1 + Math.random()*2));
         }
+
+
 
 
     }
@@ -313,6 +311,23 @@ public class Game {
 
         playerSprites.add(player.texture);
 
+        double playerW  = Game.player.straight.width()*  0.3 * ((double) 1 /Game.player.straight.width());
+        for(int n = 0; n < playerSegment.sprites.size(); n++) {
+            Sprite sprite = playerSegment.sprites.get(n);
+            double spriteW = Game.player.straight.width() * 0.3 * ((double) 1 / Game.player.straight.width());
+
+            // Calculate the sprite's offset based on its position and width
+            double spriteOffset = sprite.offset + spriteW / 2 * (sprite.offset > 0 ? 1 : -1);
+
+            if (Util.overlap(playerX, playerW, spriteOffset, spriteW, 0.7)) {
+                speed = Constants.MAXSPEED / 5;
+                position = Util.increase(playerSegment.p1.world.z, -Constants.PLAYERZ, trackLength);
+                // Stop in front of the sprite (at the front of the segment)
+                break;
+            }
+        }
+
+
         if (keyFaster) speed = Util.accelerate(speed, Constants.ACCEL, dt);
         else if (keySlower) speed = Util.accelerate(speed, Constants.BREAKING, dt);
         else speed = Util.accelerate(speed, Constants.DECEL, dt);
@@ -323,10 +338,16 @@ public class Game {
         playerX = Util.limit(playerX, -2, 2);
         speed = Util.limit(speed, 0, Constants.MAXSPEED);
 
-          // Tastendruck 'S' zeigt/versteckt die Optionen
+
+
+
+
+        // Tastendruck 'S' zeigt/versteckt die Optionen
         if (IsKeyPressed(KEY_S)) {
             optionsManager.show = !optionsManager.show;
         }
+
+        System.out.println(playerSegment.p1.screen.x);
 
         optionsManager.update();
     }
