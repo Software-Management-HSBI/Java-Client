@@ -64,6 +64,7 @@ public class Game {
 
      Road.Segment segment;
 
+     static double maxY;
 
  OptionsManager optionsManager;
     static GameState gameState = GameState.MENU;
@@ -148,20 +149,17 @@ public class Game {
     private void resetSprites() {
 
 
-        addSprite(20,  billboard7, -1);
-        addSprite(40,  billboard6, -1);
-        addSprite(60,  billboard8, -1);
-        addSprite(80,  billboard9, -1);
-        addSprite(100, billboard1, -1);
-        addSprite(120, billboard2, -1);
-        addSprite(140, billboard3, -1);
-        addSprite(160, billboard4, -1);
-        addSprite(180, billboard5, -1);
+        addSprite(10,  billboard7, -1);
+        addSprite(14,  billboard6, -1);
+        addSprite(20,  billboard8, -1);
+        addSprite(30,  billboard9, -1);
 
 
 
-        for (int n = 10; n < Constants.SEGMENTLENGTH; n += (int) (4 + Math.floor((double) n / 100))) {
-            addSprite(n, Util.getRandomTexture(plants), 1);
+        for (int n = 0; n < Constants.SEGMENTLENGTH; n++) {
+            if(n%2==0) {
+                addSprite(n, Util.getRandomTexture(plants), 1);
+            }
 
         }
 
@@ -347,7 +345,7 @@ public class Game {
             optionsManager.show = !optionsManager.show;
         }
 
-        System.out.println(playerSegment.p1.screen.x);
+
 
         optionsManager.update();
     }
@@ -366,7 +364,7 @@ public class Game {
                 Util.interpolate(
                         playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
 
-        double maxY = Constants.HEIGHT;
+         maxY = Constants.HEIGHT;
 
 
 
@@ -474,6 +472,7 @@ public class Game {
         tree2 =  LoadTexture(Constants.SPRITETEXTUREPATH + "tree2.png");
         palm_tree =  LoadTexture(Constants.SPRITETEXTUREPATH + "palm_tree.png");
         plants = new Texture[]{tree1,tree2,palm_tree};
+
 
 
     }

@@ -1,3 +1,4 @@
+import static com.raylib.Jaylib.BLUE;
 import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.*;
 
@@ -384,15 +385,6 @@ public class Util {
         float destW = (sprite.width() * spriteScale * width / 2) * (((1 / 80f) * 0.3f) * roadWidth);
         float destH = (sprite.height() * spriteScale * width / 2) * (((1 / 80f) * 0.3f) * roadWidth);
 
-        // Adjustments if necessary
-        if (offset_x == null) {
-            offset_x = 0f;
-        }
-        if (offset_y == null) {
-            offset_y = 0f;
-        }
-
-
         if (offset_x == 1) {
             destX = destX + destW / 2; // Add half of destW
         } else if (offset_x == -1) {
@@ -401,32 +393,32 @@ public class Util {
 
         destY += destH * offset_y;
 
-// Calculate clipping height if applicable
+        // Calculate clipping height if applicable
         float clipH = (clip_y == null) ? 0f : Math.max(0f, destY + destH - clip_y);
-;
 
         // Check for valid clipping conditions and sprite size
         if (clipH < destH && (destW <= (sprite.width() * 5) || (destH <= (sprite.height() * 5)))) {
-            // Recalculate clipping area to restrict the image correctly
-            float clipHeight = sprite.height() * (clipH / destH);
-            float offsetY = (clip_y == null) ? 0f : (clipHeight / 2); // Offset based on clipping
 
             Jaylib.Rectangle srcRec = new Jaylib.Rectangle(0, 0, sprite.width(), sprite.height());
 
+            System.out.println(Constants.HEIGHT-Game.maxY);
+            System.out.println(destY);
+            // Check if the sprite is above the specified y position
 
-            Jaylib.Rectangle destRec = new Jaylib.Rectangle(destX, destY+(destH/2) , destW/2, destH/2);
+            if (destY  <= (Game.maxY)) {
+                Jaylib.Rectangle destRec = new Jaylib.Rectangle(destX, destY + (destH / 2), destW / 2, destH / 2);
 
-            // DrawTexturePro with correct clipping
-            Raylib.DrawTexturePro(
-                    sprite,
-                    srcRec,
-                    destRec,
-                    new Jaylib.Vector2(0, 0),
-                    0f,
-                    WHITE);
+                // DrawTexturePro with correct clipping
+                Raylib.DrawTexturePro(
+                        sprite,
+                        srcRec,
+                        destRec,
+                        new Jaylib.Vector2(0, 0),
+                        0f,
+                        WHITE);
+            }
         }
     }
-
 
     /**
      * Retrieves a random Texture from the provided array.
