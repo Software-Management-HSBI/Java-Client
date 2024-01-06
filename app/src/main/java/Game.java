@@ -12,6 +12,7 @@ import java.util.Map;
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
     public static ArrayList<Road.Segment> segments;
+    public static ArrayList<Sound> sounds;
     ArrayList<Texture> playerSprites;
     ArrayList<Util.Background> backgroundSprites;
     static Player player = null;
@@ -69,13 +70,16 @@ public class Game {
      static double maxY;
 
  OptionsManager optionsManager;
+
+
     static GameState gameState = GameState.MENU;
 
     /** Initializes the game and starts the game loop */
     public Game() {
 
-        optionsManager = OptionsManager.getInstance();
+
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
+        initSounds();
         SetTargetFPS((int) Constants.FPS);
         playerSprites = new ArrayList<>();
         backgroundSprites = new ArrayList<>();
@@ -89,7 +93,12 @@ public class Game {
 
 
         createBackground();
+
+        optionsManager = OptionsManager.getInstance();
         mainMenu = MainMenu.getInstance();
+
+
+
         gameLoop();
 
 
@@ -180,8 +189,13 @@ public class Game {
                 break;
             case SINGLEPLAYER:
                 updateSinglePlayer(dt);
-
-                break;
+            case OPTION:
+                optionsManager.update();
+                // Tastendruck 'S' zeigt/versteckt die Optionen
+                if (IsKeyPressed(KEY_P)) {
+                    Game.gameState = GameState.MENU;
+                }
+            break;
                 // case MULTIPLAYER:
 
             default:
@@ -203,7 +217,11 @@ public class Game {
                 renderSinglePlayer();
 
                 break;
-                // case MULTIPLAYER:
+            case OPTION:
+                optionsManager.show = true;
+                optionsManager.showBackground();
+                break;
+
 
         }
 
@@ -271,6 +289,11 @@ public class Game {
 
     // updates all the logic of the singleplayer mode
     private void updateSinglePlayer(double dt) {
+
+       for(Sound s : sounds){
+           s.playSound();
+
+       }
         Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
         double speedPercent = speed / Constants.MAXSPEED;
         double dx =
@@ -450,6 +473,15 @@ public class Game {
         optionsManager.showBackground();
         playerSprites.clear();
     }
+
+    private  void initSounds(){
+        sounds = new ArrayList<>();
+        sounds.add(new Sound(Constants.SOUNDSPATH,"racer"));
+    }
+
+
+
+
 
     private void createBillboards(){
 

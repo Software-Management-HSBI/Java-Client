@@ -1,5 +1,5 @@
 public enum GameState {
-    MENU,
+    MENU,OPTION,
     SINGLEPLAYER,
     MULTIPLAYER
 }

@@ -10,39 +10,36 @@ public class MainMenu {
 
     private Util.Background background;
 
+    UtilButton backButton;
+    OptionsManager optionsManager;
     UtilButton singleplayerButton;
     UtilButton multiplayerButton;
     UtilButton exitButton;
 
+    UtilButton optionButton;
+
     // Private constructor for the Singleton Pattern
     private MainMenu() {
 
+        optionsManager = OptionsManager.getInstance();
         // Create Buttons
+
+
         singleplayerButton =
-                new UtilButton(
-                        (float) Constants.WIDTH / 2 - ((float) 250 / 2),
-                        (float) Constants.HEIGHT / 2 - ((float) 50 / 2),
-                        250,
-                        50,
-                        "SINGLEPLAYER");
+                new UtilButton(50,50,200,50,"Start");
+
+
         multiplayerButton =
-                new UtilButton(
-                        singleplayerButton.x(),
-                        singleplayerButton.y() + singleplayerButton.height(),
-                        250,
-                        50,
-                        "MULTIPLAYER");
-        exitButton =
-                new UtilButton(
-                        multiplayerButton.x(),
-                        multiplayerButton.y() + multiplayerButton.height(),
-                        250,
-                        50,
-                        "EXIT");
+                new UtilButton(50,Constants.HEIGHT-100,200,50,"Multiplayer");
+
+        exitButton = new UtilButton(Constants.WIDTH-250,Constants.HEIGHT-100,200,50,"Beenden");
 
         background =
                 new Util.Background(
                         LoadTexture(Constants.UITEXTUREPATH + "backgroundMenu.png"), 0, 0);
+
+        optionButton =
+                new UtilButton(Constants.WIDTH-250,50,200,50,"Options");
     }
 
     /**
@@ -59,6 +56,7 @@ public class MainMenu {
         DrawTexture(background.texture, 0, 0, WHITE);
 
         singleplayerButton.draw();
+        optionButton.draw();
         multiplayerButton.draw();
         exitButton.draw();
     }
@@ -69,49 +67,17 @@ public class MainMenu {
 
         if (singleplayerButton.buttonClicked()) {
             Game.gameState = GameState.SINGLEPLAYER;
+            optionsManager.show = false;
         } else if (multiplayerButton.buttonClicked()) {
             Game.gameState = GameState.MULTIPLAYER;
         } else if (exitButton.buttonClicked()) {
             System.exit(0);
+        }else if(optionButton.buttonClicked()){
+            Game.gameState = GameState.OPTION;
         }
     }
 
 
 
-    class UtilButton extends Jaylib.Rectangle {
-        private String text;
 
-        /**
-         * Creates a button with the given parameters
-         *
-         * @param x the x position of the button
-         * @param y the y position of the button
-         * @param width the width of the button
-         * @param height the height of the button
-         * @param text the text to be displayed on the button
-         */
-        public UtilButton(float x, float y, float width, float height, String text) {
-            super(x, y, width, height);
-            this.text = text;
-        }
-
-        /** Draws the button on the screen */
-        public void draw() {
-            GuiButton(this, text);
-        }
-
-        /**
-         * Checks if the button is clicked based on the current mouse position and left mouse button
-         * state
-         *
-         * @return {@code true} if the mouse is over the button and the left mouse button is
-         *     pressed, {@code false} otherwise
-         */
-        public boolean buttonClicked() {
-            if (CheckCollisionPointRec(GetMousePosition(), this)) {
-                return IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
-            }
-            return false;
-        }
-    }
 }

@@ -9,7 +9,7 @@ public class OptionsManager {
     private static final OptionsManager instance = new OptionsManager();
 
     // Display of options
-     boolean show;
+    boolean show;
 
     // Game options
     private int roadWidth;
@@ -18,18 +18,20 @@ public class OptionsManager {
     private int fogDensity;
     private int fieldOfView;
 
-    // Rectangles for GUI elements
-    Jaylib.Rectangle laneTitle = new Jaylib.Rectangle(500, 150, 200, 50);
-    Jaylib.Rectangle laneButtonSize1 = new Jaylib.Rectangle(500, 200, 200, 50);
-    Jaylib.Rectangle laneButtonSize2 = new Jaylib.Rectangle(500, 250, 200, 50);
-    Jaylib.Rectangle laneButtonSize3 = new Jaylib.Rectangle(500, 300, 200, 50);
-    Jaylib.Rectangle laneButtonSize4 = new Jaylib.Rectangle(500, 350, 200, 50);
+
+    UtilButton lane1 = new UtilButton(500, 200, 200, 50, "Lane1");
+    UtilButton lane2 = new UtilButton(500, 250, 200, 50, "Lane2");
+    UtilButton lane3 = new UtilButton(500, 300, 200, 50, "Lane3");
+    UtilButton lane4 = new UtilButton(500, 350, 200, 50, "Lane4");
+
 
     Jaylib.Rectangle roadWidthSize = new Jaylib.Rectangle(120, 200, 300, 50);
     Jaylib.Rectangle cameraHeightSize = new Jaylib.Rectangle(120, 250, 300, 50);
     Jaylib.Rectangle drawDistanceSize = new Jaylib.Rectangle(120, 300, 300, 50);
     Jaylib.Rectangle fieldOfViewSize = new Jaylib.Rectangle(120, 350, 300, 50);
     Jaylib.Rectangle fogDensitySize = new Jaylib.Rectangle(120, 400, 300, 50);
+
+    Jaylib.Rectangle controllSize = new Jaylib.Rectangle(120, 450, 300, 50);
 
     // Private constructor for the Singleton pattern
     private OptionsManager() {
@@ -50,7 +52,9 @@ public class OptionsManager {
         return instance;
     }
 
-    /** Updates the options based on user input. */
+    /**
+     * Updates the options based on user input.
+     */
     public void update() {
 
         // Updates constants based on sliders
@@ -61,7 +65,9 @@ public class OptionsManager {
         Constants.FOGDENSITY = fogDensity;
     }
 
-    /** Displays the background window with options. */
+    /**
+     * Displays the background window with options.
+     */
     public void showBackground() {
         if (show) {
             updateGui();
@@ -71,81 +77,82 @@ public class OptionsManager {
 
     // Checks if a button in the dropdown window was clicked.
     private void checkButtonWindowSize() {
-        if (CheckCollisionPointRec(GetMousePosition(), laneButtonSize1)) {
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                Constants.LANES = 1;
-            }
-        } else if (CheckCollisionPointRec(GetMousePosition(), laneButtonSize2)) {
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                Constants.LANES = 2;
-            }
-        } else if (CheckCollisionPointRec(GetMousePosition(), laneButtonSize3)) {
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                Constants.LANES = 3;
-            }
-        } else if (CheckCollisionPointRec(GetMousePosition(), laneButtonSize4)) {
-            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+
+        if (lane1.buttonClicked()) {
+            Constants.LANES = 1;
+        }
+        if (lane2.buttonClicked()) {
+            Constants.LANES = 2;
+        }
+        if (lane3.buttonClicked()) {
+            Constants.LANES = 3;
+        }
+            if (lane4.buttonClicked()) {
                 Constants.LANES = 4;
             }
+
+
+    }
+        // Updates the graphical user interface (GUI) for options.
+        private void updateGui () {
+            DrawRectangle(
+                    0, 0, Constants.WIDTH, Constants.HEIGHT, ColorAlpha(Util.color(0, 0, 0), 0.5f));
+            DrawText("Lanes:", 500, 170, 20, GRAY);
+
+            // Updates sliders and buttons
+            roadWidth =
+                    (int)
+                            GuiSlider(
+                                    roadWidthSize,
+                                    "Road Width: " + roadWidth,
+                                    "",
+                                    roadWidth,
+                                    500,
+                                    3000);
+            cameraHeight =
+                    (int)
+                            GuiSlider(
+                                    cameraHeightSize,
+                                    "Camera Height: " + cameraHeight,
+                                    "",
+                                    cameraHeight,
+                                    500,
+                                    5000);
+            drawDistance =
+                    (int)
+                            GuiSlider(
+                                    drawDistanceSize,
+                                    "Draw Distance: " + drawDistance,
+                                    "",
+                                    drawDistance,
+                                    100,
+                                    500);
+            fieldOfView =
+                    (int)
+                            GuiSlider(
+                                    fieldOfViewSize,
+                                    "Field of View: " + fieldOfView,
+                                    "",
+                                    fieldOfView,
+                                    80,
+                                    140);
+            fogDensity =
+                    (int)
+                            GuiSlider(
+                                    fogDensitySize,
+                                    "Fog Density: " + fogDensity,
+                                    "",
+                                    fogDensity,
+                                    0,
+                                    50);
+
+            DrawText("\nPress S for Options\n Press P for Pause", (int) controllSize.x(), (int) controllSize.y(),25,WHITE);
+
+
+            lane1.draw();
+            lane2.draw();
+            lane3.draw();
+            lane4.draw();
+
         }
     }
-
-    // Updates the graphical user interface (GUI) for options.
-    private void updateGui() {
-        DrawRectangle(
-                0, 0, Constants.WIDTH, Constants.HEIGHT, ColorAlpha(Util.color(0, 0, 0), 0.5f));
-        DrawText("Lanes:", 500, 170, 20, GRAY);
-
-        // Updates sliders and buttons
-        roadWidth =
-                (int)
-                        GuiSlider(
-                                roadWidthSize,
-                                "Road Width: " + roadWidth,
-                                "",
-                                roadWidth,
-                                500,
-                                3000);
-        cameraHeight =
-                (int)
-                        GuiSlider(
-                                cameraHeightSize,
-                                "Camera Height: " + cameraHeight,
-                                "",
-                                cameraHeight,
-                                500,
-                                5000);
-        drawDistance =
-                (int)
-                        GuiSlider(
-                                drawDistanceSize,
-                                "Draw Distance: " + drawDistance,
-                                "",
-                                drawDistance,
-                                100,
-                                500);
-        fieldOfView =
-                (int)
-                        GuiSlider(
-                                fieldOfViewSize,
-                                "Field of View: " + fieldOfView,
-                                "",
-                                fieldOfView,
-                                80,
-                                140);
-        fogDensity =
-                (int)
-                        GuiSlider(
-                                fogDensitySize,
-                                "Fog Density: " + fogDensity,
-                                "",
-                                fogDensity,
-                                0,
-                                50);
-
-        GuiButton(laneButtonSize1, "Lane 1");
-        GuiButton(laneButtonSize2, "Lane 2");
-        GuiButton(laneButtonSize3, "Lane 3");
-        GuiButton(laneButtonSize4, "Lane 4");
-    }
-}

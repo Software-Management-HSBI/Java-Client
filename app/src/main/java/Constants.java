@@ -8,6 +8,7 @@ public class Constants {
     public static final double STEP = (double) (1 / FPS);
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
+
     public static int ROADWIDTH = 2000;
     public static final int SEGMENTLENGTH = 200;
     public static final int RUMBLELENGTH = 3;
@@ -27,6 +28,8 @@ public class Constants {
     public static final double OFFROADLIMIT = MAXSPEED / 4.0;
     public static final String SPRITETEXTUREPATH = "src/main/resources/images/sprites/";
     public static final String BACKGROUNDTEXTUREPATH = "src/main/resources/images/background/";
+
+    public static final String SOUNDSPATH = "src/main/resources/sounds/" ;
 
     public static final String UITEXTUREPATH = "src/main/resources/images/UI/";
 
