@@ -64,7 +64,7 @@ public class Game {
 
      Road.Segment segment;
 
-     Road.Segment segment;
+
 
      static double maxY;
 
