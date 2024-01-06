@@ -60,7 +60,9 @@ public class Game {
 
     MainMenu mainMenu;
 
-     static float SPRITESCALE;
+     static double SPRITESCALE;
+
+     Road.Segment segment;
 
      Road.Segment segment;
 
@@ -135,7 +137,7 @@ public class Game {
                 -Road.ROAD.CURVE.MEDIUM);
 
 
-        resetSprites();
+
 
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
@@ -143,7 +145,7 @@ public class Game {
         for (int n = 0; n < Constants.RUMBLELENGTH; n++) {
             segments.get(segments.size() - 1 - n).color = Constants.FINISHCOLORS;
         }
-
+        resetSprites();
     }
 
     private void resetSprites() {
@@ -485,7 +487,6 @@ public class Game {
         if (segment.sprites != null) {
             for (int i = 0; i < segment.sprites.size(); i++) {
                 Sprite sprite = segment.sprites.get(i);
-
                 float spriteScale = (float) segment.p1.screen.scale;
                 float spriteX = (float) (segment.p1.screen.x + (spriteScale * sprite.offset * Constants.ROADWIDTH * Constants.WIDTH / 2));
                 float spriteY = (float) segment.p1.screen.y;

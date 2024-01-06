@@ -175,6 +175,14 @@ public class Road {
         addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, 0, -ROAD.CURVE.MEDIUM);
     }
 
+    static void addSprite(int n, Raylib.Texture sprite, int offset) {
+        if (n >= 0 && n < Game.segments.size()) {
+            if (Game.segments.get(n) == null) {
+                Game.segments.get(n).sprite = new Sprite(sprite, offset);
+            }
+
+        }
+    }
 
 
 
