@@ -110,8 +110,7 @@ public class Game {
             render();
             update(Constants.STEP);
 
-            // Debugg
-            // System.out.println("Segement y: " + Road.findSegment(position).p1.world.y);
+
         }
         CloseWindow();
     }
@@ -149,23 +148,26 @@ public class Game {
     private void resetSprites() {
 
 
-
-                addSprite(30,billboard2,1);
-
-
-
-
-
-
-
-
+        addSprite(40,  billboard6, -1);
+        addSprite(60,  billboard8, -1);
+        addSprite(80,  billboard9, -1);
+        addSprite(100, billboard1, -1);
+        addSprite(120, billboard2, -1);
+        addSprite(140, billboard3, -1);
+        addSprite(160, billboard4, -1);
+        addSprite(180, billboard5, -1);
 
 
+        addSprite(240, billboard7, (int) -1.2);
+        addSprite(240, billboard6, (int) 1.2);
+        addSprite(segments.size() - 25, billboard7, (float) -1.2);
+        addSprite(segments.size() - 25, billboard6, 1.2F);
 
 
-
-
-
+        for (int n = 10; n < 200; n += (int) (4 + Math.floor((double) n /100))) {
+            addSprite(n, palm_tree, (float) (0.5 + Math.random()*0.5));
+            addSprite(n, palm_tree, (float) (1 + Math.random()*2));
+        }
 
 
     }
@@ -344,7 +346,6 @@ public class Game {
                         playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
 
         double maxY = Constants.HEIGHT;
-        System.out.println( baseSegment.p1.screen.scale);
 
 
 
@@ -352,7 +353,7 @@ public class Game {
         var x = 0;
         var dx = -(baseSegment.curve * baseSegmentPercent);
 
-        ClearBackground(RAYWHITE); // Hier wird der Hintergrund gelöscht
+        ClearBackground(RAYWHITE); // Background will be deleted
 
         float parallaxSurfaceSky = (float) (skyOffset * surfaceSky.texture.width());
         float parallaxSurfaceHills = (float) (hillOffset * surfaceHills.texture.width());
@@ -414,17 +415,12 @@ public class Game {
 
         }
 
+        // Drawing of sprites
         renderSprites();
 
         for (Texture texture : playerSprites) {
             DrawTexture(texture, player.x, player.y, WHITE);
         }
-
-
-
-
-
-
 
 
 
@@ -469,6 +465,7 @@ public class Game {
         if (segment.sprites != null) {
             for (int i = 0; i < segment.sprites.size(); i++) {
                 Sprite sprite = segment.sprites.get(i);
+
                 float spriteScale = (float) segment.p1.screen.scale;
                 float spriteX = (float) (segment.p1.screen.x + (spriteScale * sprite.offset * Constants.ROADWIDTH * Constants.WIDTH / 2));
                 float spriteY = (float) segment.p1.screen.y;
@@ -489,12 +486,28 @@ public class Game {
 
 
 
-
-    public void addSprite(int n, Texture sprite,int offSet){
-        Game.segments.get(n).sprites.add(new Sprite(sprite,offSet));
+    /**
+     * Adds a sprite to the specified segment at a given position with a texture and offset.
+     *
+     * This method creates a new Sprite with the provided texture and offset, and adds it
+     * to the sprites list of the segment at the specified position in the Game's segments.
+     * It is designed for use in a 2D environment, such as a game or graphical application.
+     *
+     * @param n The position of the segment where the sprite will be added.
+     * @param sprite The texture of the sprite to be added.
+     * @param offSet The offset of the sprite in a 2D space.
+     * @throws IndexOutOfBoundsException If the specified position is out of bounds for the segments list.
+     */
+    public void addSprite(int n, Texture sprite, float offSet) {
+        try {
+            // Get the segment at the specified position and add a new sprite to its list
+            Game.segments.get(n).sprites.add(new Sprite(sprite, offSet));
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Invalid segment position: " + n);
+        }
     }
-
-
 }
+
+
 
 
