@@ -1,11 +1,13 @@
-import static com.raylib.Raylib.ColorAlpha;
-import static com.raylib.Raylib.DrawRectangle;
-import static com.raylib.Raylib.DrawTriangle;
+import static com.raylib.Jaylib.BLUE;
+import static com.raylib.Jaylib.WHITE;
+import static com.raylib.Raylib.*;
 
+import com.raylib.Jaylib;
 import com.raylib.Raylib;
 import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
 import com.raylib.Raylib.Vector2;
+import org.w3c.dom.Text;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -276,6 +278,8 @@ public class Util {
         return color;
     }
 
+
+
     /**
      * Create a Background at the given coordinates and texture
      *
@@ -347,6 +351,7 @@ public class Util {
         double y;
         double w;
 
+
         Screen() {
             this.scale = 0;
             this.x = 0;
@@ -354,4 +359,89 @@ public class Util {
             this.w = 0;
         }
     }
+
+
+    /**
+     * Draws a sprite on the screen with specified parameters, including scaling, positioning, and clipping.
+     *
+     * This method renders a sprite on the screen using the provided texture and parameters, such as width,
+     * roadWidth, spriteScale, destination position, offsets, and clipping. It handles adjustments and clipping
+     * based on the specified parameters to ensure proper rendering.
+     *
+     * @param sprite The texture of the sprite to be drawn.
+     * @param width The width parameter for scaling the sprite.
+     * @param roadWidth The width of the road or environment.
+     * @param spriteScale The scaling factor applied to the sprite.
+     * @param destX The x-coordinate of the destination position for the sprite.
+     * @param destY The y-coordinate of the destination position for the sprite.
+     * @param offset_x The optional x-offset for fine-tuning the sprite's position. If null, 0f is used.
+     * @param offset_y The optional y-offset for fine-tuning the sprite's position. If null, 0f is used.
+     * @param clip_y The optional y-coordinate for clipping the sprite. If null, no clipping is applied.
+     */
+    public static void sprite(Texture sprite, int width, int roadWidth, float spriteScale,
+                              float destX, float destY, Float offset_x, Float offset_y, Integer clip_y) {
+
+        // Calculate destination width and height based on scaling and road width
+        float destW = (sprite.width() * spriteScale * width / 2) * (((1 / 80f) * 0.3f) * roadWidth);
+        float destH = (sprite.height() * spriteScale * width / 2) * (((1 / 80f) * 0.3f) * roadWidth);
+
+        if (offset_x == 1) {
+            destX = destX + destW / 2; // Add half of destW
+        } else if (offset_x == -1) {
+            destX = destX - destW / 2; // Subtract half of destW
+        }
+
+        destY += destH * offset_y;
+
+        // Calculate clipping height if applicable
+        float clipH = (clip_y == null) ? 0f : Math.max(0f, destY + destH - clip_y);
+
+        // Check for valid clipping conditions and sprite size
+        if (clipH < destH && (destW <= (sprite.width() * 5) || (destH <= (sprite.height() * 5)))) {
+
+            Jaylib.Rectangle srcRec = new Jaylib.Rectangle(0, 0, sprite.width(), sprite.height());
+
+
+            // Check if the sprite is above the specified y position
+
+            if (destY  <= (Game.maxY)) {
+                Jaylib.Rectangle destRec = new Jaylib.Rectangle(destX, destY + (destH / 2), destW / 2, destH / 2);
+
+                // DrawTexturePro with correct clipping
+                Raylib.DrawTexturePro(
+                        sprite,
+                        srcRec,
+                        destRec,
+                        new Jaylib.Vector2(0, 0),
+                        0f,
+                        WHITE);
+            }
+        }
+    }
+
+    /**
+     * Retrieves a random Texture from the provided array.
+     *
+     * This method takes an array of Texture objects and returns a randomly selected
+     * Texture from the array. The randomness is achieved by generating a random index
+     * within the bounds of the array.
+     *
+     * @param list An array of Texture objects from which a random Texture will be selected.
+     * @return A randomly selected Texture from the provided array.
+     * @throws ArrayIndexOutOfBoundsException If the provided array is empty.
+     */
+    public static Texture getRandomTexture(Texture[] list) {
+        if (list.length == 0) {
+            throw new ArrayIndexOutOfBoundsException("The provided array is empty.");
+        }
+
+        // Generate a random index within the bounds of the array
+        int randomIndex = (int) (Math.random() * list.length);
+
+        // Return the Texture at the randomly generated index
+        return list[randomIndex];
+    }
+
+
+
 }
