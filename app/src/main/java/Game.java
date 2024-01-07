@@ -387,13 +387,14 @@ public class Game {
                 double spriteX = Util.interpolate(
                         segment.p1.screen.x,
                         segment.p2.screen.x,
-                        npcPercent) +
-                        (scale * npc.x * Constants.ROADWIDTH * Constants.WIDTH / 2);
+                        npcPercent);
+                        // + (scale * npc.x * Constants.ROADWIDTH * Constants.WIDTH / 2);
 
                 double spriteY = Util.interpolate(
                         segment.p1.screen.y,
                         segment.p2.screen.y,
-                        npcPercent);
+                        npcPercent)
+                        - (spriteScale * npc.texture.getTexture().height());
 
                 // check if sprite is not visible
                 if(spriteY > segment.clip) continue;
@@ -408,6 +409,7 @@ public class Game {
                 // System.out.println(clipHeight);
 
                 DrawTexture(npcTexture, (int) spriteX, (int) spriteY, WHITE);
+                // DrawTexture(npcTexture, 0, 0, WHITE);
             }
         }
 
