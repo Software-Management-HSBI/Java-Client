@@ -66,7 +66,7 @@ public class Game {
      Road.Segment segment;
 
 
-
+    Stats singleplayer = new Stats();
      static double maxY;
 
  OptionsManager optionsManager;
@@ -183,8 +183,12 @@ public class Game {
 
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
+        singleplayer.update();
+
+       System.out.println(singleplayer.fps);
         switch (gameState) {
             case MENU:
+                System.out.println(Util.getCurrentTimestamp());
                 mainMenu.checkInput();
                 break;
             case SINGLEPLAYER:
@@ -290,6 +294,7 @@ public class Game {
     // updates all the logic of the singleplayer mode
     private void updateSinglePlayer(double dt) {
 
+
        for(Sound s : sounds){
            s.playSound();
 
@@ -377,6 +382,7 @@ public class Game {
 
     // renders all the graphics for the singleplayer mode
     private void renderSinglePlayer() {
+
         Road.Segment baseSegment = Road.findSegment(position);
         double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);
 
@@ -457,6 +463,7 @@ public class Game {
 
 
 
+
         }
 
         // Drawing of sprites
@@ -467,7 +474,7 @@ public class Game {
         }
 
 
-
+        singleplayer.draw();
 
 
         optionsManager.showBackground();

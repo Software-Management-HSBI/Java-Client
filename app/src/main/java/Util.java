@@ -278,6 +278,15 @@ public class Util {
         return color;
     }
 
+    public static Color color(int r, int g, int b,int a) {
+        Color color = new Raylib.Color();
+        color.r((byte) r);
+        color.g((byte) g);
+        color.b((byte) b);
+        color.a((byte) a);
+        return color;
+    }
+
 
 
     /**
