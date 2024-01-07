@@ -107,8 +107,7 @@ public class Game {
         npcs = new ArrayList<>();
         for(int i = 0; i < Constants.TOTALCARS; i++) {
             NPC npc;
-            // double x = Math.random() * Util.randomChoice(new double[] {-0.8, 0.8});
-            double x = 0;
+            double x = Math.random() * Util.randomChoice(new double[] {-0.8, 0.8});
             double z = Math.floor(Math.random() * segments.size()) * Constants.SEGMENTLENGTH;
             NPC.NPCType texture = Util.getRandomEnum(NPC.NPCType.class);
             double speed = Constants.MAXSPEED / 4 + Math.random() * Constants.MAXSPEED/(texture == NPC.NPCType.SEMI ? 4 : 2);
@@ -261,6 +260,25 @@ public class Game {
         if (((playerX < -1) || (playerX > 1)) && (speed > Constants.OFFROADLIMIT))
             speed = Util.accelerate(speed, Constants.OFFROADDECEL, dt);
 
+        for(int n = 0 ; n < playerSegment.npcs.size() ; n++) {
+            NPC npc = playerSegment.npcs.get(n);
+            double npcW = npc.texture.getTexture().width() * 3;
+            
+            // * Constants.NPCSCALE
+            // * Constants.WIDTH/2 * Constants.ROADWIDTH;
+            // Vielleicht untere variablen auch noch, muss erst getestet werden
+            
+            System.out.println("player width: " + player.texture.width() + "\n" + "npc width: " + npcW + "\n");
+
+            if (speed > npc.speed) {
+                if (Util.overlap(playerX, 0.3, npc.x, 0.3, 0.8)) {
+                speed    = npc.speed * (npc.speed/speed);
+                position = Util.increase(npc.z, -Constants.PLAYERZ, trackLength);
+                break;
+                }
+            }
+        }
+
         playerX = Util.limit(playerX, -2, 2);
         speed = Util.limit(speed, 0, Constants.MAXSPEED);
 
@@ -273,7 +291,7 @@ public class Game {
     }
 
     private void updateNPCs(double dt) {
-        for(int i = 0; i < npcs.size(); i++){
+        for(int i = 0; i < npcs.size(); i++) {
             NPC npc = npcs.get(i);
             Road.Segment oldSegment = Road.findSegment(npc.z);
             npc.x = npc.x + updateNPCXLocation(npc, oldSegment);
@@ -387,8 +405,8 @@ public class Game {
                 double spriteX = Util.interpolate(
                         segment.p1.screen.x,
                         segment.p2.screen.x,
-                        npcPercent);
-                        // + (scale * npc.x * Constants.ROADWIDTH * Constants.WIDTH / 2);
+                        npcPercent)
+                        + (scale * npc.x * Constants.ROADWIDTH * Constants.WIDTH / 2);
 
                 double spriteY = Util.interpolate(
                         segment.p1.screen.y,
