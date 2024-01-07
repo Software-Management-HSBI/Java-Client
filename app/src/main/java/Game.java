@@ -48,7 +48,7 @@ public class Game {
     int trackLength = 0;
     double playerX = 0;
     double position = 0;
-    double speed = 0;
+    public static double speed = 0;
 
     double centrifugal = 0.3;
     boolean keyLeft = false;

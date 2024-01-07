@@ -1,8 +1,9 @@
 import com.raylib.Jaylib;
 import com.raylib.Raylib;
+import org.bytedeco.javacpp.BytePointer;
 
-import static com.raylib.Jaylib.RED;
-import static com.raylib.Jaylib.WHITE;
+import static com.raylib.Jaylib.*;
+import static java.awt.SystemColor.text;
 
 
 public class Stats {
@@ -31,10 +32,6 @@ public class Stats {
     public long end() {
         long time = System.currentTimeMillis();
 
-        ms = time - startTime;
-        msMin = Math.min(msMin, ms);
-        msMax = Math.max(msMax, ms);
-
         // Weitere Berechnungen für vergangene Zeit, Bildrate und Aktualisierung von Statistiken
 
         frames++;
@@ -59,15 +56,42 @@ public class Stats {
 
 
     public void draw(){
+        long time = System.currentTimeMillis();
+
+        ms = time - startTime;
+        msMin = Math.min(msMin, ms);
+        msMax = Math.max(msMax, ms);
+
         ///Draw background
-        Raylib.DrawRectangle(0,0,Constants.WIDTH,60,backgroundColor);
+        DrawRectangle(0,0,Constants.WIDTH,50,backgroundColor);
 
-        Raylib.DrawRectangle(5, 5,150,50,childenColor);
-        Raylib.DrawRectangle(Constants.WIDTH/2-(75), 5,150,50,childenColor);
 
-        Raylib.DrawRectangle(Constants.WIDTH-(150+5), 5,150,50,childenColor);
+        String fpsToString = String.valueOf(fps)+" FPS";
+        drawBoxWithText(5,0,100,50,BLACK,25,fpsToString);
+
+
+        String speedToString = String.valueOf((int )Game.speed/100)+" mph";
+        drawBoxWithText(Constants.WIDTH-(100+5),0,100,50,BLACK,25,speedToString);
+
+        String timeToSpeed = String.valueOf(Math.min( 30, 30 - ( ms / 200 ) * 30 ));
+        drawBoxWithText(Constants.WIDTH/2-(25),0,150,50,BLACK,25,timeToSpeed);
+
 
 
     }
+
+     void drawBoxWithText(int x, int y, int width, int height, Raylib.Color fontColor, int fontSize, String text) {
+
+        // Draw the rectangle
+        DrawRectangle(x, y, width, height, childenColor);
+
+        // Draw the text inside the rectangle
+
+        DrawTextEx(GetFontDefault(), text, new Jaylib.Vector2(((float) fontSize /4)+x, ((float) fontSize /4)+ y), fontSize, 2, fontColor);
+
+    }
+
+
+
 
 }
