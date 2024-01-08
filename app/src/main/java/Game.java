@@ -262,16 +262,21 @@ public class Game {
 
         for(int n = 0 ; n < playerSegment.npcs.size() ; n++) {
             NPC npc = playerSegment.npcs.get(n);
-            double npcW = npc.texture.getTexture().width() * 3;
+            double npcW = (npc.texture.getTexture().width() * 3) / (Constants.ROADWIDTH / 2.0);
+            double playerW = (player.texture.width()) / (Constants.ROADWIDTH / 2.0);
+            double playerXHitbox = playerX - playerW/2;
+
+            // System.out.println("playerW: " + playerW + "\n" + "npcW: " + npcW + "\n");
+            // System.out.println("playerX: " + playerXHitbox + "\n" + "npcX: " + npc.x + "\n");
             
             // * Constants.NPCSCALE
             // * Constants.WIDTH/2 * Constants.ROADWIDTH;
             // Vielleicht untere variablen auch noch, muss erst getestet werden
             
-            System.out.println("player width: " + player.texture.width() + "\n" + "npc width: " + npcW + "\n");
+            // System.out.println("player width: " + player.texture.width() + "\n" + "npc width: " + npcW + "\n");
 
             if (speed > npc.speed) {
-                if (Util.overlap(playerX, 0.3, npc.x, 0.3, 0.8)) {
+                if (Util.overlap(playerXHitbox, playerW, npc.x, npcW, 0.8)) {
                 speed    = npc.speed * (npc.speed/speed);
                 position = Util.increase(npc.z, -Constants.PLAYERZ, trackLength);
                 break;
@@ -418,15 +423,18 @@ public class Game {
                 if(spriteY > segment.clip) continue;
 
                 Texture npcTexture = npc.texture.getTexture();
-                npcTexture = Util.scale(npcTexture, spriteScale);
                         
                 // Clip the sprite
-                int clipHeight = segment.clip - ((int) spriteY - npcTexture.height());
-                npcTexture = Util.clipHorizontall(npcTexture, clipHeight);
+                // int clipHeight = segment.clip - ((int) spriteY - npcTexture.height());
+                // npcTexture = Util.clipHorizontall(npcTexture, clipHeight);
                 // System.out.println("SegmentClip: " + segment.clip + "\n" + "SpriteY: " + spriteY + "\n");
                 // System.out.println(clipHeight);
 
-                DrawTexture(npcTexture, (int) spriteX, (int) spriteY, WHITE);
+                Vector2 origin = new Vector2();
+                origin.x((int) spriteX);
+                origin.y((int) spriteY);
+
+                DrawTextureEx(npcTexture, origin, 0f, (float) spriteScale, WHITE);
                 // DrawTexture(npcTexture, 0, 0, WHITE);
             }
         }
