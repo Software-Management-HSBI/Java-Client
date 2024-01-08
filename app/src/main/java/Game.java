@@ -20,7 +20,7 @@ public class Game {
     Util.Background surfaceHills, surfaceHills2 = null;
     Util.Background surfaceTrees, surfaceTrees2 = null;
 
-
+double bounce;
 
     Texture billboard1;
     Texture billboard2;
@@ -188,7 +188,6 @@ public class Game {
        System.out.println(singleplayer.fps);
         switch (gameState) {
             case MENU:
-                System.out.println(Util.getCurrentTimestamp());
                 mainMenu.checkInput();
                 break;
             case SINGLEPLAYER:
@@ -294,8 +293,10 @@ public class Game {
     // updates all the logic of the singleplayer mode
     private void updateSinglePlayer(double dt) {
 
+         bounce = ((0.05/120 * Math.random() * Constants.HEIGHT /Constants.WIDTH) * Math.random() * speed)* Util.randomChoice(new int[]{-1,1});
 
-       for(Sound s : sounds){
+
+        for(Sound s : sounds){
            s.playSound();
 
        }
@@ -382,6 +383,7 @@ public class Game {
 
     // renders all the graphics for the singleplayer mode
     private void renderSinglePlayer() {
+
 
         Road.Segment baseSegment = Road.findSegment(position);
         double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);
@@ -470,7 +472,8 @@ public class Game {
         renderSprites(baseSegment);
 
         for (Texture texture : playerSprites) {
-            DrawTexture(texture, player.x, player.y, WHITE);
+
+            DrawTexture(texture, player.x, (int) (player.y+bounce), WHITE);
         }
 
 
