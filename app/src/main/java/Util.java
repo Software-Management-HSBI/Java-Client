@@ -254,9 +254,10 @@ public class Util {
      * @return the scaled texture
      */
     public static Texture scale(Texture texture, double pResize) {
-        Image image = LoadImageFromTexture(texture);
-        ImageResize(image, (int) (texture.width() * pResize), (int) (texture.height() * pResize));
-        return LoadTextureFromImage(image);
+        Texture newTexture = texture;
+        newTexture.width((int) (texture.width() * pResize));
+        newTexture.height((int) (texture.height() * pResize));
+        return newTexture;
     }
 
     /**
