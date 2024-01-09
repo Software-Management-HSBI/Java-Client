@@ -47,8 +47,11 @@ double bounce;
 
     int trackLength = 0;
     double playerX = 0;
-    double position = 0;
-    public static double speed = 0;
+
+
+
+    public double position = 0;
+    public  double speed = 0;
 
     double centrifugal = 0.3;
     boolean keyLeft = false;
@@ -66,18 +69,18 @@ double bounce;
      Road.Segment segment;
 
 
-    Stats singleplayer = new Stats();
+    Stats stats;
      static double maxY;
 
  OptionsManager optionsManager;
+
 
 
     static GameState gameState = GameState.MENU;
 
     /** Initializes the game and starts the game loop */
     public Game() {
-
-
+        stats = new Stats(this);
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
         initSounds();
         SetTargetFPS((int) Constants.FPS);
@@ -183,9 +186,8 @@ double bounce;
 
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
-        singleplayer.update();
+        stats.update();
 
-       System.out.println(singleplayer.fps);
         switch (gameState) {
             case MENU:
                 mainMenu.checkInput();
@@ -293,9 +295,13 @@ double bounce;
     // updates all the logic of the singleplayer mode
     private void updateSinglePlayer(double dt) {
 
-         bounce = ((0.05/120 * Math.random() * Constants.HEIGHT /Constants.WIDTH) * Math.random() * speed)* Util.randomChoice(new int[]{-1,1});
+
+        //Bounce effect
+
+         bounce = ((1.5/Constants.MAXSPEED * Math.random() * Constants.HEIGHT /Constants.WIDTH) * Math.random() * speed)* Util.randomChoice(new int[]{-1,1});
 
 
+         // Here will be played all sounds
         for(Sound s : sounds){
            s.playSound();
 
@@ -477,7 +483,7 @@ double bounce;
         }
 
 
-        singleplayer.draw();
+        stats.draw();
 
 
         optionsManager.showBackground();
@@ -486,7 +492,7 @@ double bounce;
 
     private  void initSounds(){
         sounds = new ArrayList<>();
-        sounds.add(new Sound(Constants.SOUNDSPATH,"racer"));
+       // sounds.add(new Sound(Constants.SOUNDSPATH,"racer"));
     }
 
 
@@ -570,6 +576,10 @@ double bounce;
             throw new IndexOutOfBoundsException("Invalid segment position: " + n);
         }
     }
+
+
+
+
 }
 
 
