@@ -13,7 +13,7 @@ public class Constants {
     public static final int SEGMENTLENGTH = 200;
     public static final int RUMBLELENGTH = 3;
     public static int LANES = 4;
-    //3 Multiplayerr
+    // 3 Multiplayerr
     public static int FOV = 100;
     public static int CAMERAHEIGHT = 1000;
     public static final double CAMERADEPTH = 1 / Math.tan((FOV / 2) * Math.PI / 180);
@@ -30,7 +30,7 @@ public class Constants {
     public static final String SPRITETEXTUREPATH = "src/main/resources/images/sprites/";
     public static final String BACKGROUNDTEXTUREPATH = "src/main/resources/images/background/";
 
-    public static final String SOUNDSPATH = "src/main/resources/sounds/" ;
+    public static final String SOUNDSPATH = "src/main/resources/sounds/";
 
     public static final String UITEXTUREPATH = "src/main/resources/images/UI/";
 
