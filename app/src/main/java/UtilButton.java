@@ -6,6 +6,11 @@ public class UtilButton extends Jaylib.Rectangle {
     private String text;
 
 
+    private Color color;
+
+
+
+
     /**
      * Creates a button with the given parameters
      *
@@ -21,9 +26,18 @@ public class UtilButton extends Jaylib.Rectangle {
 
     }
 
+
+
+
     /** Draws the button on the screen */
     public void draw() {
         GuiButton(this, text);
+
+    }
+    public void drawWithButton() {
+        GuiButton(this, text);
+        //DrawText(text, (int) x(), (int) y(),25,color);
+
     }
 
     /**
@@ -38,5 +52,21 @@ public class UtilButton extends Jaylib.Rectangle {
             return IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
         }
         return false;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 }
