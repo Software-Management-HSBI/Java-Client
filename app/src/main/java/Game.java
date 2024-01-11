@@ -1,11 +1,10 @@
+import com.raylib.Jaylib;
+
+import java.util.ArrayList;
+
 import static com.raylib.Jaylib.RAYWHITE;
 import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.*;
-
-import com.raylib.Jaylib;
-import com.raylib.Raylib.Texture;
-
-import java.util.ArrayList;
 
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
@@ -59,12 +58,18 @@ public class Game {
 
     static double SPRITESCALE;
 
-    Road.Segment segment;
+     Road.Segment segment;
+
+
+     static double maxY;
+
+ OptionsManager optionsManager;
+ LobbyManager lobbyManager;
 
     Stats singlePlayerStats;
-    static double maxY;
 
-    OptionsManager optionsManager;
+
+
 
     static GameState gameState = GameState.MENU;
 
@@ -86,6 +91,7 @@ public class Game {
 
         optionsManager = OptionsManager.getInstance();
         mainMenu = MainMenu.getInstance();
+        lobbyManager = LobbyManager.getInstance();
 
         gameLoop();
     }
@@ -156,26 +162,23 @@ public class Game {
     public void update(double dt) {
 
         switch (gameState) {
-            case MENU:
+            case MENU -> {
                 mainMenu.checkInput();
-                break;
-            case SINGLEPLAYER:
-                singlePlayerStats.update();
-                updateSinglePlayer(dt);
-            case OPTION:
+                mainMenu.checkInput();
+            }
+            case OPTION -> {
                 optionsManager.update();
-                // Tastendruck 'S' zeigt/versteckt die Optionen
-                if (IsKeyPressed(KEY_P)) {
-                    Game.gameState = GameState.MENU;
-                }
-                break;
-                // case MULTIPLAYER:
-
-            default:
-                // Handle unexpected values of gameState
-                gameState = GameState.MENU;
-                break;
+            }
+            case SINGLEPLAYER -> {
+                updateSinglePlayer(dt);
+            }
+            case MULTIPLAYER -> {
+            }
+            case LOBBY -> {
+                lobbyManager.update();
+            }
         }
+        if(IsKeyPressed(KEY_P))  gameState = GameState.MENU;
     }
 
     /** Render different gameStates */
@@ -183,17 +186,22 @@ public class Game {
         BeginDrawing();
 
         switch (gameState) {
-            case MENU:
+            case MENU -> {
                 mainMenu.showBackground();
-                break;
-            case SINGLEPLAYER:
-                renderSinglePlayer();
-
-                break;
-            case OPTION:
+            }
+            case OPTION -> {
                 optionsManager.show = true;
                 optionsManager.showBackground();
-                break;
+            }
+            case SINGLEPLAYER -> {
+                renderSinglePlayer();
+            }
+            case MULTIPLAYER -> {
+            }
+            case LOBBY -> {
+                lobbyManager.drawLobby();
+            }
+
         }
 
         EndDrawing();
@@ -345,6 +353,7 @@ public class Game {
             optionsManager.show = !optionsManager.show;
         }
 
+        singlePlayerStats.update();
         optionsManager.update();
     }
 
@@ -442,7 +451,7 @@ public class Game {
 
     private void initSounds() {
         sounds = new ArrayList<>();
-        sounds.add(new Sound(Constants.SOUNDSPATH,"racer"));
+        //sounds.add(new Sound(Constants.SOUNDSPATH,"racer"));
     }
 
     private void createBillboards() {

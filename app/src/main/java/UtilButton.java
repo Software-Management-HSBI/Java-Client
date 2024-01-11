@@ -4,6 +4,12 @@ import com.raylib.Jaylib;
 
 public class UtilButton extends Jaylib.Rectangle {
     private String text;
+    private boolean select =false;
+
+
+
+
+
 
     /**
      * Creates a button with the given parameters
@@ -17,10 +23,19 @@ public class UtilButton extends Jaylib.Rectangle {
     public UtilButton(float x, float y, float width, float height, String text) {
         super(x, y, width, height);
         this.text = text;
+
+
     }
+
+
+
 
     /** Draws the button on the screen */
     public void draw() {
+        GuiButton(this, text);
+
+    }
+    public void drawWithButton() {
         GuiButton(this, text);
     }
 
@@ -36,5 +51,27 @@ public class UtilButton extends Jaylib.Rectangle {
             return IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
         }
         return false;
+    }
+
+    public void update(){
+        if(buttonClicked()) {
+            select =!select;
+        }
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public boolean isSelect() {
+        return select;
+    }
+
+    public void setSelect(boolean select) {
+        this.select = select;
     }
 }
