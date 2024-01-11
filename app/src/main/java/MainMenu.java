@@ -1,7 +1,5 @@
 import static com.raylib.Jaylib.*;
 
-import com.raylib.Jaylib;
-
 /** The MainMenu class manages the game's main menu options using the Singleton Pattern. */
 public class MainMenu {
 
@@ -24,22 +22,18 @@ public class MainMenu {
         optionsManager = OptionsManager.getInstance();
         // Create Buttons
 
+        singleplayerButton = new UtilButton(50, 50, 200, 50, "Start");
 
-        singleplayerButton =
-                new UtilButton(50,50,200,50,"Start");
+        multiplayerButton = new UtilButton(50, Constants.HEIGHT - 100, 200, 50, "Multiplayer");
 
-
-        multiplayerButton =
-                new UtilButton(50,Constants.HEIGHT-100,200,50,"Multiplayer");
-
-        exitButton = new UtilButton(Constants.WIDTH-250,Constants.HEIGHT-100,200,50,"Beenden");
+        exitButton =
+                new UtilButton(Constants.WIDTH - 250, Constants.HEIGHT - 100, 200, 50, "Beenden");
 
         background =
                 new Util.Background(
                         LoadTexture(Constants.UITEXTUREPATH + "backgroundMenu.png"), 0, 0);
 
-        optionButton =
-                new UtilButton(Constants.WIDTH-250,50,200,50,"Options");
+        optionButton = new UtilButton(Constants.WIDTH - 250, 50, 200, 50, "Options");
     }
 
     /**
@@ -61,8 +55,7 @@ public class MainMenu {
         exitButton.draw();
     }
 
-    /**Check if singleplayer or multiplayer button is clicked*/
-
+    /** Check if singleplayer or multiplayer button is clicked */
     public void checkInput() {
 
         if (singleplayerButton.buttonClicked()) {
@@ -72,12 +65,8 @@ public class MainMenu {
             Game.gameState = GameState.LOBBY;
         } else if (exitButton.buttonClicked()) {
             System.exit(0);
-        }else if(optionButton.buttonClicked()){
+        } else if (optionButton.buttonClicked()) {
             Game.gameState = GameState.OPTION;
         }
     }
-
-
-
-
 }

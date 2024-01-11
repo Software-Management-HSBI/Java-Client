@@ -1,11 +1,10 @@
-import com.raylib.Jaylib;
-
 import static com.raylib.Raylib.*;
+
+import com.raylib.Jaylib;
 
 public class UtilButton extends Jaylib.Rectangle {
     private String text;
     private boolean select =false;
-
 
 
 
@@ -44,8 +43,8 @@ public class UtilButton extends Jaylib.Rectangle {
      * Checks if the button is clicked based on the current mouse position and left mouse button
      * state
      *
-     * @return {@code true} if the mouse is over the button and the left mouse button is
-     *     pressed, {@code false} otherwise
+     * @return {@code true} if the mouse is over the button and the left mouse button is pressed,
+     *     {@code false} otherwise
      */
     public boolean buttonClicked() {
         if (CheckCollisionPointRec(GetMousePosition(), this)) {

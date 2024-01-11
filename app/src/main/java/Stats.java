@@ -1,13 +1,11 @@
+import static com.raylib.Jaylib.*;
 
 import com.raylib.Raylib;
 
-import static com.raylib.Jaylib.*;
-
-
 /**
- * The Stats class is responsible for tracking and displaying various statistics
- * related to the game, including frames per second, lap times, and collision information.
- * It utilizes the Timer class for time-related operations.
+ * The Stats class is responsible for tracking and displaying various statistics related to the
+ * game, including frames per second, lap times, and collision information. It utilizes the Timer
+ * class for time-related operations.
  */
 public class Stats {
 
@@ -28,32 +26,19 @@ public class Stats {
     // Maximum elapsed time in milliseconds.
     private long msMax;
 
-    /**
-     * Current frames per second (FPS).
-     */
+    /** Current frames per second (FPS). */
     public int fps;
 
-    /**
-     * Minimum frames per second (FPS) recorded.
-     */
-    public int fpsMin;
 
-    /**
-     * Maximum frames per second (FPS) recorded.
-     */
-    public int fpsMax;
 
-    /**
-     * Total number of frames rendered.
-     */
+    /** Total number of frames rendered. */
     public int frames;
-
 
     // The Game object associated with these statistics.
     private final Game game;
 
     // The current lap round, initialized to -2.
-    private int round = -2;
+    private int round = 0;
 
     // The timer object representing the current lap time.
     private final Timer currentLapTime;
@@ -70,8 +55,8 @@ public class Stats {
     // A boolean flag indicating whether the player was colliding in the previous frame.
     private boolean wasColliding = false;
 
-    Road.Segment start1;
     Road.Segment playerSegment;
+
     /**
      * Constructs a Stats object with necessary initializations.
      *
@@ -86,47 +71,33 @@ public class Stats {
         Raylib.Color backgroundColor = Util.color(255, 0, 0, (int) (0.4 * 255));
         // The color used for rendering children-related statistics on the screen.
         Raylib.Color childenColor = Util.color(255, 255, 255, (int) (0.6 * 255));
-        startTime = System.currentTimeMillis();
+
         prevTime = startTime;
         frames = 0;
     }
 
-    /**
-     * Ends the frame, updating statistics such as frames per second.
-     *
-     * @return The current time in milliseconds.
-     */
-    public long end() {
+
+    /** Updates the game statistics, lap times, and collision information. */
+    public void update() {
         long time = System.currentTimeMillis();
         frames++;
 
         if (time > prevTime + 1000) {
             fps = (int) Math.round((frames * 1000.0) / (time - prevTime));
-            fpsMin = Math.min(fpsMin, fps);
-            fpsMax = Math.max(fpsMax, fps);
+
 
             prevTime = time;
             frames = 0;
         }
 
-        return time;
-    }
 
-    /**
-     * Updates the game statistics, lap times, and collision information.
-     */
-    public void update() {
-        startTime = end();
-
-        if(IsKeyDown(KEY_UP)){
+        if (IsKeyDown(KEY_UP)) {
             timerStarted = true;
         }
 
-        if(timerStarted){
+        if (timerStarted) {
             currentLapTime.incrememt();
         }
-
-
 
         boolean isCurrentlyColliding = isColliding();
 
@@ -135,16 +106,12 @@ public class Stats {
             if (round > 0) {
                 timerAssignment();
             }
-
         }
 
         wasColliding = isCurrentlyColliding;
-
     }
 
-    /**
-     * Draws the current game statistics on the screen.
-     */
+    /** Draws the current game statistics on the screen. */
     public void draw() {
         long time = System.nanoTime();
 
@@ -152,17 +119,37 @@ public class Stats {
         msMin = Math.min(msMin, ms);
         msMax = Math.max(msMax, ms);
 
-        DrawText(String.valueOf(fps) + ":FPS", 0, 0, 50, BLACK);
-        DrawText(String.valueOf((int) game.speed / 100) + ":MPH", 0, 50, 50, BLACK);
+        DrawText(String.valueOf(fps) + ":FPS", 0, 0, 50, BLUE);
+        DrawText(String.valueOf((int) game.speed / 100) + ":MPH", 0, 50, 50, BLUE);
 
-        DrawText(currentLapTime.getTimeString() + ":Current Time", Constants.WIDTH / 2 - 50, 0, 50, BLACK);
-        DrawText(lastLapTime.getTimeString() + ":Last Laptime", Constants.WIDTH / 2 - 50, 50, 50, BLACK);
-        DrawText(fastestLapTime.getTimeString() + ":Fastest Laptime", Constants.WIDTH / 2 - 50, 100, 50, BLACK);
+        DrawText(
+                currentLapTime.getTimeString() + ":Current Time",
+                Constants.WIDTH / 2 - 50,
+                0,
+                50,
+                BLACK);
+        DrawText(
+                lastLapTime.getTimeString() + ":Last Laptime",
+                Constants.WIDTH / 2 - 50,
+                50,
+                50,
+                BLACK);
+        DrawText(
+                fastestLapTime.getTimeString() + ":Fastest Laptime",
+                Constants.WIDTH / 2 - 50,
+                100,
+                50,
+                BLACK);
+
+        DrawText(
+                round + ":Round ",
+                Constants.WIDTH / 2 - 50,
+                150,
+                50,
+                RED);
     }
 
-    /**
-     * Handles lap time assignments based on the current round.
-     */
+    /** Handles lap time assignments based on the current round. */
     void timerAssignment() {
         if (round == 1) {
             lastLapTime.mil = currentLapTime.mil;
@@ -178,8 +165,6 @@ public class Stats {
                 currentLapTime.mil = 0;
             }
         }
-
-
     }
 
     /**
@@ -188,26 +173,22 @@ public class Stats {
      * @return True if a collision is detected, false otherwise.
      */
     boolean isColliding() {
-        start1= Game.segments.get(Road.findSegment(Constants.PLAYERZ).index + 2);
+        Road.Segment endSegment = Game.segments.get(Road.findSegment(Constants.PLAYERZ).index - 4);
         playerSegment = Road.findSegment(game.position + Constants.PLAYERZ);
-        return start1.p1.camera.z==playerSegment.p1.camera.z;
+        return endSegment.p1.camera.z == playerSegment.p1.camera.z;
     }
 }
 
 /**
- * The Timer class represents a timer used for tracking elapsed time.
- * It provides methods for incrementing the timer and formatting the elapsed time.
+ * The Timer class represents a timer used for tracking elapsed time. It provides methods for
+ * incrementing the timer and formatting the elapsed time.
  */
 class Timer {
 
-    /**
-     * The elapsed time in milliseconds.
-     */
+    /** The elapsed time in milliseconds. */
     public float mil;
 
-    /**
-     * Increments the timer by a predefined step.
-     */
+    /** Increments the timer by a predefined step. */
     public void incrememt() {
         mil += (float) (1 * Constants.STEP);
     }
