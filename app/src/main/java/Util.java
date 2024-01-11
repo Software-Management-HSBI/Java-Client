@@ -1,4 +1,3 @@
-import static com.raylib.Jaylib.BLUE;
 import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.*;
 
@@ -7,7 +6,6 @@ import com.raylib.Raylib;
 import com.raylib.Raylib.Color;
 import com.raylib.Raylib.Texture;
 import com.raylib.Raylib.Vector2;
-import org.w3c.dom.Text;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -278,7 +276,14 @@ public class Util {
         return color;
     }
 
-
+    public static Color color(int r, int g, int b, int a) {
+        Color color = new Raylib.Color();
+        color.r((byte) r);
+        color.g((byte) g);
+        color.b((byte) b);
+        color.a((byte) a);
+        return color;
+    }
 
     /**
      * Create a Background at the given coordinates and texture
@@ -351,7 +356,6 @@ public class Util {
         double y;
         double w;
 
-
         Screen() {
             this.scale = 0;
             this.x = 0;
@@ -360,13 +364,13 @@ public class Util {
         }
     }
 
-
     /**
-     * Draws a sprite on the screen with specified parameters, including scaling, positioning, and clipping.
+     * Draws a sprite on the screen with specified parameters, including scaling, positioning, and
+     * clipping.
      *
-     * This method renders a sprite on the screen using the provided texture and parameters, such as width,
-     * roadWidth, spriteScale, destination position, offsets, and clipping. It handles adjustments and clipping
-     * based on the specified parameters to ensure proper rendering.
+     * <p>This method renders a sprite on the screen using the provided texture and parameters, such
+     * as width, roadWidth, spriteScale, destination position, offsets, and clipping. It handles
+     * adjustments and clipping based on the specified parameters to ensure proper rendering.
      *
      * @param sprite The texture of the sprite to be drawn.
      * @param width The width parameter for scaling the sprite.
@@ -374,16 +378,28 @@ public class Util {
      * @param spriteScale The scaling factor applied to the sprite.
      * @param destX The x-coordinate of the destination position for the sprite.
      * @param destY The y-coordinate of the destination position for the sprite.
-     * @param offset_x The optional x-offset for fine-tuning the sprite's position. If null, 0f is used.
-     * @param offset_y The optional y-offset for fine-tuning the sprite's position. If null, 0f is used.
-     * @param clip_y The optional y-coordinate for clipping the sprite. If null, no clipping is applied.
+     * @param offset_x The optional x-offset for fine-tuning the sprite's position. If null, 0f is
+     *     used.
+     * @param offset_y The optional y-offset for fine-tuning the sprite's position. If null, 0f is
+     *     used.
+     * @param clip_y The optional y-coordinate for clipping the sprite. If null, no clipping is
+     *     applied.
      */
-    public static void sprite(Texture sprite, int width, int roadWidth, float spriteScale,
-                              float destX, float destY, Float offset_x, Float offset_y, Integer clip_y) {
+    public static void sprite(
+            Texture sprite,
+            int width,
+            int roadWidth,
+            float spriteScale,
+            float destX,
+            float destY,
+            Float offset_x,
+            Float offset_y,
+            Integer clip_y) {
 
         // Calculate destination width and height based on scaling and road width
         float destW = (sprite.width() * spriteScale * width / 2) * (((1 / 80f) * 0.3f) * roadWidth);
-        float destH = (sprite.height() * spriteScale * width / 2) * (((1 / 80f) * 0.3f) * roadWidth);
+        float destH =
+                (sprite.height() * spriteScale * width / 2) * (((1 / 80f) * 0.3f) * roadWidth);
 
         if (offset_x == 1) {
             destX = destX + destW / 2; // Add half of destW
@@ -401,20 +417,14 @@ public class Util {
 
             Jaylib.Rectangle srcRec = new Jaylib.Rectangle(0, 0, sprite.width(), sprite.height());
 
-
             // Check if the sprite is above the specified y position
 
-            if (destY  <= (Game.maxY)) {
-                Jaylib.Rectangle destRec = new Jaylib.Rectangle(destX, destY + (destH / 2), destW / 2, destH / 2);
+            if (destY <= (Game.maxY)) {
+                Jaylib.Rectangle destRec =
+                        new Jaylib.Rectangle(destX, destY + (destH / 2), destW / 2, destH / 2);
 
                 // DrawTexturePro with correct clipping
-                Raylib.DrawTexturePro(
-                        sprite,
-                        srcRec,
-                        destRec,
-                        new Jaylib.Vector2(0, 0),
-                        0f,
-                        WHITE);
+                Raylib.DrawTexturePro(sprite, srcRec, destRec, new Jaylib.Vector2(0, 0), 0f, WHITE);
             }
         }
     }
@@ -422,9 +432,9 @@ public class Util {
     /**
      * Retrieves a random Texture from the provided array.
      *
-     * This method takes an array of Texture objects and returns a randomly selected
-     * Texture from the array. The randomness is achieved by generating a random index
-     * within the bounds of the array.
+     * <p>This method takes an array of Texture objects and returns a randomly selected Texture from
+     * the array. The randomness is achieved by generating a random index within the bounds of the
+     * array.
      *
      * @param list An array of Texture objects from which a random Texture will be selected.
      * @return A randomly selected Texture from the provided array.
@@ -441,7 +451,4 @@ public class Util {
         // Return the Texture at the randomly generated index
         return list[randomIndex];
     }
-
-
-
 }

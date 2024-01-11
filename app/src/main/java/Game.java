@@ -3,11 +3,9 @@ import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.*;
 
 import com.raylib.Jaylib;
-import com.raylib.Raylib;
 import com.raylib.Raylib.Texture;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
@@ -20,7 +18,7 @@ public class Game {
     Util.Background surfaceHills, surfaceHills2 = null;
     Util.Background surfaceTrees, surfaceTrees2 = null;
 
-
+    int bounce;
 
     Texture billboard1;
     Texture billboard2;
@@ -34,7 +32,6 @@ public class Game {
 
     Texture[] billboards;
 
-
     static Texture tree1;
     Texture tree2;
     Texture palm_tree;
@@ -43,12 +40,11 @@ public class Game {
 
     Texture column;
 
-
-
     int trackLength = 0;
     double playerX = 0;
-    double position = 0;
-    double speed = 0;
+
+    public double position = 0;
+    public double speed = 0;
 
     double centrifugal = 0.3;
     boolean keyLeft = false;
@@ -61,23 +57,20 @@ public class Game {
 
     MainMenu mainMenu;
 
-     static double SPRITESCALE;
+    static double SPRITESCALE;
 
-     Road.Segment segment;
+    Road.Segment segment;
 
+    Stats singlePlayerStats;
+    static double maxY;
 
-
-     static double maxY;
-
- OptionsManager optionsManager;
-
+    OptionsManager optionsManager;
 
     static GameState gameState = GameState.MENU;
 
     /** Initializes the game and starts the game loop */
     public Game() {
-
-
+        singlePlayerStats = new Stats(this);
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
         initSounds();
         SetTargetFPS((int) Constants.FPS);
@@ -89,19 +82,12 @@ public class Game {
         resetRoad();
         createPlayer();
 
-
-
-
         createBackground();
 
         optionsManager = OptionsManager.getInstance();
         mainMenu = MainMenu.getInstance();
 
-
-
         gameLoop();
-
-
     }
 
     /** The game loop that renders and updates the game and checks for key presses */
@@ -121,8 +107,6 @@ public class Game {
 
             render();
             update(Constants.STEP);
-
-
         }
         CloseWindow();
     }
@@ -145,9 +129,6 @@ public class Game {
                 -Road.ROAD.HILL.MEDIUM,
                 -Road.ROAD.CURVE.MEDIUM);
 
-
-
-
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 2).color = Constants.STARTCOLORS;
         segments.get(Road.findSegment(Constants.PLAYERZ).index + 3).color = Constants.STARTCOLORS;
 
@@ -159,35 +140,27 @@ public class Game {
 
     private void resetSprites() {
 
-
-        addSprite(10,  billboard7, -1);
-        addSprite(14,  billboard6, -1);
-        addSprite(20,  billboard8, -1);
-        addSprite(30,  billboard9, -1);
-
-
+        addSprite(10, billboard7, -1);
+        addSprite(14, billboard6, -1);
+        addSprite(20, billboard8, -1);
+        addSprite(30, billboard9, -1);
 
         for (int n = 0; n < Constants.SEGMENTLENGTH; n++) {
-            if(n%2==0) {
+            if (n % 2 == 0) {
                 addSprite(n, Util.getRandomTexture(plants), 1);
             }
-
         }
-
-
-
-
     }
-
-
 
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
+
         switch (gameState) {
             case MENU:
                 mainMenu.checkInput();
                 break;
             case SINGLEPLAYER:
+                singlePlayerStats.update();
                 updateSinglePlayer(dt);
             case OPTION:
                 optionsManager.update();
@@ -195,7 +168,7 @@ public class Game {
                 if (IsKeyPressed(KEY_P)) {
                     Game.gameState = GameState.MENU;
                 }
-            break;
+                break;
                 // case MULTIPLAYER:
 
             default:
@@ -221,8 +194,6 @@ public class Game {
                 optionsManager.show = true;
                 optionsManager.showBackground();
                 break;
-
-
         }
 
         EndDrawing();
@@ -233,9 +204,7 @@ public class Game {
         player = new Player(Constants.WIDTH / 2, Constants.HEIGHT - 150);
         player.x -= player.texture.width() * 3 / 2;
         playerSprites.add(player.texture);
-        SPRITESCALE = (float) (0.3 *  1 /player.straight.width());
-
-
+        SPRITESCALE = (float) (0.3 * 1 / player.straight.width());
     }
 
     /** Create the background */
@@ -290,10 +259,18 @@ public class Game {
     // updates all the logic of the singleplayer mode
     private void updateSinglePlayer(double dt) {
 
-       for(Sound s : sounds){
-           s.playSound();
+        // Bounce effect
 
-       }
+        bounce =
+                (int) (((1.5 / Constants.MAXSPEED * Math.random() * Constants.HEIGHT / Constants.WIDTH)
+                                                * Math.random()
+                                                * speed)
+                                        * Util.randomChoice(new int[] {-1, 1}));
+
+        // Here will be played all sounds
+        for (Sound s : sounds) {
+            s.playSound();
+        }
         Road.Segment playerSegment = Road.findSegment(position + Constants.PLAYERZ);
         double speedPercent = speed / Constants.MAXSPEED;
         double dx =
@@ -301,7 +278,6 @@ public class Game {
         // (-1 to +1) in 1 second
 
         trackLength = segments.size() * Constants.SEGMENTLENGTH;
-
 
         position = Util.increase(position, dt * speed, trackLength);
 
@@ -334,10 +310,14 @@ public class Game {
 
         playerSprites.add(player.texture);
 
-        double playerW  = Game.player.straight.width()*  0.3 * ((double) 1 /Game.player.straight.width());
-        for(int n = 0; n < playerSegment.sprites.size(); n++) {
+        double playerW =
+                Game.player.straight.width() * 0.3 * ((double) 1 / Game.player.straight.width());
+        for (int n = 0; n < playerSegment.sprites.size(); n++) {
             Sprite sprite = playerSegment.sprites.get(n);
-            double spriteW = Game.player.straight.width() * 0.3 * ((double) 1 / Game.player.straight.width());
+            double spriteW =
+                    Game.player.straight.width()
+                            * 0.3
+                            * ((double) 1 / Game.player.straight.width());
 
             // Calculate the sprite's offset based on its position and width
             double spriteOffset = sprite.offset + spriteW / 2 * (sprite.offset > 0 ? 1 : -1);
@@ -350,7 +330,6 @@ public class Game {
             }
         }
 
-
         if (keyFaster) speed = Util.accelerate(speed, Constants.ACCEL, dt);
         else if (keySlower) speed = Util.accelerate(speed, Constants.BREAKING, dt);
         else speed = Util.accelerate(speed, Constants.DECEL, dt);
@@ -361,22 +340,17 @@ public class Game {
         playerX = Util.limit(playerX, -2, 2);
         speed = Util.limit(speed, 0, Constants.MAXSPEED);
 
-
-
-
-
         // Tastendruck 'S' zeigt/versteckt die Optionen
         if (IsKeyPressed(KEY_S)) {
             optionsManager.show = !optionsManager.show;
         }
-
-
 
         optionsManager.update();
     }
 
     // renders all the graphics for the singleplayer mode
     private void renderSinglePlayer() {
+
         Road.Segment baseSegment = Road.findSegment(position);
         double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);
 
@@ -389,10 +363,7 @@ public class Game {
                 Util.interpolate(
                         playerSegment.p1.world.y, playerSegment.p2.world.y, playerSegmentPercent);
 
-         maxY = Constants.HEIGHT;
-
-
-
+        maxY = Constants.HEIGHT;
 
         var x = 0;
         var dx = -(baseSegment.curve * baseSegmentPercent);
@@ -408,7 +379,7 @@ public class Game {
         drawTextureParallax(parallaxSurfaceTree, surfaceTrees, surfaceTrees2);
 
         for (int i = 0; i < Constants.DRAWDISTANCE; i++) {
-             segment = segments.get((baseSegment.index + i) % segments.size());
+            segment = segments.get((baseSegment.index + i) % segments.size());
             var segmentLooped = segment.index < baseSegment.index;
             segment.fog =
                     Util.exponentialFog((double) i / Constants.DRAWDISTANCE, Constants.FOGDENSITY);
@@ -453,66 +424,63 @@ public class Game {
                     segment.color);
 
             maxY = segment.p2.screen.y;
-
-
-
-
         }
 
         // Drawing of sprites
         renderSprites(baseSegment);
 
         for (Texture texture : playerSprites) {
-            DrawTexture(texture, player.x, player.y, WHITE);
+
+            DrawTexture(texture, player.x, (int) (player.y + bounce), WHITE);
         }
 
-
-
-
+        singlePlayerStats.draw();
 
         optionsManager.showBackground();
         playerSprites.clear();
     }
 
-    private  void initSounds(){
+    private void initSounds() {
         sounds = new ArrayList<>();
         sounds.add(new Sound(Constants.SOUNDSPATH,"racer"));
     }
 
+    private void createBillboards() {
 
+        billboard1 = LoadTexture(Constants.SPRITETEXTUREPATH + "billboard01.png");
+        billboard2 = LoadTexture(Constants.SPRITETEXTUREPATH + "billboard02.png");
+        billboard3 = LoadTexture(Constants.SPRITETEXTUREPATH + "billboard03.png");
+        billboard4 = LoadTexture(Constants.SPRITETEXTUREPATH + "billboard04.png");
+        billboard5 = LoadTexture(Constants.SPRITETEXTUREPATH + "billboard05.png");
+        billboard6 = LoadTexture(Constants.SPRITETEXTUREPATH + "billboard06.png");
+        billboard7 = LoadTexture(Constants.SPRITETEXTUREPATH + "billboard07.png");
+        billboard8 = LoadTexture(Constants.SPRITETEXTUREPATH + "billboard08.png");
+        billboard9 = LoadTexture(Constants.SPRITETEXTUREPATH + "billboard09.png");
 
-
-
-    private void createBillboards(){
-
-        billboard1 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard01.png");
-        billboard2 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard02.png");
-        billboard3 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard03.png");
-        billboard4 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard04.png");
-        billboard5 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard05.png");
-        billboard6 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard06.png");
-        billboard7 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard07.png");
-        billboard8 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard08.png");
-        billboard9 =  LoadTexture(Constants.SPRITETEXTUREPATH + "billboard09.png");
-
-        billboards = new Texture[]{billboard1,billboard2,billboard3,billboard4,billboard5,
-                billboard6,billboard7,billboard8,billboard9};
-
-
-        }
-    private void createPlants(){
-
-        tree1 =  LoadTexture(Constants.SPRITETEXTUREPATH + "tree1.png");
-        tree2 =  LoadTexture(Constants.SPRITETEXTUREPATH + "tree2.png");
-        palm_tree =  LoadTexture(Constants.SPRITETEXTUREPATH + "palm_tree.png");
-        plants = new Texture[]{tree1,tree2,palm_tree};
-
-
-
+        billboards =
+                new Texture[] {
+                    billboard1,
+                    billboard2,
+                    billboard3,
+                    billboard4,
+                    billboard5,
+                    billboard6,
+                    billboard7,
+                    billboard8,
+                    billboard9
+                };
     }
 
-    private void createColumns(){
-        column =LoadTexture(Constants.SPRITETEXTUREPATH + "column.png");
+    private void createPlants() {
+
+        tree1 = LoadTexture(Constants.SPRITETEXTUREPATH + "tree1.png");
+        tree2 = LoadTexture(Constants.SPRITETEXTUREPATH + "tree2.png");
+        palm_tree = LoadTexture(Constants.SPRITETEXTUREPATH + "palm_tree.png");
+        plants = new Texture[] {tree1, tree2, palm_tree};
+    }
+
+    private void createColumns() {
+        column = LoadTexture(Constants.SPRITETEXTUREPATH + "column.png");
     }
 
     public static void renderSegmentSprites(Road.Segment segment) {
@@ -520,37 +488,52 @@ public class Game {
             for (int i = 0; i < segment.sprites.size(); i++) {
                 Sprite sprite = segment.sprites.get(i);
                 float spriteScale = (float) segment.p1.screen.scale;
-                float spriteX = (float) (segment.p1.screen.x + (spriteScale * sprite.offset * Constants.ROADWIDTH * Constants.WIDTH / 2));
+                float spriteX =
+                        (float)
+                                (segment.p1.screen.x
+                                        + (spriteScale
+                                                * sprite.offset
+                                                * Constants.ROADWIDTH
+                                                * Constants.WIDTH
+                                                / 2));
                 float spriteY = (float) segment.p1.screen.y;
 
                 float offset = (sprite.offset < 0) ? -1 : 0;
 
-                Util.sprite(sprite.texture, Constants.WIDTH, Constants.ROADWIDTH, spriteScale, spriteX, spriteY, offset, (float) -1, Constants.HEIGHT);
+                Util.sprite(
+                        sprite.texture,
+                        Constants.WIDTH,
+                        Constants.ROADWIDTH,
+                        spriteScale,
+                        spriteX,
+                        spriteY,
+                        offset,
+                        (float) -1,
+                        Constants.HEIGHT);
             }
         }
     }
 
     private static void renderSprites(Road.Segment baseSegment) {
-        for(int n = (Constants.DRAWDISTANCE - 1) ; n > 0 ; n--) {
+        for (int n = (Constants.DRAWDISTANCE - 1); n > 0; n--) {
             Road.Segment segment = segments.get((baseSegment.index + n) % segments.size());
             // Iterate through road segments and render sprites
             renderSegmentSprites(segment);
         }
     }
 
-
-
     /**
      * Adds a sprite to the specified segment at a given position with a texture and offset.
      *
-     * This method creates a new Sprite with the provided texture and offset, and adds it
-     * to the sprites list of the segment at the specified position in the Game's segments.
-     * It is designed for use in a 2D environment, such as a game or graphical application.
+     * <p>This method creates a new Sprite with the provided texture and offset, and adds it to the
+     * sprites list of the segment at the specified position in the Game's segments. It is designed
+     * for use in a 2D environment, such as a game or graphical application.
      *
      * @param n The position of the segment where the sprite will be added.
      * @param sprite The texture of the sprite to be added.
      * @param offSet The offset of the sprite in a 2D space.
-     * @throws IndexOutOfBoundsException If the specified position is out of bounds for the segments list.
+     * @throws IndexOutOfBoundsException If the specified position is out of bounds for the segments
+     *     list.
      */
     public void addSprite(int n, Texture sprite, float offSet) {
         try {
@@ -561,7 +544,3 @@ public class Game {
         }
     }
 }
-
-
-
-

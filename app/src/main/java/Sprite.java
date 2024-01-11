@@ -1,8 +1,4 @@
-import com.raylib.Jaylib;
 import com.raylib.Raylib;
-
-import static com.raylib.Jaylib.WHITE;
-import static com.raylib.Raylib.DrawTexturePro;
 
 public class Sprite {
 
@@ -13,8 +9,4 @@ public class Sprite {
         this.texture = texture;
         this.offset = offset;
     }
-
 }
-
-
-
