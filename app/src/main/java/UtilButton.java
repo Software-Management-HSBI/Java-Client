@@ -4,9 +4,10 @@ import static com.raylib.Raylib.*;
 
 public class UtilButton extends Jaylib.Rectangle {
     private String text;
+    private boolean select =false;
 
 
-    private Color color;
+
 
 
 
@@ -24,6 +25,7 @@ public class UtilButton extends Jaylib.Rectangle {
         super(x, y, width, height);
         this.text = text;
 
+
     }
 
 
@@ -36,8 +38,6 @@ public class UtilButton extends Jaylib.Rectangle {
     }
     public void drawWithButton() {
         GuiButton(this, text);
-        //DrawText(text, (int) x(), (int) y(),25,color);
-
     }
 
     /**
@@ -54,6 +54,12 @@ public class UtilButton extends Jaylib.Rectangle {
         return false;
     }
 
+    public void update(){
+        if(buttonClicked()) {
+            select =!select;
+        }
+    }
+
     public String getText() {
         return text;
     }
@@ -62,11 +68,11 @@ public class UtilButton extends Jaylib.Rectangle {
         this.text = text;
     }
 
-    public Color getColor() {
-        return color;
+    public boolean isSelect() {
+        return select;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    public void setSelect(boolean select) {
+        this.select = select;
     }
 }
