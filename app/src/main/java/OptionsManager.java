@@ -63,6 +63,7 @@ public class OptionsManager {
         Constants.DRAWDISTANCE = drawDistance;
         Constants.FOV = fieldOfView;
         Constants.FOGDENSITY = fogDensity;
+
     }
 
     /**

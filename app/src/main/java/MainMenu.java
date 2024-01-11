@@ -69,7 +69,7 @@ public class MainMenu {
             Game.gameState = GameState.SINGLEPLAYER;
             optionsManager.show = false;
         } else if (multiplayerButton.buttonClicked()) {
-            Game.gameState = GameState.MULTIPLAYER;
+            Game.gameState = GameState.LOBBY;
         } else if (exitButton.buttonClicked()) {
             System.exit(0);
         }else if(optionButton.buttonClicked()){
