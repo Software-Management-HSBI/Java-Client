@@ -4,6 +4,7 @@ import static com.raylib.Raylib.*;
 
 import com.raylib.Jaylib;
 import com.raylib.Raylib.Texture;
+import com.raylib.Raylib.Vector2;
 
 import java.util.ArrayList;
 
@@ -220,7 +221,7 @@ public class Game {
                 dt * 2 * speedPercent; // at top speed, should be able to cross from left to right
         // (-1 to +1) in 1 second
 
-        updateNPCs(dt);
+        updateNPCs(dt, playerSegment);
 
         position = Util.increase(position, dt * speed, trackLength);
 
@@ -262,7 +263,6 @@ public class Game {
 
         for(int n = 0 ; n < playerSegment.npcs.size() ; n++) {
             NPC npc = playerSegment.npcs.get(n);
-            double npcW = (npc.texture.getTexture().width() * 3) / (Constants.ROADWIDTH / 2.0);
             double playerW = (player.texture.width()) / (Constants.ROADWIDTH / 2.0);
             double playerXHitbox = playerX - playerW/2;
 
@@ -276,7 +276,7 @@ public class Game {
             // System.out.println("player width: " + player.texture.width() + "\n" + "npc width: " + npcW + "\n");
 
             if (speed > npc.speed) {
-                if (Util.overlap(playerXHitbox, playerW, npc.x, npcW, 0.8)) {
+                if (Util.overlap(playerXHitbox, playerW, npc.x, npc.currentWidth, 0.8)) {
                 speed    = npc.speed * (npc.speed/speed);
                 position = Util.increase(npc.z, -Constants.PLAYERZ, trackLength);
                 break;
@@ -295,11 +295,13 @@ public class Game {
         optionsManager.update();
     }
 
-    private void updateNPCs(double dt) {
+    private void updateNPCs(double dt, Road.Segment playerSegment) {
+        double playerW = (player.texture.width()) / (Constants.ROADWIDTH / 2.0);
+
         for(int i = 0; i < npcs.size(); i++) {
             NPC npc = npcs.get(i);
             Road.Segment oldSegment = Road.findSegment(npc.z);
-            npc.x = npc.x + updateNPCXLocation(npc, oldSegment);
+            npc.x = npc.x + updateNPCXLocation(npc, oldSegment, playerSegment, playerW);
             npc.z = Util.increase(npc.z, dt * npc.speed, trackLength);
             
             Road.Segment newSegment = Road.findSegment(npc.z);
@@ -310,7 +312,47 @@ public class Game {
         }
     }
 
-    private double updateNPCXLocation(NPC pNpc, Road.Segment pOldSegment) {
+    private double updateNPCXLocation(NPC pNpc, Road.Segment pNpcSegment, Road.Segment playerSegment, double playerW) {
+        int ahead = 20;
+
+        if(pNpcSegment.index - playerSegment.index > Constants.DRAWDISTANCE) {
+            return 0;
+        }
+        for(int i = 1; i < ahead; i++) {
+            Road.Segment segment = segments.get((pNpcSegment.index + i) % segments.size());
+
+            double direction = 0;
+
+            if(segment == playerSegment && pNpc.speed > speed && Util.overlap(playerX, playerW, pNpc.x, pNpc.currentWidth, 1.2)) {
+                if(playerX > 0.5)
+                    direction = -1;
+                else if(playerX < -0.5)
+                    direction = 1;
+                else {
+                    if(pNpc.x > playerX)
+                        direction = 1;
+                    else
+                        direction = -1;
+                }
+                return direction * 1/i * (pNpc.speed - speed) / Constants.MAXSPEED;
+            }
+
+            for(NPC otherNpc : segment.npcs) {
+                if(pNpc.speed > otherNpc.speed && Util.overlap(otherNpc.x, otherNpc.currentWidth, pNpc.x, pNpc.currentWidth, 1.2)) {
+                    if(otherNpc.x > 0.5)
+                        direction = -1;
+                    else if(otherNpc.x < -0.5)
+                        direction = 1;
+                    else {
+                        if(pNpc.x > otherNpc.x)
+                            direction = 1;
+                        else
+                            direction = -1;
+                    }
+                    return direction * 1/i * (pNpc.speed - otherNpc.speed) / Constants.MAXSPEED;
+                }
+            }
+        }
         return 0;
     }
 
@@ -407,6 +449,9 @@ public class Game {
 
                 double spriteScale = scale * Constants.WIDTH/2 * Constants.NPCSCALE * Constants.ROADWIDTH;
 
+                // saving width for collision in next frame
+                npc.currentWidth = (npc.texture.getTexture().width() * spriteScale) / (Constants.ROADWIDTH / 2.0);
+
                 double spriteX = Util.interpolate(
                         segment.p1.screen.x,
                         segment.p2.screen.x,
@@ -425,7 +470,7 @@ public class Game {
                 Texture npcTexture = npc.texture.getTexture();
                         
                 // Clip the sprite
-                // int clipHeight = segment.clip - ((int) spriteY - npcTexture.height());
+                // int clipHeight = segment.clip - (int) spriteY;
                 // npcTexture = Util.clipHorizontall(npcTexture, clipHeight);
                 // System.out.println("SegmentClip: " + segment.clip + "\n" + "SpriteY: " + spriteY + "\n");
                 // System.out.println(clipHeight);
