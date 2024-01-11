@@ -18,7 +18,7 @@ public class Game {
     Util.Background surfaceHills, surfaceHills2 = null;
     Util.Background surfaceTrees, surfaceTrees2 = null;
 
-    double bounce;
+    int bounce;
 
     Texture billboard1;
     Texture billboard2;
@@ -262,10 +262,10 @@ public class Game {
         // Bounce effect
 
         bounce =
-                ((1.5 / Constants.MAXSPEED * Math.random() * Constants.HEIGHT / Constants.WIDTH)
-                                * Math.random()
-                                * speed)
-                        * Util.randomChoice(new int[] {-1, 1});
+                (int) (((1.5 / Constants.MAXSPEED * Math.random() * Constants.HEIGHT / Constants.WIDTH)
+                                                * Math.random()
+                                                * speed)
+                                        * Util.randomChoice(new int[] {-1, 1}));
 
         // Here will be played all sounds
         for (Sound s : sounds) {

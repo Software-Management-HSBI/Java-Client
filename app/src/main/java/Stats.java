@@ -29,11 +29,7 @@ public class Stats {
     /** Current frames per second (FPS). */
     public int fps;
 
-    /** Minimum frames per second (FPS) recorded. */
-    public int fpsMin;
 
-    /** Maximum frames per second (FPS) recorded. */
-    public int fpsMax;
 
     /** Total number of frames rendered. */
     public int frames;
@@ -59,7 +55,6 @@ public class Stats {
     // A boolean flag indicating whether the player was colliding in the previous frame.
     private boolean wasColliding = false;
 
-    Road.Segment start1;
     Road.Segment playerSegment;
 
     /**
@@ -76,35 +71,25 @@ public class Stats {
         Raylib.Color backgroundColor = Util.color(255, 0, 0, (int) (0.4 * 255));
         // The color used for rendering children-related statistics on the screen.
         Raylib.Color childenColor = Util.color(255, 255, 255, (int) (0.6 * 255));
-        startTime = System.currentTimeMillis();
+
         prevTime = startTime;
         frames = 0;
     }
 
-    /**
-     * Ends the frame, updating statistics such as frames per second.
-     *
-     * @return The current time in milliseconds.
-     */
-    public long end() {
+
+    /** Updates the game statistics, lap times, and collision information. */
+    public void update() {
         long time = System.currentTimeMillis();
         frames++;
 
         if (time > prevTime + 1000) {
             fps = (int) Math.round((frames * 1000.0) / (time - prevTime));
-            fpsMin = Math.min(fpsMin, fps);
-            fpsMax = Math.max(fpsMax, fps);
+
 
             prevTime = time;
             frames = 0;
         }
 
-        return time;
-    }
-
-    /** Updates the game statistics, lap times, and collision information. */
-    public void update() {
-        startTime = end();
 
         if (IsKeyDown(KEY_UP)) {
             timerStarted = true;
