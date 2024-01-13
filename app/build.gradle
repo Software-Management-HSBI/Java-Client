@@ -20,11 +20,17 @@ repositories {
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
-    implementation 'io.socket:socket.io-client:1.0.0' // Aktuelle Version überprüfen
+    implementation 'io.socket:socket.io-client:1.0.2'
     implementation 'uk.co.electronstudio.jaylib:jaylib:4.5.+'
 
     // This dependency is used by the application.
-    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'com.google.guava:guava:32.0.0-android'
+
+    // JUnit Jupiter for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
+
+    // Mockito for mocking in tests.
+    testImplementation 'org.mockito:mockito-core:3.11.2'
 }
 
 application {
