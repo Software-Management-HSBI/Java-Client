@@ -1,10 +1,10 @@
-import com.raylib.Jaylib;
-
-import java.util.ArrayList;
-
 import static com.raylib.Jaylib.RAYWHITE;
 import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.*;
+
+import com.raylib.Jaylib;
+
+import java.util.ArrayList;
 
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
@@ -58,18 +58,14 @@ public class Game {
 
     static double SPRITESCALE;
 
-     Road.Segment segment;
+    Road.Segment segment;
 
+    static double maxY;
 
-     static double maxY;
-
- OptionsManager optionsManager;
- LobbyManager lobbyManager;
+    OptionsManager optionsManager;
+    LobbyManager lobbyManager;
 
     Stats singlePlayerStats;
-
-
-
 
     static GameState gameState = GameState.MENU;
 
@@ -173,13 +169,12 @@ public class Game {
             case SINGLEPLAYER -> {
                 updateSinglePlayer(dt);
             }
-            case MULTIPLAYER -> {
-            }
+            case MULTIPLAYER -> {}
             case LOBBY -> {
                 lobbyManager.update();
             }
         }
-        if(IsKeyPressed(KEY_P))  gameState = GameState.MENU;
+        if (IsKeyPressed(KEY_P)) gameState = GameState.MENU;
     }
 
     /** Render different gameStates */
@@ -197,12 +192,10 @@ public class Game {
             case SINGLEPLAYER -> {
                 renderSinglePlayer();
             }
-            case MULTIPLAYER -> {
-            }
+            case MULTIPLAYER -> {}
             case LOBBY -> {
                 lobbyManager.drawLobby();
             }
-
         }
 
         EndDrawing();
@@ -271,10 +264,10 @@ public class Game {
         // Bounce effect
 
         bounce =
-                 (((1.5 / Constants.MAXSPEED * Math.random() * Constants.HEIGHT / Constants.WIDTH)
-                                                * Math.random()
-                                                * speed)
-                                        * Util.randomChoice(new int[] {-1, 1}));
+                (((1.5 / Constants.MAXSPEED * Math.random() * Constants.HEIGHT / Constants.WIDTH)
+                                * Math.random()
+                                * speed)
+                        * Util.randomChoice(new int[] {-1, 1}));
 
         // Here will be played all sounds
         for (Sound s : sounds) {
@@ -452,7 +445,7 @@ public class Game {
 
     private void initSounds() {
         sounds = new ArrayList<>();
-        //sounds.add(new Sound(Constants.SOUNDSPATH,"racer"));
+        // sounds.add(new Sound(Constants.SOUNDSPATH,"racer"));
     }
 
     private void createBillboards() {

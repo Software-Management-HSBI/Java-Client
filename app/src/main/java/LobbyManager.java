@@ -1,10 +1,10 @@
-import io.socket.client.Socket;
-
-import java.util.ArrayList;
-
 import static com.raylib.Jaylib.RED;
 import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.*;
+
+import io.socket.client.Socket;
+
+import java.util.ArrayList;
 
 public class LobbyManager {
     private static LobbyManager instance;
@@ -16,13 +16,10 @@ public class LobbyManager {
     private final ArrayList<String> playerList;
     private final ArrayList<UtilButton> playerButtons;
 
-
-
     private Socket socket;
 
     private LobbyManager() {
-        lobbyImage = new Util.Background(
-                LoadTexture(Constants.UITEXTUREPATH + "lobby.png"), 0, 0);
+        lobbyImage = new Util.Background(LoadTexture(Constants.UITEXTUREPATH + "lobby.png"), 0, 0);
 
         playerList = new ArrayList<>();
         playerList.add("Spieler 1");
@@ -51,8 +48,13 @@ public class LobbyManager {
             int buttonX = Constants.WIDTH / 2 - (buttonWidth / 2);
             int buttonY = initialButtonY + i * (buttonHeight + buttonSpacing);
 
-            playerButtons.add(new UtilButton(buttonX, buttonY, buttonWidth, buttonHeight,
-                    playerList.get(i) + "\n" + "NOT READY"));
+            playerButtons.add(
+                    new UtilButton(
+                            buttonX,
+                            buttonY,
+                            buttonWidth,
+                            buttonHeight,
+                            playerList.get(i) + "\n" + "NOT READY"));
         }
     }
 
@@ -81,8 +83,8 @@ public class LobbyManager {
     void drawLobby() {
         DrawTexture(lobbyImage.texture, 0, 0, WHITE);
 
-        if(socket!=null){
-            DrawText(String.valueOf(socket.connected()),10,10,10, RED);
+        if (socket != null) {
+            DrawText(String.valueOf(socket.connected()), 10, 10, 10, RED);
         }
 
         if (playerButtons != null) {
@@ -93,19 +95,21 @@ public class LobbyManager {
     }
 
     boolean allPlayerReady() {
-        return playerButtons.get(0).isSelect() &&
-                playerButtons.get(1).isSelect() &&
-                playerButtons.get(2).isSelect() &&
-                playerButtons.get(3).isSelect();
+        return playerButtons.get(0).isSelect()
+                && playerButtons.get(1).isSelect()
+                && playerButtons.get(2).isSelect()
+                && playerButtons.get(3).isSelect();
     }
 
     void connectToServer() {
         // Überprüfe, ob die Verbindung nicht bereits besteht
         if (socket != null && !socket.connected()) {
-            socket.on(Socket.EVENT_CONNECT, args -> {
-                System.out.println("Verbunden mit dem Socket.IO-Server");
-                sendToServer();
-            });
+            socket.on(
+                    Socket.EVENT_CONNECT,
+                    args -> {
+                        System.out.println("Verbunden mit dem Socket.IO-Server");
+                        sendToServer();
+                    });
             socket.connect();
         }
     }

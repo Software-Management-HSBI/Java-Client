@@ -29,8 +29,6 @@ public class Stats {
     /** Current frames per second (FPS). */
     public int fps;
 
-
-
     /** Total number of frames rendered. */
     public int frames;
 
@@ -76,7 +74,6 @@ public class Stats {
         frames = 0;
     }
 
-
     /** Updates the game statistics, lap times, and collision information. */
     public void update() {
         long time = System.currentTimeMillis();
@@ -85,11 +82,9 @@ public class Stats {
         if (time > prevTime + 1000) {
             fps = (int) Math.round((frames * 1000.0) / (time - prevTime));
 
-
             prevTime = time;
             frames = 0;
         }
-
 
         if (IsKeyDown(KEY_UP)) {
             timerStarted = true;
@@ -141,12 +136,7 @@ public class Stats {
                 50,
                 BLACK);
 
-        DrawText(
-                round + ":Round ",
-                Constants.WIDTH / 2 - 50,
-                150,
-                50,
-                RED);
+        DrawText(round + ":Round ", Constants.WIDTH / 2 - 50, 150, 50, RED);
     }
 
     /** Handles lap time assignments based on the current round. */
