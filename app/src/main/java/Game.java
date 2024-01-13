@@ -17,7 +17,7 @@ public class Game {
     Util.Background surfaceHills, surfaceHills2 = null;
     Util.Background surfaceTrees, surfaceTrees2 = null;
 
-    int bounce;
+    double bounce;
 
     Texture billboard1;
     Texture billboard2;
@@ -75,6 +75,7 @@ public class Game {
 
     /** Initializes the game and starts the game loop */
     public Game() {
+
         singlePlayerStats = new Stats(this);
         InitWindow(Constants.WIDTH, Constants.HEIGHT, "Racer");
         initSounds();
@@ -270,7 +271,7 @@ public class Game {
         // Bounce effect
 
         bounce =
-                (int) (((1.5 / Constants.MAXSPEED * Math.random() * Constants.HEIGHT / Constants.WIDTH)
+                 (((1.5 / Constants.MAXSPEED * Math.random() * Constants.HEIGHT / Constants.WIDTH)
                                                 * Math.random()
                                                 * speed)
                                         * Util.randomChoice(new int[] {-1, 1}));
