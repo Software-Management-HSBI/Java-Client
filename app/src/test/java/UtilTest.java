@@ -107,6 +107,7 @@ public class UtilTest {
         assertNotNull(point.screen);
     }
 
+    // Doesn't work when running the ./gradlew test
     @Test
     public void testGetRandomTexture() {
         // Create a mock array of textures
