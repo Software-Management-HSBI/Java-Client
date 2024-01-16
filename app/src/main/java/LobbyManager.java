@@ -2,8 +2,10 @@ import static com.raylib.Jaylib.RED;
 import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.*;
 
+import io.socket.client.IO;
 import io.socket.client.Socket;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class LobbyManager {
@@ -17,8 +19,17 @@ public class LobbyManager {
     private final ArrayList<UtilButton> playerButtons;
 
     private Socket socket;
+    String serverAddress;
+
+    String[] testDaten = new String[4];
 
     private LobbyManager() {
+        //Testdaten für die Buttons.
+        testDaten[0] = "223,23121,true";
+        testDaten[1] = "4,4r,false";
+        testDaten[2] = "33,221,true";
+        testDaten[3] = "112,55,true";
+
         lobbyImage = new Util.Background(LoadTexture(Constants.UITEXTUREPATH + "lobby.png"), 0, 0);
 
         playerList = new ArrayList<>();
@@ -78,6 +89,7 @@ public class LobbyManager {
         } else if (currentGameState != GameState.LOBBY && socket != null && socket.connected()) {
             serverDisconnect();
         }
+        readFileForButtons(testDaten);
     }
 
     void drawLobby() {
@@ -101,18 +113,34 @@ public class LobbyManager {
                 && playerButtons.get(3).isSelect();
     }
 
+
+
+
+    //Recieve data
     void connectToServer() {
         // Überprüfe, ob die Verbindung nicht bereits besteht
         if (socket != null && !socket.connected()) {
-            socket.on(
-                    Socket.EVENT_CONNECT,
-                    args -> {
-                        System.out.println("Verbunden mit dem Socket.IO-Server");
-                        sendToServer();
-                    });
+            // Ersetze "SERVER_IP" und "SERVER_PORT" durch die tatsächliche Adresse und den Port deines Servers
+             serverAddress = "http://SERVER_IP:3000";
+
+            // Erstelle eine Socket.IO-Verbindung zum Server
+            try {
+                socket = IO.socket(serverAddress);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+
+            // Höre auf das Verbindungsereignis
+            socket.on(Socket.EVENT_CONNECT, args -> {
+                System.out.println("Verbunden mit dem Socket.IO-Server");
+                sendToServer();
+            });
+
+            // Verbinde mit dem Server
             socket.connect();
         }
     }
+
 
     void sendToServer() {
         // Beispiel socket.emit("NachrichtVomClient", "Hallo, Server!");
@@ -121,6 +149,18 @@ public class LobbyManager {
     void serverDisconnect() {
         if (socket != null && socket.connected()) {
             socket.disconnect();
+        }
+    }
+
+    void readFileForButtons(String[] data){
+        int i =0;
+        for(String s: data){
+            if(s.contains("true")){
+                playerButtons.get(i).setSelect(true);
+            }else{
+                playerButtons.get(i).setSelect(false);
+            }
+            i++;
         }
     }
 }
