@@ -157,8 +157,6 @@ public class LobbyManager {
         for(String s: data){
             if(s.contains("true")){
                 playerButtons.get(i).setSelect(true);
-            }else{
-                playerButtons.get(i).setSelect(false);
             }
             i++;
         }
