@@ -54,7 +54,7 @@ public class Game {
     double hillOffset;
     double treeOffset;
 
-    MainMenu mainMenu;
+    static MainMenu mainMenu;
 
     static double SPRITESCALE;
 
@@ -62,8 +62,8 @@ public class Game {
 
     static double maxY;
 
-    OptionsManager optionsManager;
-    LobbyManager lobbyManager;
+    static OptionsManager optionsManager;
+    static LobbyManager lobbyManager;
 
     Stats singlePlayerStats;
 
@@ -111,7 +111,9 @@ public class Game {
             render();
             update(Constants.STEP);
         }
+        lobbyManager.serverDisconnect();
         CloseWindow();
+        System.exit(0);
     }
 
     /** Initialize the road segments and set the track length */
@@ -158,6 +160,7 @@ public class Game {
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
 
+        
         switch (gameState) {
             case MENU -> {
                 mainMenu.checkInput();
@@ -175,6 +178,7 @@ public class Game {
             }
         }
         if (IsKeyPressed(KEY_P)) gameState = GameState.MENU;
+        if(IsKeyPressed(KEY_K)) lobbyManager.sendTestMessage();
     }
 
     /** Render different gameStates */

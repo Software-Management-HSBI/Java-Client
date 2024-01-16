@@ -63,6 +63,7 @@ public class MainMenu {
             optionsManager.show = false;
         } else if (multiplayerButton.buttonClicked()) {
             Game.gameState = GameState.LOBBY;
+            Game.lobbyManager.connectToServer();
         } else if (exitButton.buttonClicked()) {
             System.exit(0);
         } else if (optionButton.buttonClicked()) {

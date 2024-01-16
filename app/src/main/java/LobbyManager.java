@@ -29,29 +29,53 @@ public class LobbyManager {
         testDaten[1] = "4,4r,false";
         testDaten[2] = "33,221,true";
         testDaten[3] = "112,55,true";
-
+        
         lobbyImage = new Util.Background(LoadTexture(Constants.UITEXTUREPATH + "lobby.png"), 0, 0);
-
+        
         playerList = new ArrayList<>();
         playerList.add("Spieler 1");
         playerList.add("Spieler 2");
         playerList.add("Spieler 3");
         playerList.add("Spieler 4");
-
+        
         playerButtons = new ArrayList<>();
         buttonWidth = 200;
         buttonHeight = 50;
         buttonSpacing = 20;
         initialButtonY = 50;
-
+        
         createButtons();
     }
-
+    
     public static LobbyManager getInstance() {
         if (instance == null) {
             instance = new LobbyManager();
         }
         return instance;
+    }
+    
+    public void update() {
+        if (playerButtons != null) {
+            for (UtilButton playerButton : playerButtons) {
+
+                playerButton.update();
+                if(playerButton.isSelect()){
+                    playerButton.setText("READY");
+                }
+                else{
+                    playerButton.setText("NOT READY");
+                }
+                
+            }
+        }
+
+        if (allPlayerReady()) {
+
+            // Here we can start the multiplayer session
+
+        }
+
+        // readFileForButtons(testDaten);
     }
 
     private void createButtons() {
@@ -69,28 +93,6 @@ public class LobbyManager {
         }
     }
 
-    public void update() {
-        if (playerButtons != null) {
-            for (UtilButton playerButton : playerButtons) {
-                playerButton.update();
-                playerButton.setText(playerButton.isSelect() ? "READY" : "NOT READY");
-            }
-        }
-
-        if (allPlayerReady()) {
-
-            // Here we can start the multiplayer session
-
-        }
-
-        GameState currentGameState = Game.gameState;
-        if (currentGameState == GameState.LOBBY && socket != null && !socket.connected()) {
-            connectToServer();
-        } else if (currentGameState != GameState.LOBBY && socket != null && socket.connected()) {
-            serverDisconnect();
-        }
-        readFileForButtons(testDaten);
-    }
 
     void drawLobby() {
         DrawTexture(lobbyImage.texture, 0, 0, WHITE);
@@ -113,47 +115,54 @@ public class LobbyManager {
                 && playerButtons.get(3).isSelect();
     }
 
-
-
-
     //Recieve data
     void connectToServer() {
         // Überprüfe, ob die Verbindung nicht bereits besteht
-        if (socket != null && !socket.connected()) {
-            // Ersetze "SERVER_IP" und "SERVER_PORT" durch die tatsächliche Adresse und den Port deines Servers
-             serverAddress = "http://SERVER_IP:3000";
+        // System.out.println(socket);
+        // System.out.println(socket.connected());
 
+        if (socket != null) {
+            if(socket.connected())
+                return;
+        }
+
+        else {
+            // Ersetze "SERVER_IP" und "SERVER_PORT" durch die tatsächliche Adresse und den Port deines Servers
+            serverAddress = "http://ec2-18-159-61-52.eu-central-1.compute.amazonaws.com:3000";
+            
             // Erstelle eine Socket.IO-Verbindung zum Server
             try {
                 socket = IO.socket(serverAddress);
+                System.out.println("Connected to Server");
             } catch (URISyntaxException e) {
+                System.out.println("Connectiong failed");
                 throw new RuntimeException(e);
             }
-
-            // Höre auf das Verbindungsereignis
-            socket.on(Socket.EVENT_CONNECT, args -> {
-                System.out.println("Verbunden mit dem Socket.IO-Server");
-                sendToServer();
-            });
-
+            
             // Verbinde mit dem Server
             socket.connect();
+            socket.on("road", (data) -> {System.out.println("received");});
         }
     }
-
-
-    void sendToServer() {
-        // Beispiel socket.emit("NachrichtVomClient", "Hallo, Server!");
-    }
-
+    
     void serverDisconnect() {
-        if (socket != null && socket.connected()) {
-            socket.disconnect();
+        if (socket != null) {
+            if(socket.connected()) {
+                socket.disconnect();
+                socket = null;
+                System.out.println("Disconected from the server");
+            }        
         }
+    }
+    
+    void sendTestMessage() {
+        // socket.emit("start", "Test Message", (response) -> {System.out.println(response);});
+        socket.emit("start", "Test Message");
+        System.out.println("Send message");
     }
 
     void readFileForButtons(String[] data){
-        int i =0;
+        int i = 0;
         for(String s: data){
             if(s.contains("true")){
                 playerButtons.get(i).setSelect(true);
