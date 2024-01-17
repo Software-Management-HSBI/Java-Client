@@ -7,9 +7,6 @@ public class NPC {
     // TExture of the NPC
     public final NPCType texture;
     
-    // Width of the NPC in Road coordinates
-    double currentWidth;
-    
     // Z Koordinate of the NPC (race track length)
     public double z;
 

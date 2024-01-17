@@ -276,7 +276,7 @@ public class Game {
             // System.out.println("player width: " + player.texture.width() + "\n" + "npc width: " + npcW + "\n");
 
             if (speed > npc.speed) {
-                if (Util.overlap(playerXHitbox, playerW, npc.x, npc.currentWidth, 0.8)) {
+                if (Util.overlap(playerXHitbox, playerW, npc.x, npc.texture.getTexture().width() * Constants.NPCSCALE, 0.8)) {
                 speed    = npc.speed * (npc.speed/speed);
                 position = Util.increase(npc.z, -Constants.PLAYERZ, trackLength);
                 break;
@@ -323,7 +323,7 @@ public class Game {
 
             double direction = 0;
 
-            if(segment == playerSegment && pNpc.speed > speed && Util.overlap(playerX, playerW, pNpc.x, pNpc.currentWidth, 1.2)) {
+            if(segment == playerSegment && pNpc.speed > speed && Util.overlap(playerX, playerW, pNpc.x, pNpc.texture.getTexture().width() * Constants.NPCSCALE, 1.2)) {
                 if(playerX > 0.5)
                     direction = -1;
                 else if(playerX < -0.5)
@@ -338,7 +338,7 @@ public class Game {
             }
 
             for(NPC otherNpc : segment.npcs) {
-                if(pNpc.speed > otherNpc.speed && Util.overlap(otherNpc.x, otherNpc.currentWidth, pNpc.x, pNpc.currentWidth, 1.2)) {
+                if(pNpc.speed > otherNpc.speed && Util.overlap(otherNpc.x, otherNpc.texture.getTexture().width() * Constants.NPCSCALE, pNpc.x, pNpc.texture.getTexture().width() * Constants.NPCSCALE, 1.2)) {
                     if(otherNpc.x > 0.5)
                         direction = -1;
                     else if(otherNpc.x < -0.5)
@@ -448,9 +448,6 @@ public class Game {
                         npcPercent);
 
                 double spriteScale = scale * Constants.WIDTH/2 * Constants.NPCSCALE * Constants.ROADWIDTH;
-
-                // saving width for collision in next frame
-                npc.currentWidth = (npc.texture.getTexture().width() * spriteScale) / (Constants.ROADWIDTH / 2.0);
 
                 double spriteX = Util.interpolate(
                         segment.p1.screen.x,
