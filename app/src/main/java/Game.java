@@ -79,6 +79,9 @@ public class Game {
 
     long currentTime = System.currentTimeMillis();
 
+    private int countReceived = 0;
+    private int countNoData = 0;
+
     /** Initializes the game and starts the game loop */
     public Game() {
 
@@ -128,6 +131,8 @@ public class Game {
             render();
             update(Constants.STEP);
         }
+        System.out.println("Received: " + countReceived);
+        System.out.println("Not Received: " + countNoData);
         client.serverDisconnect();
         CloseWindow();
         System.exit(0);
@@ -371,10 +376,16 @@ public class Game {
         }
 
         client.sendPlayerData((int) position, playerX);
-        // ArrayList<HashMap<String, Double>> data = client.receiveData();
-        // for(HashMap<String, Double> currentData : data){
-        //     System.out.println(currentData);
-        // }
+        ArrayList<HashMap<String, Double>> data = client.receiveData();
+        if(data != null) {
+            countReceived++;
+            for(HashMap<String, Double> currentData : data){
+                System.out.println(currentData + "\n");
+            }
+        }
+        else {
+            countNoData++;
+        }
  
         singlePlayerStats.update();
         optionsManager.update();

@@ -22,7 +22,7 @@ public class Client {
 
     private ArrayList<HashMap<String, Double>> currentData;
 
-    private void Client()
+    private Client()
     {
         currentData = new ArrayList<HashMap<String, Double>>();
     }
@@ -59,12 +59,11 @@ public class Client {
             // Verbinde mit dem Server
             socket.connect();
 
-            // event Listener
+            // event Listener ########################################################################
 
             socket.on("road", (data) -> {System.out.println("received");});
             socket.on("update", (data)
             -> {
-                JSONObject a = (JSONObject) data[0];
                 for(Object dataObject : data) {
                     if(dataObject == null)
                         continue;
@@ -127,23 +126,27 @@ public class Client {
     }
     
     public ArrayList<HashMap<String, Double>> receiveData() {
-        ArrayList<HashMap<String, Double>> data = currentData;
+        ArrayList<HashMap<String, Double>> data = new ArrayList<>();
+        data.addAll(currentData);
         // current Data wird gelöscht
         // um eventuel keine Daten zu verlieren,
         // werden nur die Daten gelöscht die auch kopiert wurden
 
-        for(HashMap<String, Double> singleData : data) {
-            currentData.remove(singleData);
-        }
-
+        // Wenns leer ist
         if(data.isEmpty()) {
             System.out.println("No Data received");
             return null;
         }
-        else if(data.size() > 1) {
+
+        // letzte daten löschen
+        currentData.removeAll(data);
+        
+        // wenns mehr als einer sind(zu viele)
+        if(data.size() > 1) {
             System.out.println("More than one Update, total: " + data.size());
             return data;
         }
+        // wenns genau einer sind, wie es sein soll
         else
             return data;
     }
