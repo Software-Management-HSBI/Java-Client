@@ -419,8 +419,17 @@ public class Game {
                     boolean dataFound = false;
                     for(HashMap<String, Double> singleData : data) {
                         if(singleData.get("player") == player.player) {
+                            Road.Segment oldSegment = Road.findSegment(player.position);
+
                             player.x = singleData.get("x");
                             player.position = (int) (double) singleData.get("position");
+
+                            Road.Segment newSegment = Road.findSegment(player.position);
+                            if (oldSegment != newSegment) {
+                                oldSegment.otherPlayers.remove(player);
+                                newSegment.otherPlayers.add(player);
+                            }
+
                             dataFound = true;
                             System.out.println("Player " + player.player + ": x- " + player.x + ", position-" + player.position);
                         }
