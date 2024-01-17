@@ -4,6 +4,7 @@ import static com.raylib.Raylib.*;
 
 import com.raylib.Jaylib;
 import com.raylib.Raylib.Texture;
+import com.raylib.Raylib.Vector2;
 
 import io.socket.client.Socket;
 
@@ -77,7 +78,7 @@ public class Game {
 
     public static Client client;
 
-    public static ArrayList<otherPlayer> otherPlayers = new ArrayList<>();
+    public static ArrayList<OtherPlayer> otherPlayers = new ArrayList<>();
 
     long currentTime = System.currentTimeMillis();
 
@@ -108,7 +109,8 @@ public class Game {
         client = Client.getInstance();
 
         //TestPlayer
-        otherPlayer otherPlayer = new otherPlayer(2);
+        OtherPlayer otherPlayer = new OtherPlayer(2);
+        otherPlayers.add(otherPlayer);
 
         gameLoop();
     }
@@ -412,7 +414,7 @@ public class Game {
             ArrayList<HashMap<String, Double>> data;
             data = client.receiveData();
 
-            for(otherPlayer player : otherPlayers) {
+            for(OtherPlayer player : otherPlayers) {
                 if(data != null) {
                     boolean dataFound = false;
                     for(HashMap<String, Double> singleData : data) {
@@ -509,6 +511,54 @@ public class Game {
                     segment.color);
 
             maxY = segment.p2.screen.y;
+        }
+
+        for(int i = Constants.DRAWDISTANCE - 1; i > 0; i--) {
+
+            Road.Segment segment = segments.get((baseSegment.index + i) % segments.size());
+
+            for(OtherPlayer otherPlayer : otherPlayers) {
+
+                double otherPlayerPercent = Util.percentRemaining((int) otherPlayer.position, Constants.SEGMENTLENGTH);
+
+                double scale = Util.interpolate(
+                        segment.p1.screen.scale,
+                        segment.p2.screen.scale,
+                        otherPlayerPercent);
+
+                double spriteScale = scale * Constants.WIDTH/2 * Constants.CARSCALE * Constants.ROADWIDTH;
+
+                double spriteX = Util.interpolate(
+                        segment.p1.screen.x,
+                        segment.p2.screen.x,
+                        otherPlayerPercent)
+                        + (scale * otherPlayer.x * Constants.ROADWIDTH * Constants.WIDTH / 2);
+
+                double spriteY = Util.interpolate(
+                        segment.p1.screen.y,
+                        segment.p2.screen.y,
+                        otherPlayerPercent)
+                        - (spriteScale * otherPlayer.getTexture().height());
+
+                // check if sprite is not visible
+                // if(spriteY > segment.clip) continue;
+                if(spriteY > maxY) continue;
+
+                Texture otherPlayerTexture = otherPlayer.getTexture();
+                        
+                // Clip the sprite
+                // int clipHeight = segment.clip - (int) spriteY;
+                // npcTexture = Util.clipHorizontall(npcTexture, clipHeight);
+                // System.out.println("SegmentClip: " + segment.clip + "\n" + "SpriteY: " + spriteY + "\n");
+                // System.out.println(clipHeight);
+
+                Vector2 origin = new Vector2();
+                origin.x((int) spriteX);
+                origin.y((int) spriteY);
+
+                DrawTextureEx(otherPlayerTexture, origin, 0f, (float) spriteScale, WHITE);
+                // DrawTexture(npcTexture, 0, 0, WHITE);
+            }
         }
 
         // Drawing of sprites

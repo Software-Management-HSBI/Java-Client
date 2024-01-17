@@ -4,7 +4,7 @@ import static com.raylib.Raylib.LoadTexture;
 
 import java.util.HashMap;
 
-public class otherPlayer {
+public class OtherPlayer {
 
     public static final HashMap<Integer, Texture> PLAYERCOLOURS
     = new HashMap<Integer, Texture>() {{
@@ -22,7 +22,7 @@ public class otherPlayer {
 
     public double x;
 
-    public otherPlayer(int pPlayer) {
+    public OtherPlayer(int pPlayer) {
         this.player = pPlayer;
         this.texture = PLAYERCOLOURS.get(pPlayer);
     }
