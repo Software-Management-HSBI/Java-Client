@@ -68,6 +68,7 @@ public class Client {
                     System.out.println("Wrong Data Type " + e.getMessage());
                     // Handle the exception or provide appropriate fallback
                 }
+                System.out.println("received");
             });
         }
     }
@@ -111,7 +112,7 @@ public class Client {
         }
         else if(data.size() > 1) {
             System.out.println("More than one Update, total: " + data.size());
-            return null;
+            return data;
         }
         else
             return data;
@@ -128,7 +129,7 @@ public class Client {
         data.put("content", 1.0);
         data.put("position", (double) position);
         data.put("x", x);
-        socket.emit("update ",data);
+        socket.emit("update",data);
     }
 
 

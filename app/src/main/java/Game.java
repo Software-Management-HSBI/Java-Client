@@ -3,6 +3,7 @@ import static com.raylib.Jaylib.WHITE;
 import static com.raylib.Raylib.*;
 
 import com.raylib.Jaylib;
+import com.raylib.Raylib.Texture;
 
 import io.socket.client.Socket;
 
@@ -76,6 +77,8 @@ public class Game {
 
     public static Client client;
 
+    long currentTime = System.currentTimeMillis();
+
     /** Initializes the game and starts the game loop */
     public Game() {
 
@@ -105,6 +108,11 @@ public class Game {
     /** The game loop that renders and updates the game and checks for key presses */
     public void gameLoop() {
         while (!WindowShouldClose()) {
+
+            long time = System.currentTimeMillis();
+            // System.out.println(time - currentTime);
+            currentTime = time;
+
             if (IsKeyDown(KEY_LEFT)) keyLeft = true;
             else keyLeft = false;
 
@@ -363,10 +371,10 @@ public class Game {
         }
 
         client.sendPlayerData((int) position, playerX);
-        ArrayList<HashMap<String, Double>> data = client.receiveData();
-        for(HashMap<String, Double> currentData : data){
-            System.out.println(currentData);
-        }
+        // ArrayList<HashMap<String, Double>> data = client.receiveData();
+        // for(HashMap<String, Double> currentData : data){
+        //     System.out.println(currentData);
+        // }
  
         singlePlayerStats.update();
         optionsManager.update();
