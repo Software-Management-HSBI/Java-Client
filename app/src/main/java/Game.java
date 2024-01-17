@@ -7,6 +7,9 @@ import com.raylib.Jaylib;
 import io.socket.client.Socket;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.print.attribute.HashAttributeSet;
 
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
@@ -165,23 +168,24 @@ public class Game {
 
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
+        client.connectToServer();
 
         switch (gameState) {
             case MENU -> {
                 mainMenu.checkInput();
-                client.serverDisconnect();
+                // client.serverDisconnect();
             }
             case OPTION -> {
                 optionsManager.update();
             }
             case SINGLEPLAYER -> {
                 updateSinglePlayer(dt);
-                client.serverDisconnect();
+                // client.serverDisconnect();
             }
             case MULTIPLAYER -> {}
             case LOBBY -> {
                 lobbyManager.update();
-                client.connectToServer();
+                // client.connectToServer();
             }
         }
         if (IsKeyPressed(KEY_P)) gameState = GameState.MENU;
@@ -358,6 +362,12 @@ public class Game {
             optionsManager.show = !optionsManager.show;
         }
 
+        client.sendPlayerData((int) position, playerX);
+        ArrayList<HashMap<String, Double>> data = client.receiveData();
+        for(HashMap<String, Double> currentData : data){
+            System.out.println(currentData);
+        }
+ 
         singlePlayerStats.update();
         optionsManager.update();
     }
