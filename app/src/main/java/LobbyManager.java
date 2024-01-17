@@ -18,7 +18,6 @@ public class LobbyManager {
     private final ArrayList<String> playerList;
     private final ArrayList<UtilButton> playerButtons;
 
-    private Socket socket;
     String serverAddress;
 
     String[] testDaten = new String[4];
@@ -93,13 +92,12 @@ public class LobbyManager {
         }
     }
 
-
     void drawLobby() {
         DrawTexture(lobbyImage.texture, 0, 0, WHITE);
 
-        if (socket != null) {
-            DrawText(String.valueOf(socket.connected()), 10, 10, 10, RED);
-        }
+        // if (Game.client != null) {
+            DrawText(String.valueOf(Game.client.isConnected()), 10, 10, 10, RED);
+        // }
 
         if (playerButtons != null) {
             for (UtilButton playerButton : playerButtons) {
@@ -115,59 +113,4 @@ public class LobbyManager {
                 && playerButtons.get(3).isSelect();
     }
 
-    //Recieve data
-    void connectToServer() {
-        // Überprüfe, ob die Verbindung nicht bereits besteht
-        // System.out.println(socket);
-        // System.out.println(socket.connected());
-
-        if (socket != null) {
-            if(socket.connected())
-                return;
-        }
-
-        else {
-            // Ersetze "SERVER_IP" und "SERVER_PORT" durch die tatsächliche Adresse und den Port deines Servers
-            serverAddress = "http://ec2-18-159-61-52.eu-central-1.compute.amazonaws.com:3000";
-            
-            // Erstelle eine Socket.IO-Verbindung zum Server
-            try {
-                socket = IO.socket(serverAddress);
-                System.out.println("Connected to Server");
-            } catch (URISyntaxException e) {
-                System.out.println("Connectiong failed");
-                throw new RuntimeException(e);
-            }
-            
-            // Verbinde mit dem Server
-            socket.connect();
-            socket.on("road", (data) -> {System.out.println("received");});
-        }
-    }
-    
-    void serverDisconnect() {
-        if (socket != null) {
-            if(socket.connected()) {
-                socket.disconnect();
-                socket = null;
-                System.out.println("Disconected from the server");
-            }        
-        }
-    }
-    
-    void sendTestMessage() {
-        // socket.emit("start", "Test Message", (response) -> {System.out.println(response);});
-        socket.emit("start", "Test Message");
-        System.out.println("Send message");
-    }
-
-    void readFileForButtons(String[] data){
-        int i = 0;
-        for(String s: data){
-            if(s.contains("true")){
-                playerButtons.get(i).setSelect(true);
-            }
-            i++;
-        }
-    }
 }

@@ -4,6 +4,8 @@ import static com.raylib.Raylib.*;
 
 import com.raylib.Jaylib;
 
+import io.socket.client.Socket;
+
 import java.util.ArrayList;
 
 /** The main game class that initializes the game and starts the game loop */
@@ -69,6 +71,8 @@ public class Game {
 
     static GameState gameState = GameState.MENU;
 
+    public static Client client;
+
     /** Initializes the game and starts the game loop */
     public Game() {
 
@@ -89,6 +93,8 @@ public class Game {
         optionsManager = OptionsManager.getInstance();
         mainMenu = MainMenu.getInstance();
         lobbyManager = LobbyManager.getInstance();
+
+        client = Client.getInstance();
 
         gameLoop();
     }
@@ -111,7 +117,7 @@ public class Game {
             render();
             update(Constants.STEP);
         }
-        lobbyManager.serverDisconnect();
+        client.serverDisconnect();
         CloseWindow();
         System.exit(0);
     }
@@ -160,25 +166,26 @@ public class Game {
     /** Update the position, speed and texture of the player */
     public void update(double dt) {
 
-        
         switch (gameState) {
             case MENU -> {
                 mainMenu.checkInput();
-                mainMenu.checkInput();
+                client.serverDisconnect();
             }
             case OPTION -> {
                 optionsManager.update();
             }
             case SINGLEPLAYER -> {
                 updateSinglePlayer(dt);
+                client.serverDisconnect();
             }
             case MULTIPLAYER -> {}
             case LOBBY -> {
                 lobbyManager.update();
+                client.connectToServer();
             }
         }
         if (IsKeyPressed(KEY_P)) gameState = GameState.MENU;
-        if(IsKeyPressed(KEY_K)) lobbyManager.sendTestMessage();
+        if(IsKeyPressed(KEY_K)) client.sendTestMessage();
     }
 
     /** Render different gameStates */
