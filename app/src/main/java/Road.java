@@ -30,6 +30,7 @@ public class Road {
             this.color = color;
             this.curve = curve;
             sprites = new ArrayList<>();
+            otherPlayers = new ArrayList<>();
         }
     }
 
