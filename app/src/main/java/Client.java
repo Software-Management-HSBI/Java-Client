@@ -1,4 +1,5 @@
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.socket.client.IO;
@@ -11,10 +12,11 @@ public class Client {
     private String serverAddress;
     private Socket socket;
 
+    private ArrayList<HashMap<String, Double>> currentData;
 
     private void Client()
     {
-        socket.on("road", (data) -> {System.out.println("received");});
+        currentData = new ArrayList<HashMap<String, Double>>();
     }
 
     public static Client getInstance() {
@@ -48,6 +50,25 @@ public class Client {
             
             // Verbinde mit dem Server
             socket.connect();
+
+            // event Listener
+
+            socket.on("road", (data) -> {System.out.println("received");});
+            socket.on("update", (data)
+            -> {
+                try {
+                    // auch wenn es mit try und catch umgeben ist, kommt hier eine Warnung, deswegen wird sie unterdrückt
+                    @SuppressWarnings("unchecked")
+                    HashMap<String, Double>[] castData = (HashMap<String, Double>[]) data;
+                    for(HashMap<String, Double> singleData : castData) {
+                        currentData.add(singleData);
+                    }
+
+                } catch (ClassCastException e) {
+                    System.out.println("Wrong Data Type " + e.getMessage());
+                    // Handle the exception or provide appropriate fallback
+                }
+            });
         }
     }
     
@@ -74,8 +95,26 @@ public class Client {
         System.out.println("Send message");
     }
     
-    public HashMap<String, Integer> receiveData() {
+    public ArrayList<HashMap<String, Double>> receiveData() {
+        ArrayList<HashMap<String, Double>> data = currentData;
+        // current Data wird gelöscht
+        // um eventuel keine Daten zu verlieren,
+        // werden nur die Daten gelöscht die auch kopiert wurden
 
+        for(HashMap<String, Double> singleData : data) {
+            currentData.remove(singleData);
+        }
+
+        if(data.isEmpty()) {
+            System.out.println("No Data received");
+            return null;
+        }
+        else if(data.size() > 1) {
+            System.out.println("More than one Update, total: " + data.size());
+            return null;
+        }
+        else
+            return data;
     }
 
     public void sendPlayerData(int position, double x)
@@ -84,6 +123,7 @@ public class Client {
         content:
         1 : carUpdate
         */
+
         HashMap<String, Double> data = new HashMap<>();
         data.put("content", 1.0);
         data.put("position", (double) position);
