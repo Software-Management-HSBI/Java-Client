@@ -1,9 +1,17 @@
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 public class Client {
 
@@ -56,31 +64,53 @@ public class Client {
             socket.on("road", (data) -> {System.out.println("received");});
             socket.on("update", (data)
             -> {
-                try {
-                    // auch wenn es mit try und catch umgeben ist, kommt hier eine Warnung, deswegen wird sie unterdrückt
-                    @SuppressWarnings("unchecked")
-                    HashMap<String, Double>[] castData = (HashMap<String, Double>[]) data;
-                    for(HashMap<String, Double> singleData : castData) {
-                        currentData.add(singleData);
+                JSONObject a = (JSONObject) data[0];
+                for(Object dataObject : data) {
+                    if(dataObject == null)
+                        continue;
+
+                    HashMap<String, Double> dataHashMap = null;
+
+                    JSONObject dataJSONObject = (JSONObject) dataObject;
+                    String dataString = dataJSONObject.toString();
+
+                    try {
+                        dataHashMap = new Gson().fromJson(dataString, HashMap.class);
+                    } catch (JsonSyntaxException e) {
+                        System.out.println("conversion to HashMap failed");
+                        e.printStackTrace();
                     }
 
-                } catch (ClassCastException e) {
-                    System.out.println("Wrong Data Type " + e.getMessage());
-                    // Handle the exception or provide appropriate fallback
+                    if(dataHashMap != null)
+                        currentData.add(dataHashMap);
                 }
-                System.out.println("received");
-            });
+                    System.out.println("received");
+                });
+            }
         }
-    }
+        
+        public void sendPlayerData(int position, double x)
+        {
+            /*
+            content:
+            1 : carUpdate
+            */
     
-    public void serverDisconnect() {
-        if (socket != null) {
-            if(socket.connected()) {
-                socket.disconnect();
-                socket = null;
-                System.out.println("Disconected from the server");
-            }        
+            HashMap<String, Double> data = new HashMap<>();
+            data.put("content", 1.0);
+            data.put("position", (double) position);
+            data.put("x", x);
+            socket.emit("update",data);
         }
+
+        public void serverDisconnect() {
+            if (socket != null) {
+                if(socket.connected()) {
+                    socket.disconnect();
+                    socket = null;
+                    System.out.println("Disconected from the server");
+                }        
+            }
     }
 
     public boolean isConnected() {
@@ -118,19 +148,6 @@ public class Client {
             return data;
     }
 
-    public void sendPlayerData(int position, double x)
-    {
-        /*
-        content:
-        1 : carUpdate
-        */
-
-        HashMap<String, Double> data = new HashMap<>();
-        data.put("content", 1.0);
-        data.put("position", (double) position);
-        data.put("x", x);
-        socket.emit("update",data);
-    }
 
 
     // void readFileForButtons(String[] data){
@@ -142,6 +159,4 @@ public class Client {
     //         i++;
     //     }
     // }
-
-
 }
