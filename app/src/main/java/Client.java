@@ -83,12 +83,12 @@ public class Client {
                     if(dataHashMap != null)
                         currentData.add(dataHashMap);
                 }
-                    System.out.println("received");
+                    // System.out.println("received");
                 });
             }
         }
         
-        public void sendPlayerData(int position, double x)
+        public void sendPlayerData(int player, int position, double x)
         {
             /*
             content:
@@ -96,7 +96,7 @@ public class Client {
             */
     
             HashMap<String, Double> data = new HashMap<>();
-            data.put("content", 1.0);
+            data.put("player", (double) player);
             data.put("position", (double) position);
             data.put("x", x);
             socket.emit("update",data);
@@ -134,7 +134,7 @@ public class Client {
 
         // Wenns leer ist
         if(data.isEmpty()) {
-            System.out.println("No Data received");
+            // System.out.println("No Data received");
             return null;
         }
 
@@ -143,7 +143,7 @@ public class Client {
         
         // wenns mehr als einer sind(zu viele)
         if(data.size() > 1) {
-            System.out.println("More than one Update, total: " + data.size());
+            // System.out.println("More than one Update, total: " + data.size());
             return data;
         }
         // wenns genau einer sind, wie es sein soll

@@ -77,6 +77,8 @@ public class Game {
 
     public static Client client;
 
+    public static ArrayList<otherPlayer> otherPlayers = new ArrayList<>();
+
     long currentTime = System.currentTimeMillis();
 
     private int countReceived = 0;
@@ -105,6 +107,9 @@ public class Game {
 
         client = Client.getInstance();
 
+        //TestPlayer
+        otherPlayer otherPlayer = new otherPlayer(2);
+
         gameLoop();
     }
 
@@ -128,8 +133,8 @@ public class Game {
             if (IsKeyDown(KEY_DOWN)) keySlower = true;
             else keySlower = false;
 
-            render();
-            update(Constants.STEP);
+            renderMode();
+            updateMode(Constants.STEP);
         }
         System.out.println("Received: " + countReceived);
         System.out.println("Not Received: " + countNoData);
@@ -180,25 +185,30 @@ public class Game {
     }
 
     /** Update the position, speed and texture of the player */
-    public void update(double dt) {
-        client.connectToServer();
-
+    public void updateMode(double dt) {
+        
         switch (gameState) {
             case MENU -> {
                 mainMenu.checkInput();
-                // client.serverDisconnect();
+                client.serverDisconnect();
             }
             case OPTION -> {
                 optionsManager.update();
             }
             case SINGLEPLAYER -> {
-                updateSinglePlayer(dt);
-                // client.serverDisconnect();
+                update(dt);
+                client.serverDisconnect();
             }
-            case MULTIPLAYER -> {}
+            case MULTIPLAYER -> {
+                //ohne in der Lobby gewesen zu sein, kommt man eigentlich nicht in den Multiplayer
+                client.connectToServer();
+                update(dt);
+            }
             case LOBBY -> {
-                lobbyManager.update();
-                // client.connectToServer();
+                // lobby wird erstmal gescipped
+                // lobbyManager.update();
+                client.connectToServer();
+                update(dt);
             }
         }
         if (IsKeyPressed(KEY_P)) gameState = GameState.MENU;
@@ -206,7 +216,7 @@ public class Game {
     }
 
     /** Render different gameStates */
-    public void render() {
+    public void renderMode() {
         BeginDrawing();
 
         switch (gameState) {
@@ -218,11 +228,14 @@ public class Game {
                 optionsManager.showBackground();
             }
             case SINGLEPLAYER -> {
-                renderSinglePlayer();
+                render();
             }
-            case MULTIPLAYER -> {}
+            case MULTIPLAYER -> {
+                render();
+            }
             case LOBBY -> {
-                lobbyManager.drawLobby();
+                // lobbyManager.drawLobby();
+                render();
             }
         }
 
@@ -287,7 +300,7 @@ public class Game {
     }
 
     // updates all the logic of the singleplayer mode
-    private void updateSinglePlayer(double dt) {
+    private void update(double dt) {
 
         // Bounce effect
 
@@ -371,28 +384,57 @@ public class Game {
         speed = Util.limit(speed, 0, Constants.MAXSPEED);
 
         // Tastendruck 'S' zeigt/versteckt die Optionen
-        if (IsKeyPressed(KEY_S)) {
-            optionsManager.show = !optionsManager.show;
+        if(gameState == GameState.LOBBY) {
+            if (IsKeyPressed(KEY_S)) {
+                optionsManager.show = !optionsManager.show;
+            }
+            updateOtherPlayers();
+            client.sendPlayerData(1, (int) (position + Constants.PLAYERZ), playerX);
+        //     ArrayList<HashMap<String, Double>> data = client.receiveData();
+        //     if(data != null) {
+        //         countReceived++;
+        //         for(HashMap<String, Double> currentData : data){
+        //             System.out.println(currentData + "\n");
+        //         }
+        //     }
+        //     else {
+        //         countNoData++;
+        //     }
         }
 
-        client.sendPlayerData((int) position, playerX);
-        ArrayList<HashMap<String, Double>> data = client.receiveData();
-        if(data != null) {
-            countReceived++;
-            for(HashMap<String, Double> currentData : data){
-                System.out.println(currentData + "\n");
-            }
-        }
-        else {
-            countNoData++;
-        }
  
         singlePlayerStats.update();
         optionsManager.update();
     }
 
+    private void updateOtherPlayers() {
+        if(otherPlayers != null) {
+            ArrayList<HashMap<String, Double>> data;
+            data = client.receiveData();
+
+            for(otherPlayer player : otherPlayers) {
+                if(data != null) {
+                    boolean dataFound = false;
+                    for(HashMap<String, Double> singleData : data) {
+                        if(singleData.get("player") == player.player) {
+                            player.x = singleData.get("x");
+                            player.position = (int) (double) singleData.get("position");
+                            dataFound = true;
+                            System.out.println("Player " + player.player + ": x- " + player.x + ", position-" + player.position);
+                        }
+                    }
+                    if(dataFound == false) {
+                        System.out.println("Player " + player.player + " No data");
+                    }
+                }
+            }
+        }
+        else
+            System.out.println("No other Players found");
+    }
+
     // renders all the graphics for the singleplayer mode
-    private void renderSinglePlayer() {
+    private void render() {
 
         Road.Segment baseSegment = Road.findSegment(position);
         double baseSegmentPercent = Util.percentRemaining((int) position, Constants.SEGMENTLENGTH);

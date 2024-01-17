@@ -15,6 +15,7 @@ public class Road {
      */
     public class Segment {
         public ArrayList<Sprite> sprites;
+        public ArrayList<otherPlayer> otherPlayers;
         int index;
         Util.Point p1;
         Util.Point p2;
