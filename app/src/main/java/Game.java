@@ -13,6 +13,8 @@ import java.util.HashMap;
 
 import javax.print.attribute.HashAttributeSet;
 
+import org.bytedeco.javacpp.annotation.Const;
+
 /** The main game class that initializes the game and starts the game loop */
 public class Game {
     public static ArrayList<Road.Segment> segments;
@@ -110,19 +112,11 @@ public class Game {
 
         //TestPlayer
         OtherPlayer otherPlayer = new OtherPlayer(2);
+        otherPlayer.position = (int) Constants.PLAYERZ;
         otherPlayers.add(otherPlayer);
 
         Road.Segment startSegment = Road.findSegment(Constants.PLAYERZ);
-        // try {
-            startSegment.otherPlayers.add(otherPlayer);
-        // }
-        // catch(Exception e)
-        // {
-        //     System.out.println(e.toString());
-        //     System.out.println(e.getStackTrace());
-        // }
-
-
+        startSegment.otherPlayers.add(otherPlayer);
 
         gameLoop();
     }
@@ -538,7 +532,7 @@ public class Game {
 
             Road.Segment segment = segments.get((baseSegment.index + i) % segments.size());
 
-            for(OtherPlayer otherPlayer : otherPlayers) {
+            for(OtherPlayer otherPlayer : segment.otherPlayers) {
 
                 double otherPlayerPercent = Util.percentRemaining((int) otherPlayer.position, Constants.SEGMENTLENGTH);
 
@@ -563,7 +557,7 @@ public class Game {
 
                 // check if sprite is not visible
                 // if(spriteY > segment.clip) continue;
-                if(spriteY > maxY) continue;
+                // if(spriteY > maxY) continue;
 
                 Texture otherPlayerTexture = otherPlayer.getTexture();
                         

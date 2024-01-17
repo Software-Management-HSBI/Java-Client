@@ -38,7 +38,7 @@ public class Constants {
     public static double HILLSPEED = 0.002;
     public static double TREESPEED = 0.003;
 
-    public static double CARSCALE = (1.0/80.0) * 0.3;
+    public static final double CARSCALE = (1.0/80.0) * 0.3;
 
     public static final HashMap<String, Color> STARTCOLORS =
             new HashMap<String, Color>() {
