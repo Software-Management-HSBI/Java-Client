@@ -381,6 +381,29 @@ public class Game {
             }
         }
 
+        for(int n = 0 ; n < playerSegment.otherPlayers.size() ; n++) {
+            OtherPlayer otherPlayer = playerSegment.otherPlayers.get(n);
+            double playerWidth = (player.texture.width());
+            double playerXHitbox = playerX - playerWidth/2;
+
+            // System.out.println("playerW: " + playerW + "\n" + "npcW: " + npcW + "\n");
+            // System.out.println("playerX: " + playerXHitbox + "\n" + "npcX: " + npc.x + "\n");
+            
+            // * Constants.NPCSCALE
+            // * Constants.WIDTH/2 * Constants.ROADWIDTH;
+            // Vielleicht untere variablen auch noch, muss erst getestet werden
+            
+            // System.out.println("player width: " + player.texture.width() + "\n" + "npc width: " + npcW + "\n");
+
+            // if (speed > otherPlayer.speed) {
+                if (Util.overlap(playerXHitbox, playerWidth, otherPlayer.x, otherPlayer.getTexture().width() * Constants.CARSCALE, 0.8)) {
+                // speed    = otherPlayer.speed * (otherPlayer.speed/speed);
+                position = Util.increase(otherPlayer.position, -Constants.PLAYERZ, trackLength);
+                break;
+                // }
+            }
+        }
+
         if (keyFaster) speed = Util.accelerate(speed, Constants.ACCEL, dt);
         else if (keySlower) speed = Util.accelerate(speed, Constants.BREAKING, dt);
         else speed = Util.accelerate(speed, Constants.DECEL, dt);
