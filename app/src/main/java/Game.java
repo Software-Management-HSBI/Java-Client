@@ -112,6 +112,9 @@ public class Game {
         OtherPlayer otherPlayer = new OtherPlayer(2);
         otherPlayers.add(otherPlayer);
 
+        Road.Segment segement = Road.findSegment(Constants.PLAYERZ);
+        segment.otherPlayers.add(otherPlayer);
+
         gameLoop();
     }
 
