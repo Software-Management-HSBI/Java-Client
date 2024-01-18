@@ -74,6 +74,11 @@ public class LobbyManager {
                         button.setText("Player " + (playerIndex + 1) + " NOT READY");
 
                         OtherPlayer newPlayer = new OtherPlayer(playerIndex + 1);
+                        newPlayer.position = (int) Constants.PLAYERZ;
+
+                        Road.Segment startSegment = Road.findSegment(Constants.PLAYERZ);
+                        startSegment.otherPlayers.add(newPlayer);
+
                         Game.otherPlayers.add(newPlayer);
                         break;
                     }
@@ -92,6 +97,7 @@ public class LobbyManager {
                             System.out.println("Keine ahnung Junge(Lobby Manger Zeile 90)");
                         }
                         break;
+                        
                     }
                     case "playerReady" -> {
                         int playerIndex = (int) (double) singleData.get("player") - 1;
@@ -101,7 +107,7 @@ public class LobbyManager {
                             button.setText("READY");
                         else {
                             button.setText("Player " + (playerIndex + 1) + " READY");
-                            
+
                             for(OtherPlayer player : Game.otherPlayers) {
                                 if(player.player == playerIndex + 1)
                                     player.ready = true;
@@ -110,9 +116,10 @@ public class LobbyManager {
 
                         break;
                     }
-                    case "countDown" -> {
+                    case "countdown" -> {
 
-                        System.out.println(singleData.get("time"));
+                        System.out.println(singleData.get("timer"));
+                        Game.gameState = GameState.MULTIPLAYER;
                         break;
                     }
                     case "finish" -> {
