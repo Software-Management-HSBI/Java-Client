@@ -71,7 +71,7 @@ public class LobbyManager {
                         int playerIndex = (int) (double) singleData.get("player") - 1;
                         UtilButton button = playerButtons.get(playerIndex);
                         button.setSelectable(false);
-                        button.setText("Player " + (playerIndex + 1) + "NOT READY");
+                        button.setText("Player " + (playerIndex + 1) + " NOT READY");
 
                         OtherPlayer newPlayer = new OtherPlayer(playerIndex + 1);
                         Game.otherPlayers.add(newPlayer);
@@ -100,8 +100,12 @@ public class LobbyManager {
                         if(playerIndex + 1 == Game.playerThis)
                             button.setText("READY");
                         else {
-                            button.setText("Plyer " + (playerIndex + 1) + "READY");
-                            Game.otherPlayers.get(playerIndex).ready = true;
+                            button.setText("Player " + (playerIndex + 1) + " READY");
+                            
+                            for(OtherPlayer player : Game.otherPlayers) {
+                                if(player.player == playerIndex + 1)
+                                    player.ready = true;
+                            }
                         }
 
                         break;
