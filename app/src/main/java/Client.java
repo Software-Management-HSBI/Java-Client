@@ -183,7 +183,7 @@ public class Client {
         return output;
     }
     
-    public ArrayList<HashMap<String, Double>> receiveData() {
+    public ArrayList<HashMap<String, Double>> receiveUpdateData() {
         ArrayList<HashMap<String, Double>> data = new ArrayList<>();
         data.addAll(currentUpdateData);
         // current Data wird gelöscht
@@ -198,6 +198,30 @@ public class Client {
 
         // letzte daten löschen
         currentUpdateData.removeAll(data);
+        
+        // wenns mehr als einer sind(zu viele)
+        if(data.size() > 1) {
+            // System.out.println("More than one Update, total: " + data.size());
+            return data;
+        }
+        // wenns genau einer sind, wie es sein soll
+        else
+            return data;
+    }
+
+
+    public ArrayList<HashMap<String, Double>> receiveLobbyData() {
+        ArrayList<HashMap<String, Double>> data = new ArrayList<>();
+        data.addAll(currentLobbyData);
+
+        // Wenns leer ist
+        if(data.isEmpty()) {
+            // System.out.println("No Data received");
+            return null;
+        }
+
+        // letzte daten löschen
+        currentLobbyData.removeAll(data);
         
         // wenns mehr als einer sind(zu viele)
         if(data.size() > 1) {

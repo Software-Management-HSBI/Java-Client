@@ -22,6 +22,10 @@ public class OtherPlayer {
 
     public double x;
 
+    public boolean ready = false;
+
+    public boolean finish = false;
+
     public OtherPlayer(int pPlayer) {
         this.player = pPlayer;
         this.texture = PLAYERCOLOURS.get(pPlayer);

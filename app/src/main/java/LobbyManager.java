@@ -7,6 +7,7 @@ import io.socket.client.Socket;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class LobbyManager {
     private static LobbyManager instance;
@@ -15,27 +16,13 @@ public class LobbyManager {
     private final int buttonSpacing;
     private final int initialButtonY;
     private final Util.Background lobbyImage;
-    private final ArrayList<String> playerList;
     private final ArrayList<UtilButton> playerButtons;
 
     String serverAddress;
 
-    String[] testDaten = new String[4];
-
     private LobbyManager() {
-        //Testdaten für die Buttons.
-        testDaten[0] = "223,23121,true";
-        testDaten[1] = "4,4r,false";
-        testDaten[2] = "33,221,true";
-        testDaten[3] = "112,55,true";
         
         lobbyImage = new Util.Background(LoadTexture(Constants.UITEXTUREPATH + "lobby.png"), 0, 0);
-        
-        playerList = new ArrayList<>();
-        playerList.add("Spieler 1");
-        playerList.add("Spieler 2");
-        playerList.add("Spieler 3");
-        playerList.add("Spieler 4");
         
         playerButtons = new ArrayList<>();
         buttonWidth = 200;
@@ -54,31 +41,71 @@ public class LobbyManager {
     }
     
     public void update() {
-        if (playerButtons != null) {
-            for (UtilButton playerButton : playerButtons) {
 
-                playerButton.update();
-                if(playerButton.isSelect()){
-                    playerButton.setText("READY");
+        ArrayList<HashMap<String, Double>> data = Game.client.receiveLobbyData();
+        for(HashMap<String, Double> singleData : data) {
+
+            // What type of data
+            String content = "";
+            for(String key : singleData.keySet()) {
+                if(singleData.get(key) == 4.2)
+                    content = key;
+            }
+
+            switch(content) {
+                case "accept" -> {
+                    
+                    break;
                 }
-                else{
-                    playerButton.setText("NOT READY");
+
+                case "lock" -> {
+
+                    break;
                 }
-                
+                case "unlock" -> {
+
+                    break;
+                }
+                case "playerReady" -> {
+
+                    break;
+                }
+                case "countDown" -> {
+
+                    break;
+                }
+                case "finish" -> {
+
+                    break;
+                }
             }
         }
 
-        if (allPlayerReady()) {
+        // if (playerButtons != null) {
+            // for (UtilButton playerButton : playerButtons) {
+
+            //     playerButton.update();
+            //     if(playerButton.isSelect()){
+            //         playerButton.setText("READY");
+            //     }
+            //     else{
+            //         playerButton.setText("NOT READY");
+            //     }
+                
+            // }
+        // }
+
+        // if (allPlayerReady()) {
 
             // Here we can start the multiplayer session
 
-        }
+        // }
 
         // readFileForButtons(testDaten);
     }
 
     private void createButtons() {
-        for (int i = 0; i < playerList.size(); i++) {
+        for (int i = 1; i <= 4; i++) {
             int buttonX = Constants.WIDTH / 2 - (buttonWidth / 2);
             int buttonY = initialButtonY + i * (buttonHeight + buttonSpacing);
 
@@ -88,7 +115,7 @@ public class LobbyManager {
                             buttonY,
                             buttonWidth,
                             buttonHeight,
-                            playerList.get(i) + "\n" + "NOT READY"));
+                            "Player " + i));
         }
     }
 
@@ -107,10 +134,7 @@ public class LobbyManager {
     }
 
     boolean allPlayerReady() {
-        return playerButtons.get(0).isSelect()
-                && playerButtons.get(1).isSelect()
-                && playerButtons.get(2).isSelect()
-                && playerButtons.get(3).isSelect();
+        return false;
     }
 
 }

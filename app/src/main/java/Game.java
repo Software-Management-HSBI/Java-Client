@@ -82,6 +82,8 @@ public class Game {
 
     public static ArrayList<OtherPlayer> otherPlayers = new ArrayList<>();
 
+    public int playerThis;
+
     long currentTime = System.currentTimeMillis();
 
     private int countReceived = 0;
@@ -111,12 +113,12 @@ public class Game {
         client = Client.getInstance();
 
         //TestPlayer
-        OtherPlayer otherPlayer = new OtherPlayer(2);
-        otherPlayer.position = (int) Constants.PLAYERZ;
-        otherPlayers.add(otherPlayer);
+        // OtherPlayer otherPlayer = new OtherPlayer(2);
+        // otherPlayer.position = (int) Constants.PLAYERZ;
+        // otherPlayers.add(otherPlayer);
 
-        Road.Segment startSegment = Road.findSegment(Constants.PLAYERZ);
-        startSegment.otherPlayers.add(otherPlayer);
+        // Road.Segment startSegment = Road.findSegment(Constants.PLAYERZ);
+        // startSegment.otherPlayers.add(otherPlayer);
 
         gameLoop();
     }
@@ -199,24 +201,28 @@ public class Game {
             case MENU -> {
                 mainMenu.checkInput();
                 client.serverDisconnect();
+                break;
             }
             case OPTION -> {
                 optionsManager.update();
+                break;
             }
             case SINGLEPLAYER -> {
                 update(dt);
                 client.serverDisconnect();
+                break;
             }
             case MULTIPLAYER -> {
                 //ohne in der Lobby gewesen zu sein, kommt man eigentlich nicht in den Multiplayer
                 client.connectToServer();
                 update(dt);
+                break;
             }
             case LOBBY -> {
-                // lobby wird erstmal gescipped
-                // lobbyManager.update();
+                lobbyManager.update();
                 client.connectToServer();
-                update(dt);
+                // update(dt);
+                break;
             }
         }
         if (IsKeyPressed(KEY_P)) gameState = GameState.MENU;
@@ -230,20 +236,25 @@ public class Game {
         switch (gameState) {
             case MENU -> {
                 mainMenu.showBackground();
+                break;
             }
             case OPTION -> {
                 optionsManager.show = true;
                 optionsManager.showBackground();
+                break;
             }
             case SINGLEPLAYER -> {
                 render();
+                break;
             }
             case MULTIPLAYER -> {
                 render();
+                break;
             }
             case LOBBY -> {
-                // lobbyManager.drawLobby();
-                render();
+                lobbyManager.drawLobby();
+                // render();
+                break;
             }
         }
 
@@ -415,22 +426,12 @@ public class Game {
         speed = Util.limit(speed, 0, Constants.MAXSPEED);
 
         // Tastendruck 'S' zeigt/versteckt die Optionen
-        if(gameState == GameState.LOBBY) {
+        if(gameState == GameState.MULTIPLAYER) {
             if (IsKeyPressed(KEY_S)) {
                 optionsManager.show = !optionsManager.show;
             }
             updateOtherPlayers();
-            client.sendPlayerData(1, (int) (position + Constants.PLAYERZ), playerX);
-        //     ArrayList<HashMap<String, Double>> data = client.receiveData();
-        //     if(data != null) {
-        //         countReceived++;
-        //         for(HashMap<String, Double> currentData : data){
-        //             System.out.println(currentData + "\n");
-        //         }
-        //     }
-        //     else {
-        //         countNoData++;
-        //     }
+            client.sendPlayerData(playerThis, (int) (position + Constants.PLAYERZ), playerX);
         }
 
  
@@ -441,7 +442,7 @@ public class Game {
     private void updateOtherPlayers() {
         if(otherPlayers != null) {
             ArrayList<HashMap<String, Double>> data;
-            data = client.receiveData();
+            data = client.receiveUpdateData();
 
             for(OtherPlayer player : otherPlayers) {
                 if(data != null) {
