@@ -20,11 +20,12 @@ public class Client {
     private String serverAddress;
     private Socket socket;
 
-    private ArrayList<HashMap<String, Double>> currentData;
+    private ArrayList<HashMap<String, Double>> currentUpdateData;
+    private ArrayList<HashMap<String, Double>> currentLobbyData;
 
     private Client()
     {
-        currentData = new ArrayList<HashMap<String, Double>>();
+        currentUpdateData = new ArrayList<HashMap<String, Double>>();
     }
 
     public static Client getInstance() {
@@ -64,25 +65,57 @@ public class Client {
             socket.on("road", (data) -> {System.out.println("received");});
             socket.on("update", (data)
             -> {
-                for(Object dataObject : data) {
-                    if(dataObject == null)
-                        continue;
+                currentUpdateData.addAll(this.convertData(data));  
+                    // System.out.println("received");
+                });
 
-                    HashMap<String, Double> dataHashMap = null;
-
-                    JSONObject dataJSONObject = (JSONObject) dataObject;
-                    String dataString = dataJSONObject.toString();
-
-                    try {
-                        dataHashMap = new Gson().fromJson(dataString, HashMap.class);
-                    } catch (JsonSyntaxException e) {
-                        System.out.println("conversion to HashMap failed");
-                        e.printStackTrace();
-                    }
-
-                    if(dataHashMap != null)
-                        currentData.add(dataHashMap);
+            socket.on("accept", (data)
+            -> {
+                ArrayList<HashMap<String, Double>> convertedData = this.convertData(data);
+                for(HashMap<String, Double> singleData: convertedData) {
+                    singleData.put("accept", 4.2);
                 }
+                currentLobbyData.addAll(convertedData);  
+                    // System.out.println("received");
+                });
+
+            socket.on("lock", (data)
+            -> {
+                ArrayList<HashMap<String, Double>> convertedData = this.convertData(data);
+                for(HashMap<String, Double> singleData: convertedData) {
+                    singleData.put("lock", 4.2);
+                }
+                currentLobbyData.addAll(convertedData);  
+                    // System.out.println("received");
+                });
+
+            socket.on("playerReady", (data)
+            -> {
+                ArrayList<HashMap<String, Double>> convertedData = this.convertData(data);
+                for(HashMap<String, Double> singleData: convertedData) {
+                    singleData.put("playerReady", 4.2);
+                }
+                currentLobbyData.addAll(convertedData);  
+                    // System.out.println("received");
+                });
+
+            socket.on("countdown", (data)
+            -> {
+                ArrayList<HashMap<String, Double>> convertedData = this.convertData(data);
+                for(HashMap<String, Double> singleData: convertedData) {
+                    singleData.put("countdown", 4.2);
+                }
+                currentLobbyData.addAll(convertedData);  
+                    // System.out.println("received");
+                });
+
+            socket.on("finish", (data)
+            -> {
+                ArrayList<HashMap<String, Double>> convertedData = this.convertData(data);
+                for(HashMap<String, Double> singleData: convertedData) {
+                    singleData.put("finish", 4.2);
+                }
+                currentLobbyData.addAll(convertedData);  
                     // System.out.println("received");
                 });
             }
@@ -124,10 +157,35 @@ public class Client {
         socket.emit("start", "Test Message");
         System.out.println("Send message");
     }
+
+    private ArrayList<HashMap<String, Double>> convertData(Object[] data) {
+        ArrayList<HashMap<String, Double>> output = new ArrayList<>();
+
+        for(Object dataObject : data) {
+            if(dataObject == null)
+                continue;
+
+            HashMap<String, Double> dataHashMap = null;
+
+            JSONObject dataJSONObject = (JSONObject) dataObject;
+            String dataString = dataJSONObject.toString();
+
+            try {
+                dataHashMap = new Gson().fromJson(dataString, HashMap.class);
+            } catch (JsonSyntaxException e) {
+                System.out.println("conversion to HashMap failed");
+                e.printStackTrace();
+            }
+
+            if(dataHashMap != null)
+                output.add(dataHashMap);
+        }
+        return output;
+    }
     
     public ArrayList<HashMap<String, Double>> receiveData() {
         ArrayList<HashMap<String, Double>> data = new ArrayList<>();
-        data.addAll(currentData);
+        data.addAll(currentUpdateData);
         // current Data wird gelöscht
         // um eventuel keine Daten zu verlieren,
         // werden nur die Daten gelöscht die auch kopiert wurden
@@ -139,7 +197,7 @@ public class Client {
         }
 
         // letzte daten löschen
-        currentData.removeAll(data);
+        currentUpdateData.removeAll(data);
         
         // wenns mehr als einer sind(zu viele)
         if(data.size() > 1) {
