@@ -1,3 +1,4 @@
+import static com.raylib.Jaylib.LIGHTGRAY;
 import static com.raylib.Raylib.*;
 
 import com.raylib.Jaylib;
@@ -5,6 +6,7 @@ import com.raylib.Jaylib;
 public class UtilButton extends Jaylib.Rectangle {
     private String text;
     private boolean select = false;
+    private boolean selectable = true;
 
     /**
      * Creates a button with the given parameters
@@ -26,7 +28,7 @@ public class UtilButton extends Jaylib.Rectangle {
     }
 
     public void drawWithButton() {
-        GuiButton(this, text);
+        GuiButton(this, text) ;
     }
 
     /**
@@ -44,7 +46,7 @@ public class UtilButton extends Jaylib.Rectangle {
     }
 
     public void update() {
-        if (buttonClicked()) {
+        if (buttonClicked() && selectable) {
             select = !select;
         }
     }
@@ -63,5 +65,9 @@ public class UtilButton extends Jaylib.Rectangle {
 
     public void setSelect(boolean select) {
         this.select = select;
+    }
+
+    public void setSelectable(boolean pSelectable) {
+        this.selectable = pSelectable;
     }
 }

@@ -43,44 +43,66 @@ public class LobbyManager {
     public void update() {
 
         ArrayList<HashMap<String, Double>> data = Game.client.receiveLobbyData();
-        for(HashMap<String, Double> singleData : data) {
+        if(data != null) {
+            for(HashMap<String, Double> singleData : data) {
 
-            // What type of data
-            String content = "";
-            for(String key : singleData.keySet()) {
-                if(singleData.get(key) == 4.2)
-                    content = key;
-            }
-
-            switch(content) {
-                case "accept" -> {
-                    
-                    break;
+                // What type of data
+                String content = "";
+                for(String key : singleData.keySet()) {
+                    if(singleData.get(key) == 4.2)
+                        content = key;
                 }
 
-                case "lock" -> {
+                System.out.println("Data reveived: " + singleData.keySet());
+                switch(content) {
+                    case "accept" -> {
+                        UtilButton button = playerButtons.get((int) (double) singleData.get("player") - 1);
+                        button.setText("NOT READY");
+                        for(UtilButton otherButton : playerButtons) {
+                            otherButton.setSelectable(false);
+                        }
+                        button.setSelectable(true);
+                        break;
+                    }
 
-                    break;
-                }
-                case "unlock" -> {
+                    case "lock" -> {
 
-                    break;
-                }
-                case "playerReady" -> {
+                        break;
+                    }
+                    case "unlock" -> {
 
-                    break;
-                }
-                case "countDown" -> {
+                        break;
+                    }
+                    case "playerReady" -> {
 
-                    break;
-                }
-                case "finish" -> {
+                        break;
+                    }
+                    case "countDown" -> {
 
-                    break;
+                        break;
+                    }
+                    case "finish" -> {
+
+                        break;
+                    }
                 }
             }
         }
 
+
+        // Button Listener
+       for(int i = 0; i < playerButtons.size(); i++) {
+            playerButtons.get(i).update();
+
+            if(playerButtons.get(i).isSelect()) {
+                HashMap<String, Double> output = new HashMap<>();
+                output.put("player", i + 1.0);
+                Game.client.sendLobbyData("register", output);
+                System.out.println("Data send: register," + output);
+                playerButtons.get(i).setSelect(false);
+            }
+        }
+        
         // if (playerButtons != null) {
             // for (UtilButton playerButton : playerButtons) {
 
@@ -109,13 +131,14 @@ public class LobbyManager {
             int buttonX = Constants.WIDTH / 2 - (buttonWidth / 2);
             int buttonY = initialButtonY + i * (buttonHeight + buttonSpacing);
 
-            playerButtons.add(
-                    new UtilButton(
-                            buttonX,
-                            buttonY,
-                            buttonWidth,
-                            buttonHeight,
-                            "Player " + i));
+            UtilButton newButton = new UtilButton(
+                buttonX,
+                buttonY,
+                buttonWidth,
+                buttonHeight,
+                "Player " + i);
+            
+            playerButtons.add(newButton);
         }
     }
 

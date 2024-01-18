@@ -26,6 +26,7 @@ public class Client {
     private Client()
     {
         currentUpdateData = new ArrayList<HashMap<String, Double>>();
+        currentLobbyData = new ArrayList<HashMap<String, Double>>();
     }
 
     public static Client getInstance() {
@@ -133,6 +134,10 @@ public class Client {
             data.put("position", (double) position);
             data.put("x", x);
             socket.emit("update",data);
+        }
+
+        public void sendLobbyData(String content, HashMap<String, Double> pData) {
+            socket.emit(content, pData);
         }
 
         public void serverDisconnect() {
