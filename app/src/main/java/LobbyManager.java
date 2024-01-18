@@ -58,6 +58,8 @@ public class LobbyManager {
                     case "accept" -> {
                         UtilButton button = playerButtons.get((int) (double) singleData.get("player") - 1);
                         button.setText("NOT READY");
+                        button.selected = true;
+                        Game.playerThis = (int) (double) singleData.get("player");
                         for(UtilButton otherButton : playerButtons) {
                             otherButton.setSelectable(false);
                         }
@@ -66,19 +68,47 @@ public class LobbyManager {
                     }
 
                     case "lock" -> {
+                        int playerIndex = (int) (double) singleData.get("player") - 1;
+                        UtilButton button = playerButtons.get(playerIndex);
+                        button.setSelectable(false);
+                        button.setText("Player " + playerIndex + 1 + "NOT READY");
 
+                        OtherPlayer newPlayer = new OtherPlayer(playerIndex + 1);
+                        Game.otherPlayers.add(newPlayer);
                         break;
                     }
                     case "unlock" -> {
-
+                        int playerIndex = (int) (double) singleData.get("player") - 1;
+                        UtilButton button = playerButtons.get(playerIndex);
+                        button.setSelectable(true);
+                        button.setText("NOT READY");
+                        
+                        for(OtherPlayer player : Game.otherPlayers) {
+                            if(player.player == playerIndex + 1) {
+                                Game.otherPlayers.remove(player);
+                                break;
+                            }
+                            else
+                            System.out.println("Keine ahnung Junge(Lobby Manger Zeile 90)");
+                        }
                         break;
                     }
                     case "playerReady" -> {
+                        int playerIndex = (int) (double) singleData.get("player") - 1;
+                        UtilButton button = playerButtons.get(playerIndex);
+
+                        if(playerIndex + 1 == Game.playerThis)
+                            button.setText("READY");
+                        else {
+                            button.setText("Plyer " + playerIndex + 1 + "READY");
+                            Game.otherPlayers.get(playerIndex).ready = true;
+                        }
 
                         break;
                     }
                     case "countDown" -> {
 
+                        System.out.println(singleData.get("time"));
                         break;
                     }
                     case "finish" -> {
@@ -93,13 +123,21 @@ public class LobbyManager {
         // Button Listener
        for(int i = 0; i < playerButtons.size(); i++) {
             playerButtons.get(i).update();
-
             if(playerButtons.get(i).isSelect()) {
-                HashMap<String, Double> output = new HashMap<>();
-                output.put("player", i + 1.0);
-                Game.client.sendLobbyData("register", output);
-                System.out.println("Data send: register," + output);
                 playerButtons.get(i).setSelect(false);
+
+                if(!playerButtons.get(i).selected) {
+                    HashMap<String, Double> output = new HashMap<>();
+                    output.put("player", i + 1.0);
+                    Game.client.sendLobbyData("register", output);
+                    System.out.println("Data send: register," + output);
+                }
+                else {
+                    HashMap<String, Double> output = new HashMap<>();
+                    output.put("player", i + 1.0);
+                    Game.client.sendLobbyData("playerReady", output);
+                    System.out.println("Data send: playerReady," + output);
+                }
             }
         }
         

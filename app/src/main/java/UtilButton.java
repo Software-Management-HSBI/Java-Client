@@ -8,6 +8,8 @@ public class UtilButton extends Jaylib.Rectangle {
     private boolean select = false;
     private boolean selectable = true;
 
+    public boolean selected = false;
+
     /**
      * Creates a button with the given parameters
      *

@@ -82,7 +82,7 @@ public class Game {
 
     public static ArrayList<OtherPlayer> otherPlayers = new ArrayList<>();
 
-    public int playerThis;
+    public static int playerThis;
 
     long currentTime = System.currentTimeMillis();
 
